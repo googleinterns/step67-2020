@@ -24,6 +24,8 @@ public class TablesFromDatabase extends HttpServlet {
 
   public void init() {
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
+
+    //TODO: change "example-db" to the database that Millennia passes in from the db selection
     DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", "example-db"); //project id, args, args
     this.dbClient = spanner.getDatabaseClient(db);
   }
