@@ -37,7 +37,7 @@ function createSelectElement() {
 function createForm() {
   const form = document.createElement("form");
   form.setAttribute("id", "table-form");
-  form.setAttribute("action", "/tables-from-db");
+  form.setAttribute("action", "/data-from-db");
   form.setAttribute("method", "POST");
   document.body.appendChild(form);
 }
@@ -70,4 +70,15 @@ function printSelected() {
     selectedElement.innerText = result[index];
     selectedSpace.appendChild(selectedElement);
   }
+}
+
+function showDatabase() {
+  fetch('/data-from-db')
+  .then(response => response.text())
+  .then((data) => { //data is a json object representing the data
+    const dataArea = document.getElementById("data");
+    const pElement = document.createElement("p");
+    pElement.innerText = data;
+    dataArea.appendChild(pElement);
+  });
 }

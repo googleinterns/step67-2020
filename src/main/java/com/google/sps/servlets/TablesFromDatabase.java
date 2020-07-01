@@ -10,6 +10,7 @@ import com.google.cloud.spanner.Statement;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -50,17 +51,6 @@ public class TablesFromDatabase extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    System.out.println("here is a post request");
-    String selected = request.getParameter("table-select");
-    System.out.println("HEREEEE " + selected);
-
-  ///problem -- only getting the first one that i selected
-
-    Enumeration enumer = request.getParameterNames();
-    while (enumer.hasMoreElements()) {
-      System.out.println(enumer.nextElement());
-    }
-
-    response.sendRedirect("/select-tables.html");
+    
   }
 }
