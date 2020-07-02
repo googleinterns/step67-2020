@@ -33,21 +33,15 @@ public class DataFromDatabase extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
 
-    //get the list of strings from some url
-
     if (selectedTables == null) {
       throw new RuntimeException("Selected tables is null");
     }
-    
-    
 
     for (String table : selectedTables) {
       String colQuery = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "'";
 
       try (ResultSet resultSet =
-        dbClient
-          .singleUse() // Execute a single read or query against Cloud Spanner.
-          .executeQuery(Statement.of(colQuery))) {
+        dbClient.singleUse().executeQuery(Statement.of(colQuery))) {
 
         List<String> colnames = new ArrayList<>();
         List<String> spannerTypes = new ArrayList<>();
@@ -66,72 +60,98 @@ public class DataFromDatabase extends HttpServlet {
         query = query.substring(0, query.length() - 2);
         query += " FROM " + table; 
 
-        System.out.println("query: " + query);
-
         try (ResultSet rs =
           dbClient
           .singleUse() // Execute a single read or query against Cloud Spanner.
           .executeQuery(Statement.of(query))) {
-          System.out.println("HERE");
+
           while (rs.next()) {
-            System.out.println("there is a next");
-            String row = "<p>";
+            String row = "";
             int index = 0;
             while (index < colnames.size()) {
               String colName = colnames.get(index);
               System.out.println(colName + " " + spannerTypes.get(index));
+              row += (" " + colName + ": ");
 
               //TODO: make sure to check for nulls, split up into different methods
               switch (spannerTypes.get(index)) {
                 case "STRING(MAX)":
-                  row += rs.getString(colName);
+                  if (rs.getString(colName) != null) {
+                    row += rs.getString(colName);
+                  } else {
+                    row += "NULL";
+                  }
                   break;
                 case "STRING(250)":
-                  row += rs.getString(colName);
+                  if (rs.getString(colName) != null) {
+                    row += rs.getString(colName);
+                  } else {
+                    row += "NULL";
+                  }
                   break;
                 case "STRING(1024)":
-                  row += rs.getString(colName);
+                  if (rs.getString(colName) != null) {
+                    row += rs.getString(colName);
+                  } else {
+                    row += "NULL";
+                  }
                   break;
                 case "TIMESTAMP":
-                  row += rs.getTimestamp(colName);
+                 if (rs.getTimestamp(colName) != null) {
+                    row += rs.getTimestamp(colName);
+                  } else {
+                    row += "NULL";
+                  }
                   break;
                 case "INT64":
+                  if (rs.getLong(colName) != null) {
+                    row += rs.getLong(colName);
+                  } else {
+                    row += "NULL";
+                  }
                   row += rs.getLong(colName);
                   break;
                 case "BYTES(MAX)":
-                  row += "null bytes fix later";
-                  //row += rs.getBytes(colName);
+                  if (rs.getBytes(colName) != null) {
+                    row += rs.getBytes(colName);
+                  } else {
+                    row += "NULL";
+                  }
                   break;
                 case "BYTES":
-                  row += rs.getBytes(colName);
+                  if (rs.getBytes(colName) != null) {
+                    row += rs.getBytes(colName);
+                  } else {
+                    row += "NULL";
+                  }
                   break;
                 case "ARRAY<INT64>":
-                  row += "array goes here";
+                  row += "ARRAY HERE";
                   break;
                 case "DATE":
-                  row += "date goes here";
+                  row += "DATE HERE";
                   break;
                 case "BOOL":
-                  row += rs.getBoolean(colName);
+                  if (rs.getBoolean(colName) != null) {
+                    row += rs.getBoolean(colName);
+                  } else {
+                    row += "NULL";
+                  }
 
               }
               index++;
             }
-            row += "</p>";
             System.out.println(row);
             response.getWriter().println(row); 
           }
           response.getWriter().println("Done printing this table.");
         }
-        // String json = new Gson().toJson(colnames);
-        // response.getWriter().println(json);
       }
     }
   }
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    System.out.println("here is a post request");
     selectedTables = request.getParameterValues("table-select");
     for (String table : selectedTables) {
       System.out.println("Selected table = " + table);
