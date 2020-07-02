@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.google.cloud.ByteArray;
 import com.google.cloud.spanner.DatabaseClient;
 import com.google.cloud.spanner.DatabaseId;
 import com.google.cloud.spanner.ResultSet;
@@ -15,13 +16,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns HTML that contains content from the example database. */
 @WebServlet("/data-from-db")
 public class DataFromDatabase extends HttpServlet {
 
   DatabaseClient dbClient;
   private String[] selectedTables;
-
 
   public void init() {
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
@@ -32,10 +31,6 @@ public class DataFromDatabase extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
-
-    if (selectedTables == null) {
-      throw new RuntimeException("Selected tables is null");
-    }
 
     for (String table : selectedTables) {
       String colQuery = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "'";
@@ -60,92 +55,73 @@ public class DataFromDatabase extends HttpServlet {
         query = query.substring(0, query.length() - 2);
         query += " FROM " + table; 
 
-        try (ResultSet rs =
-          dbClient
-          .singleUse() // Execute a single read or query against Cloud Spanner.
-          .executeQuery(Statement.of(query))) {
+        response.getWriter().println("Table: " + table);
 
-          while (rs.next()) {
-            String row = "";
-            int index = 0;
-            while (index < colnames.size()) {
-              String colName = colnames.get(index);
-              System.out.println(colName + " " + spannerTypes.get(index));
-              row += (" " + colName + ": ");
+        executeTableQuery(query, colnames, spannerTypes, response);
+      }
+    }
+  }
 
-              //TODO: make sure to check for nulls, split up into different methods
-              switch (spannerTypes.get(index)) {
-                case "STRING(MAX)":
-                  if (rs.getString(colName) != null) {
-                    row += rs.getString(colName);
-                  } else {
-                    row += "NULL";
-                  }
-                  break;
-                case "STRING(250)":
-                  if (rs.getString(colName) != null) {
-                    row += rs.getString(colName);
-                  } else {
-                    row += "NULL";
-                  }
-                  break;
-                case "STRING(1024)":
-                  if (rs.getString(colName) != null) {
-                    row += rs.getString(colName);
-                  } else {
-                    row += "NULL";
-                  }
-                  break;
-                case "TIMESTAMP":
-                 if (rs.getTimestamp(colName) != null) {
-                    row += rs.getTimestamp(colName);
-                  } else {
-                    row += "NULL";
-                  }
-                  break;
-                case "INT64":
-                  if (rs.getLong(colName) != null) {
-                    row += rs.getLong(colName);
-                  } else {
-                    row += "NULL";
-                  }
-                  row += rs.getLong(colName);
-                  break;
-                case "BYTES(MAX)":
-                  if (rs.getBytes(colName) != null) {
-                    row += rs.getBytes(colName);
-                  } else {
-                    row += "NULL";
-                  }
-                  break;
-                case "BYTES":
-                  if (rs.getBytes(colName) != null) {
-                    row += rs.getBytes(colName);
-                  } else {
-                    row += "NULL";
-                  }
-                  break;
-                case "ARRAY<INT64>":
-                  row += "ARRAY HERE";
-                  break;
-                case "DATE":
-                  row += "DATE HERE";
-                  break;
-                case "BOOL":
-                  if (rs.getBoolean(colName) != null) {
-                    row += rs.getBoolean(colName);
-                  } else {
-                    row += "NULL";
-                  }
+  private void executeTableQuery(String query, List<String> colnames, List<String> spannerTypes, HttpServletResponse response) throws IOException {
+    try (ResultSet rs =
+      dbClient
+      .singleUse() // Execute a single read or query against Cloud Spanner.
+      .executeQuery(Statement.of(query))) {
 
-              }
-              index++;
-            }
-            System.out.println(row);
-            response.getWriter().println(row); 
+      while (rs.next()) {
+        String row = "";
+        int index = 0;
+        while (index < colnames.size()) {
+          String colName = colnames.get(index);
+          row += (" " + colName + ": ");
+
+          // If there is a null in this col here, just print out NULL for now.
+          if (rs.isNull(colName)) {
+            index++;
+            row += "NULL"; 
+            continue;
           }
-          response.getWriter().println("Done printing this table.");
+
+          // Figure out how to make more concise.
+          switch (spannerTypes.get(index)) {
+            case "STRING(MAX)":
+              row += rs.getString(colName);
+              break;
+            case "STRING(250)":
+              row += rs.getString(colName);
+              break;
+            case "STRING(1024)":
+              row += rs.getString(colName);
+              break;
+            case "TIMESTAMP":
+              row += rs.getTimestamp(colName);
+              break;
+            case "INT64":
+              row += rs.getLong(colName);
+              break;
+            case "BYTES(MAX)":
+              ByteArray bytes = rs.getBytes(colName);
+              byte[] byteArray = bytes.toByteArray();
+          
+              for (byte b : byteArray) {
+                row += b;
+              }
+              break;
+            case "BYTES":
+              row += rs.getBytes(colName);
+              break;
+            case "ARRAY<INT64>":
+              row += "ARRAY HERE";
+              break;
+            case "DATE":
+              row += "DATE HERE";
+              break;
+            case "BOOL":
+              row += rs.getBoolean(colName);
+          }
+          index++;
         }
+        response.getWriter().println(row); 
       }
     }
   }
@@ -153,10 +129,6 @@ public class DataFromDatabase extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     selectedTables = request.getParameterValues("table-select");
-    for (String table : selectedTables) {
-      System.out.println("Selected table = " + table);
-    }
-
     response.sendRedirect("/select-tables.html");
   }
 }
