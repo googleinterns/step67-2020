@@ -36,7 +36,7 @@ public class ExampleDbServlet extends HttpServlet {
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
     DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", "example-db");
     this.dbClient = spanner.getDatabaseClient(db);
-  }
+  } 
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

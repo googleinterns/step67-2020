@@ -49,5 +49,5 @@ public class LoginServlet extends HttpServlet {
     response.getWriter().println("<h1> You are Logged in as " + userEmail + "!<h1>");
     response.getWriter().println("<a href=\"" +homePage+ "\"><button>Home</button/></a>");
     response.getWriter().println("<a href=\"" + logoutUrl + "\"><button>Logout</button/></a>");
-    }
+    } 
 } 

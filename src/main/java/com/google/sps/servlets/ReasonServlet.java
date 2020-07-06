@@ -31,7 +31,7 @@ public final class ReasonServlet extends HttpServlet {
       return defaultValue;
     }
     return value;
-  }
+  } 
 }
 
     // boolean upperCase = Boolean.parseBoolean(getParameter(request, "upper-case", "false"));
