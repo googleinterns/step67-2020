@@ -50,4 +50,4 @@ public class LoginServlet extends HttpServlet {
     response.getWriter().println("<a href=\"" +homePage+ "\"><button>Home</button/></a>");
     response.getWriter().println("<a href=\"" + logoutUrl + "\"><button>Logout</button/></a>");
     }
-}
+} 

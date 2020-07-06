@@ -1,4 +1,3 @@
-
 function getData() {
     console.log("fetch");
     fetch('/example-db').then(response => response.text()).then((word) => {

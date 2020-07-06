@@ -35,7 +35,6 @@ public final class ReasonServlet extends HttpServlet {
 }
 
     // boolean upperCase = Boolean.parseBoolean(getParameter(request, "upper-case", "false"));
-
     // for now just test getParam(request, database selection);
     
     // here is my idea
