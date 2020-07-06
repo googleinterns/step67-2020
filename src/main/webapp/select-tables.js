@@ -57,28 +57,74 @@ function getSelectValues(select) {
   return result;
 }
 
-// Prints selected table names onto page
-// Need to do a post request (?) to put the selected tables into a url, this way they can be saved and passed into the next page
-// to actually show the data from the tables.
-// Need to figure out how to do this. Maybe create a url that has the selected tables.
-function printSelected() {
-  const select = document.getElementById("table-select");
-  const selectedSpace = document.getElementById("selected");
-  var result = getSelectValues(select);
-  for (let index = 0; index < result.length; index++) {
-    const selectedElement = document.createElement("p");
-    selectedElement.innerText = result[index];
-    selectedSpace.appendChild(selectedElement);
+function showDatabase() {
+  fetch('/data-from-db')
+  .then(response => response.json())
+  .then((data) => { //data is a json object representing the data
+    const dataArea = document.getElementById("data");
+    
+    for (tableIndex in data) {
+      const tableData = data[tableIndex];
+
+      // Make header for table (show name)
+      const name = tableData.name;
+      createTableName(name, dataArea);
+
+      // Make table itself, add headers for column names
+      const table = createTable(name);
+      const colsArray = tableData.columns;
+      table.appendChild(makeTableHeaders(colsArray));
+
+      // add data
+      makeRows(tableData.rows, table, colsArray);
+      dataArea.appendChild(table);
+    }
+  });
+}
+
+// Create column name labels for table
+function makeTableHeaders(colsArray) {
+  const columnNamesRow = document.createElement("tr");
+
+  let index;
+  for (index in colsArray) {
+    const columnTitle = addColumnHeader(colsArray[index]);
+    columnNamesRow.appendChild(columnTitle);
+  }
+  return columnNamesRow;
+}
+
+function makeRows(rows, table, colsArray) {
+  for (index in rows) {
+    const row = rows[index].row;
+    const rowElement = document.createElement("tr");
+
+    for (colIndex in colsArray) {
+      const colName = colsArray[colIndex];
+      const dataPoint = row[colName];
+      const dataPointElement = document.createElement("td");
+      dataPointElement.innerText = dataPoint;
+      rowElement.appendChild(dataPointElement);
+    }
+
+    table.appendChild(rowElement);
   }
 }
 
-function showDatabase() {
-  fetch('/data-from-db')
-  .then(response => response.text())
-  .then((data) => { //data is a json object representing the data
-    const dataArea = document.getElementById("data");
-    const pElement = document.createElement("p");
-    pElement.innerText = data;
-    dataArea.appendChild(pElement);
-  });
+function addColumnHeader(colName) {
+  const columnHeader = document.createElement("th");
+  columnHeader.innerText = colName;
+  return columnHeader;
+}
+
+function createTableName(name, dataArea) {
+  const header = document.createElement("h2");
+  header.innerText = name;
+  dataArea.appendChild(header);
+}
+
+function createTable(name) {
+  const table = document.createElement("table");
+  table.setAttribute("id", "table_" + name);
+  return table;
 }

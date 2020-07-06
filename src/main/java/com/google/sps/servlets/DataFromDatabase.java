@@ -31,9 +31,11 @@ public class DataFromDatabase extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
+    List<Table> tables = new ArrayList<>();
 
     for (String table : selectedTables) {
       String colQuery = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "'";
+      Table tableObject = new Table(table);
 
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(colQuery))) {
@@ -49,79 +51,82 @@ public class DataFromDatabase extends HttpServlet {
         }
 
         String query = "SELECT ";
+        String columnNamesString = "Columns: ";
         for (String colName : colnames) {
           query += (colName + ", ");
+          columnNamesString += (colName + ", ");
+          tableObject.addColumn(colName);
         }
         query = query.substring(0, query.length() - 2);
         query += " FROM " + table; 
 
-        response.getWriter().println("Table: " + table);
-
-        executeTableQuery(query, colnames, spannerTypes, response);
+        executeTableQuery(tableObject, query, colnames, spannerTypes, response);
+        tables.add(tableObject);
       }
     }
+    String json = new Gson().toJson(tables);
+    response.getWriter().println(json);
   }
 
-  private void executeTableQuery(String query, List<String> colnames, List<String> spannerTypes, HttpServletResponse response) throws IOException {
+  private void executeTableQuery(Table tableObject, String query, List<String> colnames, List<String> spannerTypes, HttpServletResponse response) throws IOException {
     try (ResultSet rs =
       dbClient
       .singleUse() // Execute a single read or query against Cloud Spanner.
       .executeQuery(Statement.of(query))) {
 
       while (rs.next()) {
-        String row = "";
+        Row rowObject = new Row();
         int index = 0;
         while (index < colnames.size()) {
           String colName = colnames.get(index);
-          row += (" " + colName + ": ");
 
           // If there is a null in this col here, just print out NULL for now.
           if (rs.isNull(colName)) {
             index++;
-            row += "NULL"; 
+            rowObject.addData(colName, "NULL");
             continue;
           }
 
           // Figure out how to make more concise.
           switch (spannerTypes.get(index)) {
             case "STRING(MAX)":
-              row += rs.getString(colName);
-              break;
             case "STRING(250)":
-              row += rs.getString(colName);
-              break;
             case "STRING(1024)":
-              row += rs.getString(colName);
+              rowObject.addData(colName, rs.getString(colName));
               break;
             case "TIMESTAMP":
-              row += rs.getTimestamp(colName);
+              rowObject.addData(colName, "" + rs.getTimestamp(colName));
               break;
             case "INT64":
-              row += rs.getLong(colName);
+              rowObject.addData(colName, "" + rs.getLong(colName));
               break;
             case "BYTES(MAX)":
+            case "BYTES":
               ByteArray bytes = rs.getBytes(colName);
               byte[] byteArray = bytes.toByteArray();
-          
+              String byteToString = "";
               for (byte b : byteArray) {
-                row += b;
+                byteToString += b;
               }
-              break;
-            case "BYTES":
-              row += rs.getBytes(colName);
+              rowObject.addData(colName, byteToString);
               break;
             case "ARRAY<INT64>":
-              row += "ARRAY HERE";
+              long[] longArray = rs.getLongArray(colName);
+              String arrayToString = "";
+              for (long l : longArray) {
+                arrayToString += l + " ";
+              }
+              rowObject.addData(colName, "ARRAY HERE");
               break;
             case "DATE":
-              row += "DATE HERE";
+              rowObject.addData(colName, "DATE HERE");
               break;
             case "BOOL":
-              row += rs.getBoolean(colName);
+              rowObject.addData(colName, "" + rs.getBoolean(colName));
           }
           index++;
         }
-        response.getWriter().println(row); 
+        tableObject.addRow(rowObject);
       }
     }
   }
