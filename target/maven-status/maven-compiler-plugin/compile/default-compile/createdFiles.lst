@@ -1,1 +1,3 @@
+com/google/sps/servlets/LoginServlet.class
 com/google/sps/servlets/ExampleDbServlet.class
+com/google/sps/servlets/ReasonServlet.class
