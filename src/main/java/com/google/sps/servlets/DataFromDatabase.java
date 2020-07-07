@@ -83,41 +83,46 @@ public class DataFromDatabase extends HttpServlet {
 
           // If there is a null in this col here, just print out NULL for now.
           if (rs.isNull(colName)) {
-            index++;
             rowObject.addData(colName, "NULL");
             continue;
           }
 
-          switch (spannerTypes.get(index)) {
-            case "STRING(MAX)":
-            case "STRING(250)":
-            case "STRING(1024)":
-              rowObject.addData(colName, rs.getString(colName));
-              break;
-            case "TIMESTAMP":
-              rowObject.addData(colName, "" + rs.getTimestamp(colName));
-              break;
-            case "INT64":
-              rowObject.addData(colName, "" + rs.getLong(colName));
-              break;
-            case "BYTES(MAX)":
-            case "BYTES":
-              String byteToString = bytesToString(rs.getBytes(colName));
-              rowObject.addData(colName, byteToString);
-              break;
-            case "ARRAY<INT64>":
-              String arrayToString = longArrayToString(rs.getLongArray(colName));
-              rowObject.addData(colName, arrayToString);
-              break;
-            case "DATE":
-              rowObject.addData(colName, "DATE HERE");
-              break;
-            case "BOOL":
-              rowObject.addData(colName, "" + rs.getBoolean(colName));
-          }
+          String dataType = spannerTypes.get(index);
+          addDataToRowObject(dataType, rowObject, colName, rs);
+          
         }
         tableObject.addRow(rowObject);
       }
+    }
+  }
+
+  private void addDataToRowObject(String dataType, Row rowObject, String colName, ResultSet rs) {
+    switch (dataType) {
+      case "STRING(MAX)":
+      case "STRING(250)":
+      case "STRING(1024)":
+        rowObject.addData(colName, rs.getString(colName));
+        break;
+      case "TIMESTAMP":
+        rowObject.addData(colName, "" + rs.getTimestamp(colName));
+        break;
+      case "INT64":
+        rowObject.addData(colName, "" + rs.getLong(colName));
+        break;
+      case "BYTES(MAX)":
+      case "BYTES":
+        String byteToString = bytesToString(rs.getBytes(colName));
+        rowObject.addData(colName, byteToString);
+        break;
+      case "ARRAY<INT64>":
+        String arrayToString = longArrayToString(rs.getLongArray(colName));
+        rowObject.addData(colName, arrayToString);
+        break;
+      case "DATE":
+        rowObject.addData(colName, "DATE HERE");
+        break;
+      case "BOOL":
+        rowObject.addData(colName, "" + rs.getBoolean(colName));
     }
   }
 
