@@ -32,8 +32,18 @@ public class DataFromDatabase extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
 
+    selectedTables = request.getParameterValues("table-select");
+    String databaseName = request.getParameter("list-databases");
+ 
+    Spanner spanner = SpannerOptions.newBuilder().build().getService();
+    DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", databaseName);
+    this.dbClient = spanner.getDatabaseClient(db);
+
+    List<Table> tables = new ArrayList<>();
+
     for (String table : selectedTables) {
       String colQuery = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "'";
+      Table tableObject = new Table(table);
 
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(colQuery))) {
@@ -51,78 +61,87 @@ public class DataFromDatabase extends HttpServlet {
         String query = "SELECT ";
         for (String colName : colnames) {
           query += (colName + ", ");
+          tableObject.addColumn(colName);
         }
+
         query = query.substring(0, query.length() - 2);
         query += " FROM " + table; 
 
-        response.getWriter().println("Table: " + table);
-
-        executeTableQuery(query, colnames, spannerTypes, response);
+        executeTableQuery(tableObject, query, colnames, spannerTypes, response);
+        tables.add(tableObject);
+        }
       }
+      String json = new Gson().toJson(tables);
+      response.getWriter().println(json);
     }
-  }
 
-  private void executeTableQuery(String query, List<String> colnames, List<String> spannerTypes, HttpServletResponse response) throws IOException {
+
+  private void executeTableQuery(Table tableObject, String query, List<String> colnames, List<String> spannerTypes, HttpServletResponse response) throws IOException {
     try (ResultSet rs =
       dbClient
       .singleUse() // Execute a single read or query against Cloud Spanner.
       .executeQuery(Statement.of(query))) {
 
       while (rs.next()) {
-        String row = "";
-        int index = 0;
-        while (index < colnames.size()) {
+        Row rowObject = new Row();
+        for(int index = 0; index < colnames.size(); index++) {
           String colName = colnames.get(index);
-          row += (" " + colName + ": ");
-
+ 
           // If there is a null in this col here, just print out NULL for now.
           if (rs.isNull(colName)) {
             index++;
-            row += "NULL"; 
+            rowObject.addData(colName, "NULL");
             continue;
           }
 
-          // Figure out how to make more concise.
           switch (spannerTypes.get(index)) {
             case "STRING(MAX)":
-              row += rs.getString(colName);
-              break;
             case "STRING(250)":
-              row += rs.getString(colName);
-              break;
             case "STRING(1024)":
-              row += rs.getString(colName);
+              rowObject.addData(colName, rs.getString(colName));
               break;
             case "TIMESTAMP":
-              row += rs.getTimestamp(colName);
+              rowObject.addData(colName, "" + rs.getTimestamp(colName));
               break;
             case "INT64":
-              row += rs.getLong(colName);
+              rowObject.addData(colName, "" + rs.getLong(colName));
               break;
             case "BYTES(MAX)":
-              ByteArray bytes = rs.getBytes(colName);
-              byte[] byteArray = bytes.toByteArray();
-          
-              for (byte b : byteArray) {
-                row += b;
-              }
-              break;
             case "BYTES":
-              row += rs.getBytes(colName);
+              String byteToString = bytesToString(rs.getBytes(colName));
+              rowObject.addData(colName, byteToString);
               break;
             case "ARRAY<INT64>":
-              row += "ARRAY HERE";
+              String arrayToString = longArrayToString(rs.getLongArray(colName));
+              rowObject.addData(colName, arrayToString);
               break;
             case "DATE":
-              row += "DATE HERE";
+              rowObject.addData(colName, "DATE HERE");
               break;
             case "BOOL":
-              row += rs.getBoolean(colName);
+              rowObject.addData(colName, "" + rs.getBoolean(colName));
           }
-          index++;
         }
-        response.getWriter().println(row); 
+        tableObject.addRow(rowObject);
       }
+    }
+  }
+
+  private String longArrayToString(long[] longArray) {
+    String arrayToString = "";
+    for (long l : longArray) {
+      arrayToString += l + ", ";
+    }
+    return arrayToString;
+  }
+ 
+  private String bytesToString(ByteArray bytes) {
+    try {
+      byte[] byteArray = bytes.toByteArray();
+      return new String(byteArray, "UTF8");
+    }
+    catch (UnsupportedEncodingException e) {
+      return "Unable to encode";
     }
   }
 

@@ -23,22 +23,28 @@ import javax.servlet.http.HttpServletResponse;
 public class TablesFromDatabase extends HttpServlet {
 
   DatabaseClient dbClient;
-
-  public void init() {
-    Spanner spanner = SpannerOptions.newBuilder().build().getService();
-
-    //TODO: change "example-db" to the database that Millennia passes in from the db selection
-    DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", "example-db"); //project id, args, args
-    this.dbClient = spanner.getDatabaseClient(db);
-  }
+  String selectedDatabase;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html;");
 
+    if (request.getParameter("list-databases") != null) {
+      selectedDatabase = request.getParameter("list-databases");
+    }
+
+    if (selectedDatabase == null || selectedDatabase.equals("")) {
+      response.sendRedirect("/index.html");
+      return;
+    }
+ 
+    Spanner spanner = SpannerOptions.newBuilder().build().getService();
+    DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", selectedDatabase); 
+    this.dbClient = spanner.getDatabaseClient(db);
+
     try (ResultSet resultSet =
         dbClient
-            .singleUse() // Execute a single read or query against Cloud Spanner.
+            .singleUse() 
             .executeQuery(Statement.of("SELECT table_name FROM information_schema.tables WHERE table_catalog = '' and table_schema = ''"))) {
       List<String> tables = new ArrayList<>();
       while (resultSet.next()) {
@@ -51,6 +57,10 @@ public class TablesFromDatabase extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
+    if (request.getParameter("list-databases") != null)
+      selectedDatabase = request.getParameter("list-databases");
+    else
+      System.out.println("is null");
+    response.sendRedirect("/index.html");
   }
 }
