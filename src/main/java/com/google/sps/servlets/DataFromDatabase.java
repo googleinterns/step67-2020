@@ -78,8 +78,7 @@ public class DataFromDatabase extends HttpServlet {
 
       while (rs.next()) {
         Row rowObject = new Row();
-        int index = 0;
-        while (index < colnames.size()) {
+        for (int index = 0; index < colnames.size(); index++) {
           String colName = colnames.get(index);
 
           // If there is a null in this col here, just print out NULL for now.
@@ -89,7 +88,6 @@ public class DataFromDatabase extends HttpServlet {
             continue;
           }
 
-          // Figure out how to make more concise.
           switch (spannerTypes.get(index)) {
             case "STRING(MAX)":
             case "STRING(250)":
@@ -117,7 +115,6 @@ public class DataFromDatabase extends HttpServlet {
             case "BOOL":
               rowObject.addData(colName, "" + rs.getBoolean(colName));
           }
-          index++;
         }
         tableObject.addRow(rowObject);
       }
