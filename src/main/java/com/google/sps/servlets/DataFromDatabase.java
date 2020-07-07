@@ -23,23 +23,16 @@ public class DataFromDatabase extends HttpServlet {
   DatabaseClient dbClient;
   private String[] selectedTables;
 
-  public void init() {
-    Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", "example-db");
-    this.dbClient = spanner.getDatabaseClient(db);
-  }
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-
     selectedTables = request.getParameterValues("table-select");
     String databaseName = request.getParameter("list-databases");
- 
+
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
     DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", databaseName);
     this.dbClient = spanner.getDatabaseClient(db);
-
+  
+    response.setContentType("text/html;");
     List<Table> tables = new ArrayList<>();
 
     for (String table : selectedTables) {
@@ -60,22 +53,22 @@ public class DataFromDatabase extends HttpServlet {
         }
 
         String query = "SELECT ";
+        String columnNamesString = "Columns: ";
         for (String colName : colnames) {
           query += (colName + ", ");
+          columnNamesString += (colName + ", ");
           tableObject.addColumn(colName);
         }
-
         query = query.substring(0, query.length() - 2);
         query += " FROM " + table; 
 
         executeTableQuery(tableObject, query, colnames, spannerTypes, response);
         tables.add(tableObject);
-        }
       }
-      String json = new Gson().toJson(tables);
-      response.getWriter().println(json);
     }
-
+    String json = new Gson().toJson(tables);
+    response.getWriter().println(json);
+  }
 
   private void executeTableQuery(Table tableObject, String query, List<String> colnames, List<String> spannerTypes, HttpServletResponse response) throws IOException {
     try (ResultSet rs =
@@ -85,9 +78,10 @@ public class DataFromDatabase extends HttpServlet {
 
       while (rs.next()) {
         Row rowObject = new Row();
-        for(int index = 0; index < colnames.size(); index++) {
+        int index = 0;
+        while (index < colnames.size()) {
           String colName = colnames.get(index);
- 
+
           // If there is a null in this col here, just print out NULL for now.
           if (rs.isNull(colName)) {
             index++;
@@ -95,6 +89,7 @@ public class DataFromDatabase extends HttpServlet {
             continue;
           }
 
+          // Figure out how to make more concise.
           switch (spannerTypes.get(index)) {
             case "STRING(MAX)":
             case "STRING(250)":
@@ -122,6 +117,7 @@ public class DataFromDatabase extends HttpServlet {
             case "BOOL":
               rowObject.addData(colName, "" + rs.getBoolean(colName));
           }
+          index++;
         }
         tableObject.addRow(rowObject);
       }
@@ -135,7 +131,7 @@ public class DataFromDatabase extends HttpServlet {
     }
     return arrayToString;
   }
- 
+
   private String bytesToString(ByteArray bytes) {
     try {
       byte[] byteArray = bytes.toByteArray();
