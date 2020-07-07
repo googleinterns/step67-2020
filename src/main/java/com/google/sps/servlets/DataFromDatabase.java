@@ -20,28 +20,36 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/data-from-db")
 public class DataFromDatabase extends HttpServlet {
 
+  private static final String TABLE_SELECT_PARAM = "table-select";
+  private static final String DATABASE_PARAM = "list-databases";
+  private static final String PROJECT = "play-user-data-beetle";
+  private static final String TEST_INSTANCE = "test-instance";
+  private static final String TEXT_TYPE = "text/html;";
+  private static final String COMMA = ", ";
+  private static final String SCHEMA_INFO_SQL = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '";
   DatabaseClient dbClient;
   private String[] selectedTables;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    selectedTables = request.getParameterValues("table-select");
-    String databaseName = request.getParameter("list-databases");
+    selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
+    String databaseName = request.getParameter(DATABASE_PARAM);
 
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", databaseName);
+    DatabaseId db = DatabaseId.of(PROJECT, TEST_INSTANCE, databaseName);
     this.dbClient = spanner.getDatabaseClient(db);
   
-    response.setContentType("text/html;");
+    response.setContentType(TEXT_TYPE);
     List<Table> tables = new ArrayList<>();
 
     for (String table : selectedTables) {
-      String colQuery = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '" + table + "'";
+      String colQuery = SCHEMA_INFO_SQL + table + "'";
       Table tableObject = new Table(table);
 
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(colQuery))) {
 
+        //Will convert the below into object form tomorrow
         List<String> colnames = new ArrayList<>();
         List<String> spannerTypes = new ArrayList<>();
         List<String> nullables = new ArrayList<>();
@@ -53,10 +61,8 @@ public class DataFromDatabase extends HttpServlet {
         }
 
         String query = "SELECT ";
-        String columnNamesString = "Columns: ";
         for (String colName : colnames) {
-          query += (colName + ", ");
-          columnNamesString += (colName + ", ");
+          query += (colName + COMMA);
           tableObject.addColumn(colName);
         }
         query = query.substring(0, query.length() - 2);
@@ -89,7 +95,6 @@ public class DataFromDatabase extends HttpServlet {
 
           String dataType = spannerTypes.get(index);
           addDataToRowObject(dataType, rowObject, colName, rs);
-          
         }
         tableObject.addRow(rowObject);
       }
@@ -129,7 +134,7 @@ public class DataFromDatabase extends HttpServlet {
   private String longArrayToString(long[] longArray) {
     String arrayToString = "";
     for (long l : longArray) {
-      arrayToString += l + ", ";
+      arrayToString += l + COMMA;
     }
     return arrayToString;
   }
@@ -144,9 +149,4 @@ public class DataFromDatabase extends HttpServlet {
     }
   }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    selectedTables = request.getParameterValues("table-select");
-    response.sendRedirect("/select-tables.html");
-  }
 }
