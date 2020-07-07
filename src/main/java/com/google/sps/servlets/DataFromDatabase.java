@@ -34,11 +34,8 @@ public class DataFromDatabase extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(DATABASE_PARAM);
+    initializeDatabase(databaseName);
 
-    Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of(PROJECT, TEST_INSTANCE, databaseName);
-    this.dbClient = spanner.getDatabaseClient(db);
-  
     response.setContentType(TEXT_TYPE);
     List<Table> tables = new ArrayList<>();
 
@@ -60,14 +57,7 @@ public class DataFromDatabase extends HttpServlet {
           nullables.add(resultSet.getString(2));
         }
 
-        String query = "SELECT ";
-        for (String colName : colnames) {
-          query += (colName + COMMA);
-          tableObject.addColumn(colName);
-        }
-        query = query.substring(0, query.length() - 2);
-        query += " FROM " + table; 
-
+        String query = constructQueryString(colnames, tableObject, table);
         executeTableQuery(tableObject, query, colnames, spannerTypes, response);
         tables.add(tableObject);
       }
@@ -76,10 +66,27 @@ public class DataFromDatabase extends HttpServlet {
     response.getWriter().println(json);
   }
 
+  private String constructQueryString(List<String> colnames, Table tableObject, String table) {
+    String query = "SELECT ";
+    for (String colName : colnames) {
+      query += (colName + COMMA);
+      tableObject.addColumn(colName);
+    }
+    query = query.substring(0, query.length() - 2);
+    query += " FROM " + table; 
+    return query;
+  }
+
+  private void initializeDatabase(String databaseName) {
+    Spanner spanner = SpannerOptions.newBuilder().build().getService();
+    DatabaseId db = DatabaseId.of(PROJECT, TEST_INSTANCE, databaseName);
+    this.dbClient = spanner.getDatabaseClient(db);
+  }
+
   private void executeTableQuery(Table tableObject, String query, List<String> colnames, List<String> spannerTypes, HttpServletResponse response) throws IOException {
     try (ResultSet rs =
       dbClient
-      .singleUse() // Execute a single read or query against Cloud Spanner.
+      .singleUse() 
       .executeQuery(Statement.of(query))) {
 
       while (rs.next()) {
