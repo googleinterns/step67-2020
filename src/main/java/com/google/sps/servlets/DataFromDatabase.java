@@ -131,7 +131,7 @@ public class DataFromDatabase extends HttpServlet {
         rowObject.addData(colName, arrayToString);
         break;
       case "DATE":
-        rowObject.addData(colName, "DATE HERE");
+        rowObject.addData(colName, "" + rs.getDate(colName));
         break;
       case "BOOL":
         rowObject.addData(colName, "" + rs.getBoolean(colName));
@@ -139,10 +139,12 @@ public class DataFromDatabase extends HttpServlet {
   }
 
   private String longArrayToString(long[] longArray) {
-    String arrayToString = "";
+    String arrayToString = "[";
     for (long l : longArray) {
       arrayToString += l + COMMA;
     }
+    arrayToString = arrayToString.substring(0, arrayToString.length() - 2);
+    arrayToString += "]";
     return arrayToString;
   }
 
