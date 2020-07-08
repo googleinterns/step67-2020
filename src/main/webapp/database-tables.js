@@ -1,7 +1,6 @@
 function showDatabase() {
   const search = window.location.search;
   const queryString = '/data-from-db' + search;
-  console.log(queryString)
  
   fetch(queryString)
   .then(response => response.json())
