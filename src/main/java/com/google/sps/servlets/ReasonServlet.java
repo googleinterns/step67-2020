@@ -14,8 +14,9 @@ public final class ReasonServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
+    long timestamp = System.currentTimeMillis();
     String text = getParameter(request, "reason", "");
-    String[] words = text.split("\\s*,\\s*");
+    // String[] words = text.split("\\s*,\\s*");
     response.setContentType("text/html;");
     response.getWriter().println(Arrays.toString(words));
   }

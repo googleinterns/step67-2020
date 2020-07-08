@@ -28,14 +28,22 @@ public class LoginServlet extends HttpServlet {
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
       response.getWriter().println("<p>Hello stranger.</p>");
       response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+    //   response.sendRedirect("https://accounts.google.com/signin/v2/identifier?");
       return;
     }
+    else{
+        String urlToRedirectToAfterUserLogsOut = "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin";
+        String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
+        String userEmail = userService.getCurrentUser().getEmail();
+        System.out.println(userEmail);
 
-    String logoutUrl = "https://google.com";
-    String userEmail = userService.getCurrentUser().getEmail();
-    String homePage = "/index.html";
-    response.getWriter().println("<h1> You are Logged in as " + userEmail + "!<h1>");
-    response.getWriter().println("<a href=\"" +homePage+ "\"><button>Home</button/></a>");
-    response.getWriter().println("<a href=\"" + logoutUrl + "\"><button>Logout</button/></a>");
+        if (userEmail == "test@example.com"){
+            response.getWriter().println("<p> You need to login!</p>");
+        }
+        String homePage = "/index.html";
+        response.getWriter().println("<h1> You are Logged in as " + userEmail + "!<h1>");
+        response.getWriter().println("<a href=\"" +homePage+ "\"><button>Home</button/></a>");
+        response.getWriter().println("<a href=\"" + logoutUrl + "\"><button>Logout</button/></a>");
+    }
   }
 } 
