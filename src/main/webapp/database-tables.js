@@ -17,7 +17,7 @@ function showDatabase() {
       // Make table itself, add headers for column names
       const table = createTable(name);
       const colsArray = tableData.columns;
-      table.appendChild(makeTableHeaders(colsArray));
+      table.appendChild(makeTableHeaders(colsArray, name));
  
       // add data
       makeRows(tableData.rows, table, colsArray);
@@ -27,12 +27,12 @@ function showDatabase() {
 }
  
 // Create column name labels for table
-function makeTableHeaders(colsArray) {
+function makeTableHeaders(colsArray, name) {
   const columnNamesRow = document.createElement("tr");
  
   let index;
   for (index in colsArray) {
-    const columnTitle = addColumnHeader(colsArray[index]);
+    const columnTitle = addColumnHeader(colsArray[index], name, index);
     columnNamesRow.appendChild(columnTitle);
   }
   return columnNamesRow;
@@ -55,8 +55,9 @@ function makeRows(rows, table, colsArray) {
   }
 }
  
-function addColumnHeader(colName) {
+function addColumnHeader(colName, tableName, index) {
   const columnHeader = document.createElement("th");
+  columnHeader.setAttribute("onclick", "clickfunc(" + index + ", '" + tableName + "')");
   columnHeader.innerText = colName;
   return columnHeader;
 }
@@ -69,6 +70,6 @@ function createTableName(name, dataArea) {
  
 function createTable(name) {
   const table = document.createElement("table");
-  table.setAttribute("id", "table_" + name);
+  table.setAttribute("id", "" + name);
   return table;
 }
