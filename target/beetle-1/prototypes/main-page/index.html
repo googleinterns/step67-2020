@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>repl.it</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+    <link href="table-style.css" rel="stylesheet" />
+  </head>
+  <body>
+
+    <div name="header" id="header">
+      <div class="button-box-left">
+        <a href="test-react.html" class="logo">Beetle</a>
+      </div>
+
+      <div class="button-box-left">
+        <button onclick = "openSide()"
+        id="filter" name="filter">Filters</button>
+      </div>
+
+      <div class="button-box">
+        <button onclick = "hideDataTable()" id="header-button">Clear All Filters</button>
+        <button onclick = "showShare()"
+        id="header-button">Share Query</button>
+        <a href = "../login-page/login.html" button id="header-button" style="color: white; background-color: rgb(26, 162, 96)">Go Back</a>
+      </div>
+    </div>
+
+    <div name ="sideBar" id = "sideBar">
+      <p>FILTERS</p>
+      <form>
+        <p class ="closeButton" onclick = "closeSide()"
+        >Close</p>
+        <input type="text" placeholder="User/device ID">
+        <div style="padding: 10px"></div> 
+        <input type="search" placeholder="Search...">
+        <div style="padding: 10px"></div> 
+        <input type="number" placeholder="Limit number of rows">
+        <div style="padding: 10px"></div> 
+
+      </form>
+
+      <select name="cols" id="cols" class="select">
+        <option value="col1">col1</option>
+        <option value="col2">col2</option>
+        <option value="col3">col3</option>
+        <option value="col4">col4</option>
+        <option value="col1">col1</option>
+        <option value="col2">col2</option>
+        <option value="col3">col3</option>
+        <option value="col4">col4</option>
+      </select>
+      
+      <div style="padding: 10px"></div> 
+
+      <button onclick="showDataTable()">Fake Submit</button>
+    </div>
+    
+    <div id = "centered"> 
+      <img src="beetleLogo.png" alt="logo here">
+    </div>
+
+    <div id = "data-table" class = "invisible">
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>ID</th>
+          <th>Date of Purchase</th>
+        </tr>
+        <tr>
+          <td>app.blah.example</td>
+          <td>23987698630984</td>
+          <td>03/06/2020</td>
+        </tr>
+        <tr>
+          <td>movie.another.example</td>
+          <td>43637658996754</td>
+          <td>03/05/2020</td>
+        </tr>
+        <tr>
+          <td>tv.show.wow</td>
+          <td>56457457659769</td>
+          <td>03/04/2020</td>
+        </tr>
+        <tr>
+          <td>app.fun.app</td>
+          <td>43653476744575</td>
+          <td>03/05/2020</td>
+        </tr>
+        <tr>
+          <td>movie.harry.potter</td>
+          <td>98703495034546</td>
+          <td>03/08/2020</td>
+        </tr>
+        <tr>
+          <td>movie.another.one</td>
+          <td>49046980954567</td>
+          <td>03/07/2020</td>
+        </tr>
+      </table>
+    </div>
+
+    <div id = "share" class="invisible">
+      <h4>Share Query</h4>
+      <input type="text" placeholder="Share with a fellow Googler.">
+      <div style="padding:10px"></div>
+      <button id="header-button" onclick="hideShare()">Share</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

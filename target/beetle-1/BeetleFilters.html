@@ -1,0 +1,25 @@
+ <!DOCTYPE html>
+ <html>
+     <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
+        <title>Filters</title>
+        <script src="script.js"></script>
+        
+     </head>
+    <body>
+        <div id="filter-box">
+            <form>
+                <h1> Filters</h1>
+                <input type="text" id="user_id" placeholder="Enter the user_id">
+                <div style="padding: 10px"></div> 
+                <input type="text" id="device_id" placeholder="Enter the device_id">
+                <div style="padding: 10px"></div>
+                <input type="search" placeholder="Search...">
+                <div style="padding: 10px"></div>
+
+                <input type="submit" id="submit" value="submit" onClick=" return isFilterInputEmpty()">
+            </form>  
+        </div>
+    </body>
+ </html>
