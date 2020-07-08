@@ -22,30 +22,37 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/tables-from-db")
 public class TablesFromDatabase extends HttpServlet {
 
+  private static final String DATABASE_PARAM = "list-databases";
+  private static final String EMPTY_STRING = "";
+  private static final String GET_TABLE_SQL = "SELECT table_name FROM information_schema.tables WHERE table_catalog = '' and table_schema = ''";
+  private static final String NULL_REDIRECT = "/index.html";
+  private static final String PROJECT_NAME = "play-user-data-beetle";
+  private static final String TEST_INSTANCE = "test-instance";
+  private static final String TEXT_TYPE = "text/html;";
   DatabaseClient dbClient;
   String selectedDatabase;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
+    response.setContentType(TEXT_TYPE);
 
-    if (request.getParameter("list-databases") != null) {
-      selectedDatabase = request.getParameter("list-databases");
+    if (request.getParameter(DATABASE_PARAM) != null) {
+      selectedDatabase = request.getParameter(DATABASE_PARAM);
     }
 
-    if (selectedDatabase == null || selectedDatabase.equals("")) {
-      response.sendRedirect("/index.html");
+    if (selectedDatabase == null || selectedDatabase.equals(EMPTY_STRING)) {
+      response.sendRedirect(NULL_REDIRECT);
       return;
     }
  
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", selectedDatabase); 
+    DatabaseId db = DatabaseId.of(PROJECT_NAME, TEST_INSTANCE, selectedDatabase); 
     this.dbClient = spanner.getDatabaseClient(db);
 
     try (ResultSet resultSet =
         dbClient
             .singleUse() 
-            .executeQuery(Statement.of("SELECT table_name FROM information_schema.tables WHERE table_catalog = '' and table_schema = ''"))) {
+            .executeQuery(Statement.of(GET_TABLE_SQL))) {
       List<String> tables = new ArrayList<>();
       while (resultSet.next()) {
         tables.add(resultSet.getString(0));
@@ -55,12 +62,4 @@ public class TablesFromDatabase extends HttpServlet {
     }
   }
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    if (request.getParameter("list-databases") != null)
-      selectedDatabase = request.getParameter("list-databases");
-    else
-      System.out.println("is null");
-    response.sendRedirect("/index.html");
-  }
 }
