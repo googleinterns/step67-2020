@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/data-from-db")
-public class DataFromDatabase extends HttpServlet {
+public class DataFromDatabaseServlet extends HttpServlet {
 
   private static final String COMMA = ", ";
   private static final String DATABASE_PARAM = "list-databases";

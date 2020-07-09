@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns HTML that contains tables in the example database. */
 @WebServlet("/tables-from-db")
-public class TablesFromDatabase extends HttpServlet {
+public class TablesFromDatabaseServlet extends HttpServlet {
 
   private static final String DATABASE_PARAM = "list-databases";
   private static final String EMPTY_STRING = "";
