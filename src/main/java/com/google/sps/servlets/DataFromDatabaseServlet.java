@@ -76,6 +76,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
   private Schema createSchema(ResultSet resultSet) {
     String columnName = resultSet.getString(0);
     String schemaType = resultSet.getString(1);
+    int indexOfOpeningParen = schemaType.indexOf("(");
+    if (indexOfOpeningParen >= 0) {
+      schemaType = schemaType.substring(0, indexOfOpeningParen);
+    }
     String nullable = resultSet.getString(2);
     return Schema.create(columnName, schemaType, nullable);
   }
@@ -124,32 +128,32 @@ public class DataFromDatabaseServlet extends HttpServlet {
   }
 
   private void addDataToRowObject(String dataType, Row rowObject, String columnName, ResultSet resultSet) {
+    System.out.println(dataType);
     switch (dataType) {
-      case "STRING(MAX)":
-      case "STRING(250)":
-      case "STRING(1024)":
+      case "STRING":
         rowObject.addData(columnName, resultSet.getString(columnName));
+        break;
+      case "BOOL":
+        rowObject.addData(columnName, EMPTY_STRING + resultSet.getBoolean(columnName));
+      case "INT64":
+        rowObject.addData(columnName, EMPTY_STRING + resultSet.getLong(columnName));
+        break;
+      case "BYTES":
+        String byteToString = bytesToString(resultSet.getBytes(columnName));
+        rowObject.addData(columnName, byteToString);
         break;
       case "TIMESTAMP":
         rowObject.addData(columnName, EMPTY_STRING + resultSet.getTimestamp(columnName));
         break;
-      case "INT64":
-        rowObject.addData(columnName, EMPTY_STRING + resultSet.getLong(columnName));
-        break;
-      case "BYTES(MAX)":
-      case "BYTES":
-        String byteToString = bytesToString(resultSet.getBytes(columnName));
-        rowObject.addData(columnName, byteToString);
+      case "DATE":
+        rowObject.addData(columnName, EMPTY_STRING + resultSet.getDate(columnName));
         break;
       case "ARRAY<INT64>":
         String arrayToString = longArrayToString(resultSet.getLongArray(columnName));
         rowObject.addData(columnName, arrayToString);
         break;
-      case "DATE":
-        rowObject.addData(columnName, EMPTY_STRING + resultSet.getDate(columnName));
-        break;
-      case "BOOL":
-        rowObject.addData(columnName, EMPTY_STRING + resultSet.getBoolean(columnName));
+      default:
+        rowObject.addData(columnName, "This type is not currently supported.");
     }
   }
 
