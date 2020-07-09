@@ -98,7 +98,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     this.dbClient = spanner.getDatabaseClient(db);
   }
 
-   private void executeTableQuery(Table tableObject, String query, List<Schema> schemas, HttpServletResponse response) throws IOException {
+   private void executeTableQuery(Table tableObject, String query, List<Schema> schemas) throws IOException {
     try (ResultSet resultSet =
       dbClient
       .singleUse() 
