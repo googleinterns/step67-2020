@@ -22,10 +22,49 @@ function getDatabases(){
   });
 }
 
-function submitDatabaseForm() {
+function submitDatabaseForm() { 
   document.getElementById("database-select-form").submit();
 }
- 
+
+//Get database and selected tables from query string and /tables-from-db
+function getDatabaseAndTable(){
+    const tablesUrl = '/tables-from-db';
+    const search = window.location.search;
+    const queryString = tablesUrl + search;
+    var startIndex = 0;
+    var databaseString= "";
+    
+    for (var i = 0; i<search.length; i++){
+        if (search.charAt(i) == '='){
+            startIndex = i;
+        }
+        else if (search.charAt(i) == '&'){
+            break;
+        }
+        else{
+             databaseString += search.charAt(i);
+        }
+    }
+
+    databaseString = databaseString.substring(startIndex);
+    fetch(queryString)
+    .then(response => response.json())
+    .then((list) => { 
+        const DbText = document.createElement('p');
+        DbText.innerText = "Database: " + databaseString;
+        const TableText = document.createElement('p');
+        TableText.innerText = "List of selected tables:  ";
+        const databaseTable = document.getElementById('DB-T');
+        databaseTable.appendChild(DbText);
+        databaseTable.appendChild(TableText);
+
+        for (let index = 0; index < list.length; index++) {
+            databaseTable.appendChild(
+            createListElement(list[index]));
+        }
+    });
+}
+
 function getTablesList() {
   const tablesUrl = '/tables-from-db';
   const search = window.location.search;
@@ -102,4 +141,10 @@ function addTableOption(text) {
 function onLoad() {
   getDatabases();
   getTablesList();
+}
+
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
 }
