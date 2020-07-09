@@ -72,15 +72,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
   }
 
   private String constructQueryString(List<Schema> schemas, Table tableObject, String table) {
-    String query = constants.SELECT;
+    StringBuilder query = new StringBuilder(constants.SELECT);
     for (Schema schema : schemas) {
       String columnName = schema.columnName();
-      query += (columnName + constants.COMMA);
+      query.append(columnName + constants.COMMA);
       tableObject.addColumn(columnName);
     }
-    query = query.substring(0, query.length() - 2);
-    query += constants.FROM + table; 
-    return query;
+    query.deleteCharAt(query.length() - 1);
+    query.append(constants.FROM + table); 
+    return query.toString();
   }
 
   private void initializeDatabase(String databaseName) {
@@ -145,13 +145,14 @@ public class DataFromDatabaseServlet extends HttpServlet {
   }
 
   private String longArrayToString(long[] longArray) {
-    String arrayToString = "[";
+    StringBuilder arrayToStringBuilder = new StringBuilder("[");
     for (long l : longArray) {
-      arrayToString += l + constants.COMMA;
+      arrayToStringBuilder.append(l + constants.COMMA);
     }
-    arrayToString = arrayToString.substring(0, arrayToString.length() - 2);
-    arrayToString += "]";
-    return arrayToString;
+
+    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
+    arrayToStringBuilder.append("]");
+    return arrayToStringBuilder.toString();
   }
 
   private String bytesToString(ByteArray bytes) {
