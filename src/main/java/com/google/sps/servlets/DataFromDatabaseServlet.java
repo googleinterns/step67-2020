@@ -64,7 +64,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
         Table tableObject = new Table(table);
         String query = constructQueryString(schemas, tableObject, table);
-        executeTableQuery(tableObject, query, schemas, response);
+        executeTableQuery(tableObject, query, schemas);
         tables.add(tableObject);
       }
     }
