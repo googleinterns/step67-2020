@@ -47,7 +47,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
         // No columns -> throw error
         if (schemas.size() == 0) {
-          throw new RuntimeException("Table is empty.");
+          throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
         }
  
         Table.Builder tableBuilder = Table.builder().setName(table);
@@ -69,13 +69,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
   private Schema createSchema(ResultSet resultSet) {
     String columnName = resultSet.getString(0);
     String schemaType = resultSet.getString(1);
+
+    // Remove length in parens (i.e. STRING(MAX) --> STRING)
     int indexOfOpeningParen = schemaType.indexOf("(");
     if (indexOfOpeningParen >= 0) {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
     String nullableString = resultSet.getString(2);
     boolean nullable = false;
-    if (nullableString.toLowerCase().equals("true")) {
+    if (nullableString.toLowerCase().equals(constants.TRUE)) {
       nullable = true;
     }
     return Schema.create(columnName, schemaType, nullable);

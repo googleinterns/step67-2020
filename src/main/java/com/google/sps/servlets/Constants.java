@@ -5,6 +5,7 @@ class Constants {
   static final String COMMA = ", ";
   static final String DATABASE_PARAM = "list-databases";
   static final String EMPTY_STRING = "";
+  static final String EMPTY_TABLE_ERROR = "Table is empty.";
   static final String ENCODING_ERROR = "Unable to encode";
   static final String ENCODING_TYPE = "UTF8";
   static final String ENDING_APOSTROPHE = "'";
@@ -19,5 +20,6 @@ class Constants {
   static final String TABLE_SELECT_PARAM = "table-select";
   static final String TEST_INSTANCE = "test-instance";
   static final String TEXT_TYPE = "text/html;";
+  static final String TRUE = "true";
   static final String UNSUPPORT_ERROR = "This type is not currently supported.";
 }
