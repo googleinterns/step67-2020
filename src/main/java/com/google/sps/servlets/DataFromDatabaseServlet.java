@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.google.auto.value.AutoValue;
 import com.google.cloud.ByteArray;
 import com.google.cloud.spanner.DatabaseClient;
 import com.google.cloud.spanner.DatabaseId;
@@ -7,6 +8,7 @@ import com.google.cloud.spanner.ResultSet;
 import com.google.cloud.spanner.Spanner;
 import com.google.cloud.spanner.SpannerOptions;
 import com.google.cloud.spanner.Statement;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -48,9 +50,16 @@ public class DataFromDatabaseServlet extends HttpServlet {
           throw new RuntimeException("Table is empty.");
         }
  
-        Table tableObject = new Table(table);
-        Statement queryStatement = constructQueryStatement(schemas, tableObject, table);
-        executeTableQuery(tableObject, queryStatement, schemas);
+        //Table tableObject = new Table(table);
+        Table.Builder tableBuilder = Table.builder().setName(table);
+
+        List<String> columnNames = new ArrayList<>();
+        Statement queryStatement = constructQueryStatement(schemas, columnNames, table);
+        tableBuilder.setColumns(columnNames);
+
+        executeTableQuery(tableBuilder, queryStatement, schemas);
+        
+        Table tableObject = tableBuilder.build();
         tables.add(tableObject);
       }
     }
@@ -69,12 +78,12 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return Schema.create(columnName, schemaType, nullable);
   }
 
-  private Statement constructQueryStatement(List<Schema> schemas, Table tableObject, String table) {
+  private Statement constructQueryStatement(List<Schema> schemas, List<String> columnNames, String table) {
     StringBuilder query = new StringBuilder(constants.SELECT);
     for (Schema schema : schemas) {
       String columnName = schema.columnName();
       query.append(columnName + constants.COMMA);
-      tableObject.addColumn(columnName);
+      columnNames.add(columnName);
     }
     query.deleteCharAt(query.length() - 1);
     query.append(constants.FROM + table); 
@@ -88,40 +97,42 @@ public class DataFromDatabaseServlet extends HttpServlet {
     this.dbClient = spanner.getDatabaseClient(db);
   }
 
-   private void executeTableQuery(Table tableObject, Statement query, List<Schema> schemas) throws IOException {
+   private void executeTableQuery(Table.Builder tableBuilder, Statement query, List<Schema> schemas) throws IOException {
     try (ResultSet resultSet =
       dbClient
       .singleUse() 
       .executeQuery(query)) {
  
       while (resultSet.next()) {
-        //Row rowObject = new Row();
         List<String> row = new ArrayList<>();
         for (Schema schema : schemas) {
           String columnName = schema.columnName();
  
           // If there is a null in this col here, just print out NULL for now.
           if (resultSet.isNull(columnName)) {
-            //rowObject.addData(columnName, constants.NULL);
             row.add(constants.NULL);
             continue;
           }
  
           String dataType = schema.schemaType();
-          addDataToRowObject(dataType, row, columnName, resultSet);
+          System.out.println(dataType);
+          addDataToRow(dataType, row, columnName, resultSet);
         }
-        tableObject.addRow(row);
+
+        ImmutableList<String> immutableRow = ImmutableList.copyOf(row);
+        tableBuilder.addRow(immutableRow);
       }
     }
   }
 
-  private void addDataToRowObject(String dataType, List<String> row, String columnName, ResultSet resultSet) {
+  private void addDataToRow(String dataType, List<String> row, String columnName, ResultSet resultSet) {
     switch (dataType) {
       case "STRING":
         row.add(resultSet.getString(columnName));
         break;
       case "BOOL":
         row.add(constants.EMPTY_STRING + resultSet.getBoolean(columnName));
+        break;
       case "INT64":
         row.add(constants.EMPTY_STRING + resultSet.getLong(columnName));
         break;

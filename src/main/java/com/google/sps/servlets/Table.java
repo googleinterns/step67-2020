@@ -1,26 +1,31 @@
 package com.google.sps.servlets;
  
+import com.google.auto.value.AutoValue;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Table {
-  private String name;
-  private List<String> columns = new ArrayList<String>();
-  private List<List<String>> rows = new ArrayList<List<String>>();
- 
-  public Table(String name) {
-    this.name = name;
+@AutoValue
+abstract class Table {
+  abstract String name();
+  abstract List<String> columns();
+  abstract ImmutableList<ImmutableList<String>> rows();
+
+  static Builder builder() {
+    return new AutoValue_Table.Builder();
   }
- 
-  public void addColumn(String colName) {
-    columns.add(colName);
-  }
- 
-  public List<String> getColumns() {
-    return new ArrayList<>(columns);
-  }
- 
-  public void addRow(List<String> row) {
-    rows.add(row);
+
+  @AutoValue.Builder
+  abstract static class Builder {
+    abstract Builder setName(String name);
+    abstract Builder setColumns(List<String> columns);
+    abstract ImmutableList.Builder<ImmutableList<String>> rowsBuilder();
+
+    public Builder addRow(ImmutableList<String> row) {
+      rowsBuilder().add(row);
+      return this;
+    }
+
+    abstract Table build();
   }
 }
