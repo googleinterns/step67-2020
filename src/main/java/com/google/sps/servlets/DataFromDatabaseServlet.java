@@ -104,54 +104,54 @@ public class DataFromDatabaseServlet extends HttpServlet {
       .executeQuery(query)) {
  
       while (resultSet.next()) {
-        List<String> row = new ArrayList<>();
+        //List<String> row = new ArrayList<>();
+        ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (Schema schema : schemas) {
           String columnName = schema.columnName();
  
           // If there is a null in this col here, just print out NULL for now.
           if (resultSet.isNull(columnName)) {
-            row.add(constants.NULL);
+            rowBuilder.add(constants.NULL);
             continue;
           }
  
           String dataType = schema.schemaType();
-          System.out.println(dataType);
-          addDataToRow(dataType, row, columnName, resultSet);
+          addDataToRow(dataType, rowBuilder, columnName, resultSet);
         }
 
-        ImmutableList<String> immutableRow = ImmutableList.copyOf(row);
+        ImmutableList<String> immutableRow = rowBuilder.build();
         tableBuilder.addRow(immutableRow);
       }
     }
   }
 
-  private void addDataToRow(String dataType, List<String> row, String columnName, ResultSet resultSet) {
+  private void addDataToRow(String dataType, ImmutableList.Builder<String> rowBuilder, String columnName, ResultSet resultSet) {
     switch (dataType) {
       case "STRING":
-        row.add(resultSet.getString(columnName));
+        rowBuilder.add(resultSet.getString(columnName));
         break;
       case "BOOL":
-        row.add(constants.EMPTY_STRING + resultSet.getBoolean(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getBoolean(columnName));
         break;
       case "INT64":
-        row.add(constants.EMPTY_STRING + resultSet.getLong(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getLong(columnName));
         break;
       case "BYTES":
         String byteToString = bytesToString(resultSet.getBytes(columnName));
-        row.add(byteToString);
+        rowBuilder.add(byteToString);
         break;
       case "TIMESTAMP":
-        row.add(constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
         break;
       case "DATE":
-        row.add(constants.EMPTY_STRING + resultSet.getDate(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getDate(columnName));
         break;
       case "ARRAY<INT64>":
         String arrayToString = longArrayToString(resultSet.getLongArray(columnName));
-        row.add(arrayToString);
+        rowBuilder.add(arrayToString);
         break;
       default:
-        row.add(constants.UNSUPPORT_ERROR);
+        rowBuilder.add(constants.UNSUPPORT_ERROR);
     }
   }
 
@@ -161,7 +161,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
       arrayToStringBuilder.append(l + constants.COMMA);
     }
 
+    // Remove extra space and comma at the end
     arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
+    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
+    
     arrayToStringBuilder.append(constants.CLOSE_BRACKET);
     return arrayToStringBuilder.toString();
   }
