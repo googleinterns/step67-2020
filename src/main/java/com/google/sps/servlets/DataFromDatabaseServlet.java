@@ -33,13 +33,12 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.setContentType(constants.TEXT_TYPE);
     List<Table> tables = new ArrayList<>();
 
-     for (String table : selectedTables) {
+    for (String table : selectedTables) {
       String columnQuery = constants.SCHEMA_INFO_SQL + table + constants.ENDING_APOSTROPHE;
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
         List<Schema> schemas = new ArrayList<>();
- 
         while (resultSet.next()) {
           schemas.add(createSchema(resultSet));
         }
@@ -50,12 +49,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
         }
  
         Table tableObject = new Table(table);
-        String query = constructQueryString(schemas, tableObject, table);
-        executeTableQuery(tableObject, query, schemas);
+        Statement queryStatement = constructQueryStatement(schemas, tableObject, table);
+        executeTableQuery(tableObject, queryStatement, schemas);
         tables.add(tableObject);
       }
     }
-
     String json = new Gson().toJson(tables);
     response.getWriter().println(json);
   }
@@ -71,7 +69,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return Schema.create(columnName, schemaType, nullable);
   }
 
-  private String constructQueryString(List<Schema> schemas, Table tableObject, String table) {
+  private Statement constructQueryStatement(List<Schema> schemas, Table tableObject, String table) {
     StringBuilder query = new StringBuilder(constants.SELECT);
     for (Schema schema : schemas) {
       String columnName = schema.columnName();
@@ -80,7 +78,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
     query.deleteCharAt(query.length() - 1);
     query.append(constants.FROM + table); 
-    return query.toString();
+    Statement statement = Statement.newBuilder(query.toString()).build();
+    return statement;
   }
 
   private void initializeDatabase(String databaseName) {
@@ -89,11 +88,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
     this.dbClient = spanner.getDatabaseClient(db);
   }
 
-   private void executeTableQuery(Table tableObject, String query, List<Schema> schemas) throws IOException {
+   private void executeTableQuery(Table tableObject, Statement query, List<Schema> schemas) throws IOException {
     try (ResultSet resultSet =
       dbClient
       .singleUse() 
-      .executeQuery(Statement.of(query))) {
+      .executeQuery(query)) {
  
       while (resultSet.next()) {
         Row rowObject = new Row();
@@ -115,7 +114,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
   }
 
   private void addDataToRowObject(String dataType, Row rowObject, String columnName, ResultSet resultSet) {
-    System.out.println(dataType);
     switch (dataType) {
       case "STRING":
         rowObject.addData(columnName, resultSet.getString(columnName));
@@ -140,18 +138,18 @@ public class DataFromDatabaseServlet extends HttpServlet {
         rowObject.addData(columnName, arrayToString);
         break;
       default:
-        rowObject.addData(columnName, "This type is not currently supported.");
+        rowObject.addData(columnName, constants.UNSUPPORT_ERROR);
     }
   }
 
   private String longArrayToString(long[] longArray) {
-    StringBuilder arrayToStringBuilder = new StringBuilder("[");
+    StringBuilder arrayToStringBuilder = new StringBuilder(constants.OPEN_BRACKET);
     for (long l : longArray) {
       arrayToStringBuilder.append(l + constants.COMMA);
     }
 
     arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
-    arrayToStringBuilder.append("]");
+    arrayToStringBuilder.append(constants.CLOSE_BRACKET);
     return arrayToStringBuilder.toString();
   }
 
