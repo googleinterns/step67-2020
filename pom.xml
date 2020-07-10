@@ -52,6 +52,12 @@
       <groupId>com.google.cloud</groupId>
       <artifactId>google-cloud-spanner</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>com.google.auto.value</groupId>
+      <artifactId>auto-value-annotations</artifactId>
+      <version>1.7.3</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -65,6 +71,21 @@
         <configuration>
           <deploy.projectId>play-user-data-beetle</deploy.projectId>
           <deploy.version>1</deploy.version>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.1</version>
+        <configuration>
+          <annotationProcessorPaths>
+            <path>
+              <groupId>com.google.auto.value</groupId>
+              <artifactId>auto-value</artifactId>
+              <version>1.7.3</version>
+            </path>
+          </annotationProcessorPaths>
         </configuration>
       </plugin>
     </plugins>
