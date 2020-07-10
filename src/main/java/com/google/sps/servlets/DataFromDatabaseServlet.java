@@ -95,50 +95,52 @@ public class DataFromDatabaseServlet extends HttpServlet {
       .executeQuery(query)) {
  
       while (resultSet.next()) {
-        Row rowObject = new Row();
+        //Row rowObject = new Row();
+        List<String> row = new ArrayList<>();
         for (Schema schema : schemas) {
           String columnName = schema.columnName();
  
           // If there is a null in this col here, just print out NULL for now.
           if (resultSet.isNull(columnName)) {
-            rowObject.addData(columnName, constants.NULL);
+            //rowObject.addData(columnName, constants.NULL);
+            row.add(constants.NULL);
             continue;
           }
  
           String dataType = schema.schemaType();
-          addDataToRowObject(dataType, rowObject, columnName, resultSet);
+          addDataToRowObject(dataType, row, columnName, resultSet);
         }
-        tableObject.addRow(rowObject);
+        tableObject.addRow(row);
       }
     }
   }
 
-  private void addDataToRowObject(String dataType, Row rowObject, String columnName, ResultSet resultSet) {
+  private void addDataToRowObject(String dataType, List<String> row, String columnName, ResultSet resultSet) {
     switch (dataType) {
       case "STRING":
-        rowObject.addData(columnName, resultSet.getString(columnName));
+        row.add(resultSet.getString(columnName));
         break;
       case "BOOL":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getBoolean(columnName));
+        row.add(constants.EMPTY_STRING + resultSet.getBoolean(columnName));
       case "INT64":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getLong(columnName));
+        row.add(constants.EMPTY_STRING + resultSet.getLong(columnName));
         break;
       case "BYTES":
         String byteToString = bytesToString(resultSet.getBytes(columnName));
-        rowObject.addData(columnName, byteToString);
+        row.add(byteToString);
         break;
       case "TIMESTAMP":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
+        row.add(constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
         break;
       case "DATE":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getDate(columnName));
+        row.add(constants.EMPTY_STRING + resultSet.getDate(columnName));
         break;
       case "ARRAY<INT64>":
         String arrayToString = longArrayToString(resultSet.getLongArray(columnName));
-        rowObject.addData(columnName, arrayToString);
+        row.add(arrayToString);
         break;
       default:
-        rowObject.addData(columnName, constants.UNSUPPORT_ERROR);
+        row.add(constants.UNSUPPORT_ERROR);
     }
   }
 

@@ -20,7 +20,7 @@ function showDatabase() {
       table.appendChild(makeTableHeaders(colsArray));
  
       // add data
-      makeRows(tableData.rows, table, colsArray);
+      makeRows(tableData.rows, table);
       dataArea.appendChild(table);
     }
   });
@@ -38,14 +38,13 @@ function makeTableHeaders(colsArray) {
   return columnNamesRow;
 }
  
-function makeRows(rows, table, colsArray) {
+function makeRows(rows, table) {
   for (index in rows) {
-    const row = rows[index].row;
+    const row = rows[index];
     const rowElement = document.createElement("tr");
  
-    for (colIndex in colsArray) {
-      const colName = colsArray[colIndex];
-      const dataPoint = row[colName];
+    for (rowIndex in row) {
+      const dataPoint = row[rowIndex];
       const dataPointElement = document.createElement("td");
       dataPointElement.innerText = dataPoint;
       rowElement.appendChild(dataPointElement);
