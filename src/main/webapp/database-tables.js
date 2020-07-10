@@ -20,7 +20,7 @@ function showDatabase() {
       table.appendChild(makeTableHeaders(colsArray));
  
       // add data
-      makeRows(tableData.rows, table);
+      makeRows(tableData.dataTable, table);
       dataArea.appendChild(table);
     }
   });
