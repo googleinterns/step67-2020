@@ -36,12 +36,10 @@ function getDatabaseAndTable(){
     for (var i = 0; i<search.length; i++){
         if (search.charAt(i) == '='){
             startIndex = i;
-        }
-        else if (search.charAt(i) == '&'){
+        } else if (search.charAt(i) == '&'){
             break;
-        }
-        else{
-             databaseString += search.charAt(i);
+        } else{
+            databaseString += search.charAt(i);
         }
     }
 
@@ -49,13 +47,13 @@ function getDatabaseAndTable(){
     fetch(queryString)
     .then(response => response.json())
     .then((list) => { 
-        const DbText = document.createElement('p');
-        DbText.innerText = "Database: " + databaseString;
-        const TableText = document.createElement('p');
-        TableText.innerText = "List of selected tables:  ";
+        const dbText = document.createElement('p');
+        dbText.innerText = "Database: " + databaseString;
+        const tableText = document.createElement('p');
+        tableText.innerText = "List of selected tables:  ";
         const databaseTable = document.getElementById('DB-T');
-        databaseTable.appendChild(DbText);
-        databaseTable.appendChild(TableText);
+        databaseTable.appendChild(dbText);
+        databaseTable.appendChild(tableText);
 
         for (let index = 0; index < list.length; index++) {
             databaseTable.appendChild(

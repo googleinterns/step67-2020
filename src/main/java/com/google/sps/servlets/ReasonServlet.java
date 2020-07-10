@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Arrays;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,8 +14,11 @@ public final class ReasonServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Get the input from the form.
-    long timestamp = System.currentTimeMillis();
+    Instant timestamp = Instant.now();
+    String timeString = timestamp.toString();
+    // long timestamp = System.currentTimeMillis();
     String text = getParameter(request, "reason", "");
+    text = text + " Time: " +  timeString;
     String[] words = text.split("\\s*,\\s*");
     response.setContentType("text/html;");
     response.getWriter().println(Arrays.toString(words));
