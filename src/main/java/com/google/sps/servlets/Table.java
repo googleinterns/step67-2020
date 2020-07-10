@@ -9,7 +9,7 @@ import java.util.List;
 abstract class Table {
   abstract String name();
   abstract List<String> columns();
-  abstract ImmutableList<ImmutableList<String>> rows();
+  abstract ImmutableList<ImmutableList<String>> dataTable();
 
   static Builder builder() {
     return new AutoValue_Table.Builder();
@@ -19,10 +19,10 @@ abstract class Table {
   abstract static class Builder {
     abstract Builder setName(String name);
     abstract Builder setColumns(List<String> columns);
-    abstract ImmutableList.Builder<ImmutableList<String>> rowsBuilder();
+    abstract ImmutableList.Builder<ImmutableList<String>> dataTableBuilder();
 
     public Builder addRow(ImmutableList<String> row) {
-      rowsBuilder().add(row);
+      dataTableBuilder().add(row);
       return this;
     }
 
