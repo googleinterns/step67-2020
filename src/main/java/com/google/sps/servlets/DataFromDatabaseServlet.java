@@ -50,7 +50,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
           throw new RuntimeException("Table is empty.");
         }
  
-        //Table tableObject = new Table(table);
         Table.Builder tableBuilder = Table.builder().setName(table);
 
         List<String> columnNames = new ArrayList<>();
@@ -74,12 +73,17 @@ public class DataFromDatabaseServlet extends HttpServlet {
     if (indexOfOpeningParen >= 0) {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
-    String nullable = resultSet.getString(2);
+    String nullableString = resultSet.getString(2);
+    boolean nullable = false;
+    if (nullableString.toLowerCase().equals("true")) {
+      nullable = true;
+    }
     return Schema.create(columnName, schemaType, nullable);
   }
 
   private Statement constructQueryStatement(List<Schema> schemas, List<String> columnNames, String table) {
     StringBuilder query = new StringBuilder(constants.SELECT);
+
     for (Schema schema : schemas) {
       String columnName = schema.columnName();
       query.append(columnName + constants.COMMA);
@@ -91,6 +95,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return statement;
   }
 
+  //TODO (issue 15): will get rid of this through DatabaseConnector class
   private void initializeDatabase(String databaseName) {
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
     DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, databaseName);
@@ -104,7 +109,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
       .executeQuery(query)) {
  
       while (resultSet.next()) {
-        //List<String> row = new ArrayList<>();
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (Schema schema : schemas) {
           String columnName = schema.columnName();
