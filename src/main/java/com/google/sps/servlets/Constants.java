@@ -1,6 +1,6 @@
 package com.google.sps.servlets;
 
-public class Constants {
+class Constants {
   static final String COMMA = ", ";
   static final String DATABASE_PARAM = "list-databases";
   static final String EMPTY_STRING = "";
