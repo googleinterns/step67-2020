@@ -6,7 +6,7 @@ import java.util.List;
 public class Table {
   private String name;
   private List<String> columns = new ArrayList<String>();
-  private List<Row> rows = new ArrayList<Row>();
+  private List<List<String>> rows = new ArrayList<List<String>>();
  
   public Table(String name) {
     this.name = name;
@@ -20,7 +20,7 @@ public class Table {
     return new ArrayList<>(columns);
   }
  
-  public void addRow(Row row) {
+  public void addRow(List<String> row) {
     rows.add(row);
   }
 }
