@@ -67,10 +67,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
     if (indexOfOpeningParen >= 0) {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
-    String nullable = resultSet.getString(2);
+    String nullableString = resultSet.getString(2);
+    boolean nullable = false;
+    if (nullableString.toLowerCase().equals("true")) {
+      nullable = true;
+    }
     return Schema.create(columnName, schemaType, nullable);
   }
 
+  //TODO (issue 15): use StringBuilder instead
   private String constructQueryString(List<Schema> schemas, Table tableObject, String table) {
     String query = constants.SELECT;
     for (Schema schema : schemas) {
@@ -83,6 +88,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return query;
   }
 
+  //TODO (issue 15): will get rid of this through DatabaseConnector class
   private void initializeDatabase(String databaseName) {
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
     DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, databaseName);
@@ -114,14 +120,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
   }
 
+  //TODO(issue 15): get rid of Row and change to List of Strings
   private void addDataToRowObject(String dataType, Row rowObject, String columnName, ResultSet resultSet) {
-    System.out.println(dataType);
     switch (dataType) {
       case "STRING":
         rowObject.addData(columnName, resultSet.getString(columnName));
         break;
       case "BOOL":
         rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getBoolean(columnName));
+        break;
       case "INT64":
         rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getLong(columnName));
         break;
@@ -144,6 +151,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
   }
 
+  //TODO(issue 15): change to String Builder
   private String longArrayToString(long[] longArray) {
     String arrayToString = "[";
     for (long l : longArray) {

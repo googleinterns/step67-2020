@@ -34,6 +34,7 @@ public class TablesFromDatabaseServlet extends HttpServlet {
       selectedDatabase = request.getParameter(constants.DATABASE_PARAM);
     }
 
+    //TODO (issue 8): check if selectedDatabase is supported
     if (selectedDatabase == null || selectedDatabase.equals(constants.EMPTY_STRING)) {
       response.sendRedirect(constants.NULL_REDIRECT);
       return;
