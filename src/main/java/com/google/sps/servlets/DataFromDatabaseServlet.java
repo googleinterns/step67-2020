@@ -13,11 +13,13 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 
 @WebServlet("/data-from-db")
 public class DataFromDatabaseServlet extends HttpServlet {
@@ -168,17 +170,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
   }
 
   private String longArrayToString(long[] longArray) {
-    StringBuilder arrayToStringBuilder = new StringBuilder(constants.OPEN_BRACKET);
-    for (long l : longArray) {
-      arrayToStringBuilder.append(l + constants.COMMA);
-    }
-
-    // Remove extra space and comma at the end
-    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
-    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
-    
-    arrayToStringBuilder.append(constants.CLOSE_BRACKET);
-    return arrayToStringBuilder.toString();
+    return "[" + StringUtils.join(longArray, ',') + "]";
   }
 
   private String bytesToString(ByteArray bytes) {
