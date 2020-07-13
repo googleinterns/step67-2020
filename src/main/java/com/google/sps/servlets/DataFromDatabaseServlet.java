@@ -52,19 +52,25 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
         Table.Builder tableBuilder = Table.builder().setName(table);
 
-        ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
-        Statement queryStatement = constructQueryStatement(columnSchemas, columnNamesBuilder, table);
-        ImmutableList<String> columnNames = columnNamesBuilder.build();
-        tableBuilder.setColumns(columnNames);
-
+        Statement queryStatement = constructQueryStatement(columnSchemas, table);
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
+        tableBuilder.setColumns(createColumnNamesList(columnSchemas));
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
       }
     }
     String json = new Gson().toJson(tables);
     response.getWriter().println(json);
+  }
+
+  //TODO (issue 15): get rid of the list of columns for table, because it's already in the ColumnSchema
+  private ImmutableList<String> createColumnNamesList(List<ColumnSchema> columnSchemas) {
+    ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
+    for (ColumnSchema colSchema : columnSchemas) {
+      columnNamesBuilder.add(colSchema.columnName());
+    }
+    return columnNamesBuilder.build();
   }
 
   private ColumnSchema createColumnSchema(ResultSet resultSet) {
@@ -84,13 +90,12 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return ColumnSchema.create(columnName, schemaType, isNullable);
   }
 
-  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, ImmutableList.Builder<String> columnNamesBuilder, String table) {
+  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table) {
     StringBuilder query = new StringBuilder(constants.SELECT);
 
     for (ColumnSchema columnSchema : columnSchemas) {
       String columnName = columnSchema.columnName();
       query.append(columnName + constants.COMMA);
-      columnNamesBuilder.add(columnName);
     }
     query.deleteCharAt(query.length() - 1);
     query.append(constants.FROM + table); 
