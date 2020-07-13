@@ -25,12 +25,34 @@ function clickfunc(columnIndex, tableName) {
       const data1 = rows[index].getElementsByTagName("td")[columnIndex];
       const data2 = rows[index + 1].getElementsByTagName("td")[columnIndex];
 
-      if (direction == "ascending" && data1.innerHTML > data2.innerHTML) {
-        shouldSwitch = true;
-        break;
-      } else if (direction == "descending" && data1.innerHTML < data2.innerHTML) {
-        shouldSwitch = true;
-        break;
+      var innerHTML1 = data1.innerHTML;
+      var innerHTML2 = data2.innerHTML;
+
+      const int1 = parseInt(innerHTML1);
+      const int2 = parseInt(innerHTML2);
+
+      if (Number.isInteger(int1) && Number.isInteger(int2)) { // Integers
+        if (direction == "ascending" && int1 > int2) {
+          shouldSwitch = true;
+          break;
+        } else if (direction == "descending" && int2 > int1) {
+          shouldSwitch = true;
+          break;
+        }
+      } else { // String
+        if (innerHTML1 == "NULL") {
+          innerHTML1 = "";
+        }
+        if (innerHTML2 == "NULL") {
+          innerHTML2 = "";
+        }
+        if (direction == "ascending" && innerHTML1 > innerHTML2) {
+          shouldSwitch = true;
+          break;
+        } else if (direction == "descending" && innerHTML1 < innerHTML2) {
+          shouldSwitch = true;
+          break;
+        }
       }
     }
     if (shouldSwitch) {
