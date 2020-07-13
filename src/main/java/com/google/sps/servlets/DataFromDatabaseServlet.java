@@ -42,7 +42,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
         List<ColumnSchema> columnSchemas = new ArrayList<>();
         while (resultSet.next()) {
-          columnSchemas.add(createSchema(resultSet));
+          columnSchemas.add(createColumnSchema(resultSet));
         }
  
         // No columns -> throw error
@@ -67,7 +67,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  private ColumnSchema createSchema(ResultSet resultSet) {
+  private ColumnSchema createColumnSchema(ResultSet resultSet) {
     String columnName = resultSet.getString(0);
     String schemaType = resultSet.getString(1);
 
