@@ -9,6 +9,7 @@ import java.util.List;
 abstract class Table {
   abstract String name();
   abstract List<String> columns();
+  abstract List<String> schemas();
   abstract ImmutableList<ImmutableList<String>> dataTable();
 
   static Builder builder() {
@@ -19,6 +20,7 @@ abstract class Table {
   abstract static class Builder {
     abstract Builder setName(String name);
     abstract Builder setColumns(List<String> columns);
+    abstract Builder setSchemas(List<String> schemas);
     abstract ImmutableList.Builder<ImmutableList<String>> dataTableBuilder();
 
     public Builder addRow(ImmutableList<String> row) {
