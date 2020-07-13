@@ -103,3 +103,20 @@ function onLoad() {
   getDatabases();
   getTablesList();
 }
+
+function showShare(){
+    console.log("Show");
+    document.getElementById("share-form").classList.remove("invisible");
+}
+
+function copyLink(){
+    var copyText = document.getElementById("share-text");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999)
+    document.execCommand("copy");
+    alert("Copied the text: " + copyText.value);
+}
+
+function changeText(){
+    document.getElementById("share-text").value = window.location.href;
+}

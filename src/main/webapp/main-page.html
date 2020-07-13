@@ -5,11 +5,29 @@
     <title>Main Page</title>
     <script src="./script.js"></script>
     <script src="./database-tables.js"></script>
+    <link rel="stylesheet" href="main-style.css">
   </head>
-  <body onload="showDatabase()">
+  <body>
     <h1>Main Page</h1>
  
     <div id="data"></div>
+
+    <div id = "header">
+        <div class = "button-box">
+            <a href = "index.html"><button>Splash Page</button></a>
+            <button onclick= "showFilterPanel()" >Show Filters </button>
+            <button onclick = "showDatabase()" >Load Data </button>
+            <button onclick = "showShare()" >Share Query</button>
+        </div>
+    </div>
+
+    <div id = "share-form" class = "invisible">
+      <h4>Share Query</h4>
+      <input type="text" id = "share-text" placeholder="Share with a fellow Googler.">
+      <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
+      <div style="padding:10px"></div>
+    </div>
+
   </body>
 </html>
 
