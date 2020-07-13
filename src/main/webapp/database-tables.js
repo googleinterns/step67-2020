@@ -18,12 +18,28 @@ function showDatabase() {
       const table = createTable(name);
       const colsArray = tableData.columns;
       table.appendChild(makeTableHeaders(colsArray, name));
+
+      const schemas = tableData.schemas;
+      table.appendChild(makeColumnTypes(schemas));
  
       // add data
       makeRows(tableData.dataTable, table);
       dataArea.appendChild(table);
     }
   });
+}
+
+function makeColumnTypes(schemas) {
+  const columnTypesRow = document.createElement("tr");
+
+  let index;
+  for (index in schemas) {
+    const schemaType = schemas[index].schemaType;
+    const columnTypeHeader = document.createElement("th");
+    columnTypeHeader.innerText = schemaType;
+    columnTypesRow.appendChild(columnTypeHeader);
+  }
+  return columnTypesRow;
 }
  
 // Create column name labels for table
@@ -56,7 +72,7 @@ function makeRows(rows, table) {
  
 function addColumnHeader(colName, tableName, index) {
   const columnHeader = document.createElement("th");
-  columnHeader.setAttribute("onclick", "clickfunc(" + index + ", '" + tableName + "')");
+  columnHeader.setAttribute("onclick", "sort(" + index + ", '" + tableName + "')");
   columnHeader.innerText = colName;
   return columnHeader;
 }

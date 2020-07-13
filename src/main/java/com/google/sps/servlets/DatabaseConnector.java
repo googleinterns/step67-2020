@@ -29,7 +29,7 @@ public class DatabaseConnector {
 
   public DatabaseClient getDbClient(String databaseName) {
     if (!databaseNameToClient.containsKey(databaseName)) {
-      throw new RuntimeException("Database not in list");
+      throw new RuntimeException("Database " + databaseName + " not in list");
     }
     return databaseNameToClient.get(databaseName);
   }

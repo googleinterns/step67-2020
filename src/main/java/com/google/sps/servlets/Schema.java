@@ -8,6 +8,7 @@ abstract class Schema {
     return new AutoValue_Schema(columnName, schemaType, nullable);
   }
 
+  //TODO (issue 12): add primary key boolean to the schema?
   abstract String columnName();
   abstract String schemaType();
   abstract boolean nullable();
