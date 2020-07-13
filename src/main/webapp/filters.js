@@ -90,8 +90,3 @@ function filterColumns() {
     }   
   });
 }
-
-
-
-
-
