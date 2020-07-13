@@ -1,5 +1,6 @@
 package com.google.sps.servlets;
 
+import com.google.auto.value.AutoValue;
 import com.google.cloud.ByteArray;
 import com.google.cloud.spanner.DatabaseClient;
 import com.google.cloud.spanner.DatabaseId;
@@ -7,6 +8,7 @@ import com.google.cloud.spanner.ResultSet;
 import com.google.cloud.spanner.Spanner;
 import com.google.cloud.spanner.SpannerOptions;
 import com.google.cloud.spanner.Statement;
+import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -28,34 +30,39 @@ public class DataFromDatabaseServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     selectedTables = request.getParameterValues(constants.TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(constants.DATABASE_PARAM);
-    initializeDatabase(databaseName);
+    initDatabaseClient(databaseName);
 
     response.setContentType(constants.TEXT_TYPE);
     List<Table> tables = new ArrayList<>();
 
-     for (String table : selectedTables) {
+    for (String table : selectedTables) {
       String columnQuery = constants.SCHEMA_INFO_SQL + table + constants.ENDING_APOSTROPHE;
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
         List<Schema> schemas = new ArrayList<>();
- 
         while (resultSet.next()) {
           schemas.add(createSchema(resultSet));
         }
  
         // No columns -> throw error
         if (schemas.size() == 0) {
-          throw new RuntimeException("Table is empty.");
+          throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
         }
  
-        Table tableObject = new Table(table);
-        String query = constructQueryString(schemas, tableObject, table);
-        executeTableQuery(tableObject, query, schemas);
+        Table.Builder tableBuilder = Table.builder().setName(table);
+
+        ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
+        Statement queryStatement = constructQueryStatement(schemas, columnNamesBuilder, table);
+        ImmutableList<String> columnNames = columnNamesBuilder.build();
+        tableBuilder.setColumns(columnNames);
+
+        executeTableQuery(tableBuilder, queryStatement, schemas);
+        
+        Table tableObject = tableBuilder.build();
         tables.add(tableObject);
       }
     }
-
     String json = new Gson().toJson(tables);
     response.getWriter().println(json);
   }
@@ -63,103 +70,107 @@ public class DataFromDatabaseServlet extends HttpServlet {
   private Schema createSchema(ResultSet resultSet) {
     String columnName = resultSet.getString(0);
     String schemaType = resultSet.getString(1);
+
+    // Remove length in parens (i.e. STRING(MAX) --> STRING)
     int indexOfOpeningParen = schemaType.indexOf("(");
     if (indexOfOpeningParen >= 0) {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
     String nullableString = resultSet.getString(2);
     boolean nullable = false;
-    if (nullableString.toLowerCase().equals("true")) {
+    if (nullableString.toLowerCase().equals(constants.TRUE)) {
       nullable = true;
     }
     return Schema.create(columnName, schemaType, nullable);
   }
 
-  //TODO (issue 15): use StringBuilder instead
-  private String constructQueryString(List<Schema> schemas, Table tableObject, String table) {
-    String query = constants.SELECT;
+  private Statement constructQueryStatement(List<Schema> schemas, ImmutableList.Builder<String> columnNamesBuilder, String table) {
+    StringBuilder query = new StringBuilder(constants.SELECT);
+
     for (Schema schema : schemas) {
       String columnName = schema.columnName();
-      query += (columnName + constants.COMMA);
-      tableObject.addColumn(columnName);
+      query.append(columnName + constants.COMMA);
+      columnNamesBuilder.add(columnName);
     }
-    query = query.substring(0, query.length() - 2);
-    query += constants.FROM + table; 
-    return query;
+    query.deleteCharAt(query.length() - 1);
+    query.append(constants.FROM + table); 
+    Statement statement = Statement.newBuilder(query.toString()).build();
+    return statement;
   }
 
-  //TODO (issue 15): will get rid of this through DatabaseConnector class
-  private void initializeDatabase(String databaseName) {
-    Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, databaseName);
-    this.dbClient = spanner.getDatabaseClient(db);
+  private void initDatabaseClient(String databaseName) {
+    this.dbClient = DatabaseConnector.getInstance().getDbClient(databaseName);
   }
 
-   private void executeTableQuery(Table tableObject, String query, List<Schema> schemas) throws IOException {
+   private void executeTableQuery(Table.Builder tableBuilder, Statement query, List<Schema> schemas) throws IOException {
     try (ResultSet resultSet =
       dbClient
       .singleUse() 
-      .executeQuery(Statement.of(query))) {
- 
+      .executeQuery(query)) {
+
       while (resultSet.next()) {
-        Row rowObject = new Row();
+        ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (Schema schema : schemas) {
           String columnName = schema.columnName();
  
           // If there is a null in this col here, just print out NULL for now.
           if (resultSet.isNull(columnName)) {
-            rowObject.addData(columnName, constants.NULL);
+            rowBuilder.add(constants.NULL);
             continue;
           }
  
           String dataType = schema.schemaType();
-          addDataToRowObject(dataType, rowObject, columnName, resultSet);
+          addDataToRow(dataType, rowBuilder, columnName, resultSet);
         }
-        tableObject.addRow(rowObject);
+
+        ImmutableList<String> immutableRow = rowBuilder.build();
+        tableBuilder.addRow(immutableRow);
       }
     }
   }
 
-  //TODO(issue 15): get rid of Row and change to List of Strings
-  private void addDataToRowObject(String dataType, Row rowObject, String columnName, ResultSet resultSet) {
+  private void addDataToRow(String dataType, ImmutableList.Builder<String> rowBuilder, String columnName, ResultSet resultSet) {
     switch (dataType) {
       case "STRING":
-        rowObject.addData(columnName, resultSet.getString(columnName));
+        rowBuilder.add(resultSet.getString(columnName));
         break;
       case "BOOL":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getBoolean(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getBoolean(columnName));
         break;
       case "INT64":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getLong(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getLong(columnName));
         break;
       case "BYTES":
         String byteToString = bytesToString(resultSet.getBytes(columnName));
-        rowObject.addData(columnName, byteToString);
+        rowBuilder.add(byteToString);
         break;
       case "TIMESTAMP":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
         break;
       case "DATE":
-        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getDate(columnName));
+        rowBuilder.add(constants.EMPTY_STRING + resultSet.getDate(columnName));
         break;
       case "ARRAY<INT64>":
         String arrayToString = longArrayToString(resultSet.getLongArray(columnName));
-        rowObject.addData(columnName, arrayToString);
+        rowBuilder.add(arrayToString);
         break;
       default:
-        rowObject.addData(columnName, "This type is not currently supported.");
+        rowBuilder.add(constants.UNSUPPORT_ERROR);
     }
   }
 
-  //TODO(issue 15): change to String Builder
   private String longArrayToString(long[] longArray) {
-    String arrayToString = "[";
+    StringBuilder arrayToStringBuilder = new StringBuilder(constants.OPEN_BRACKET);
     for (long l : longArray) {
-      arrayToString += l + constants.COMMA;
+      arrayToStringBuilder.append(l + constants.COMMA);
     }
-    arrayToString = arrayToString.substring(0, arrayToString.length() - 2);
-    arrayToString += "]";
-    return arrayToString;
+
+    // Remove extra space and comma at the end
+    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
+    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
+    
+    arrayToStringBuilder.append(constants.CLOSE_BRACKET);
+    return arrayToStringBuilder.toString();
   }
 
   private String bytesToString(ByteArray bytes) {
@@ -170,5 +181,4 @@ public class DataFromDatabaseServlet extends HttpServlet {
       return constants.ENCODING_ERROR;
     }
   }
-
 }

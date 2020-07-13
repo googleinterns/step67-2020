@@ -34,16 +34,19 @@ public class TablesFromDatabaseServlet extends HttpServlet {
       selectedDatabase = request.getParameter(constants.DATABASE_PARAM);
     }
 
-    //TODO (issue 8): check if selectedDatabase is supported
     if (selectedDatabase == null || selectedDatabase.equals(constants.EMPTY_STRING)) {
       response.sendRedirect(constants.NULL_REDIRECT);
       return;
     }
+    if (!DatabaseConnector.getInstance().databaseIsSupported(selectedDatabase)) {
+      throw new RuntimeException("Database " + selectedDatabase + " not supported");
+    }
  
-    Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, selectedDatabase); 
-    this.dbClient = spanner.getDatabaseClient(db);
+    this.dbClient = DatabaseConnector.getInstance().getDbClient(selectedDatabase);
+    executeQuery(response);
+  }
 
+  private void executeQuery(HttpServletResponse response) throws IOException {
     try (ResultSet resultSet =
         dbClient
             .singleUse() 
@@ -56,5 +59,4 @@ public class TablesFromDatabaseServlet extends HttpServlet {
       response.getWriter().println(json);
     }
   }
-
 }
