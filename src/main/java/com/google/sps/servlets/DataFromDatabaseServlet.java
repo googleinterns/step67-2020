@@ -52,8 +52,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
         Table.Builder tableBuilder = Table.builder().setName(table);
 
-        List<String> columnNames = new ArrayList<>();
-        Statement queryStatement = constructQueryStatement(schemas, columnNames, table);
+        ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
+        Statement queryStatement = constructQueryStatement(schemas, columnNamesBuilder, table);
+        ImmutableList<String> columnNames = columnNamesBuilder.build();
         tableBuilder.setColumns(columnNames);
 
         executeTableQuery(tableBuilder, queryStatement, schemas);
@@ -83,13 +84,13 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return Schema.create(columnName, schemaType, nullable);
   }
 
-  private Statement constructQueryStatement(List<Schema> schemas, List<String> columnNames, String table) {
+  private Statement constructQueryStatement(List<Schema> schemas, ImmutableList.Builder<String> columnNamesBuilder, String table) {
     StringBuilder query = new StringBuilder(constants.SELECT);
 
     for (Schema schema : schemas) {
       String columnName = schema.columnName();
       query.append(columnName + constants.COMMA);
-      columnNames.add(columnName);
+      columnNamesBuilder.add(columnName);
     }
     query.deleteCharAt(query.length() - 1);
     query.append(constants.FROM + table); 
