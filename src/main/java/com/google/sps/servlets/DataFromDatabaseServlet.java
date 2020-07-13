@@ -76,12 +76,12 @@ public class DataFromDatabaseServlet extends HttpServlet {
     if (indexOfOpeningParen >= 0) {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
-    String nullableString = resultSet.getString(2);
-    boolean nullable = false;
-    if (nullableString.toLowerCase().equals(constants.TRUE)) {
-      nullable = true;
+    String isNullableColumn = resultSet.getString(2);
+    boolean isNullable = false;
+    if (isNullableColumn.toLowerCase().equals(constants.TRUE)) {
+      isNullable = true;
     }
-    return Schema.create(columnName, schemaType, nullable);
+    return Schema.create(columnName, schemaType, isNullable);
   }
 
   private Statement constructQueryStatement(List<Schema> schemas, ImmutableList.Builder<String> columnNamesBuilder, String table) {
