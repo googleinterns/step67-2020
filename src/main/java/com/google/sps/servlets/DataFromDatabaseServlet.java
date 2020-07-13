@@ -40,24 +40,24 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
-        List<Schema> schemas = new ArrayList<>();
+        List<ColumnSchema> columnSchemas = new ArrayList<>();
         while (resultSet.next()) {
-          schemas.add(createSchema(resultSet));
+          columnSchemas.add(createSchema(resultSet));
         }
  
         // No columns -> throw error
-        if (schemas.size() == 0) {
+        if (columnSchemas.size() == 0) {
           throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
         }
  
         Table.Builder tableBuilder = Table.builder().setName(table);
 
         ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
-        Statement queryStatement = constructQueryStatement(schemas, columnNamesBuilder, table);
+        Statement queryStatement = constructQueryStatement(columnSchemas, columnNamesBuilder, table);
         ImmutableList<String> columnNames = columnNamesBuilder.build();
         tableBuilder.setColumns(columnNames);
 
-        executeTableQuery(tableBuilder, queryStatement, schemas);
+        executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
@@ -67,7 +67,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  private Schema createSchema(ResultSet resultSet) {
+  private ColumnSchema createSchema(ResultSet resultSet) {
     String columnName = resultSet.getString(0);
     String schemaType = resultSet.getString(1);
 
@@ -81,14 +81,14 @@ public class DataFromDatabaseServlet extends HttpServlet {
     if (isNullableColumn.toLowerCase().equals("YES")) {
       isNullable = true;
     }
-    return Schema.create(columnName, schemaType, isNullable);
+    return ColumnSchema.create(columnName, schemaType, isNullable);
   }
 
-  private Statement constructQueryStatement(List<Schema> schemas, ImmutableList.Builder<String> columnNamesBuilder, String table) {
+  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, ImmutableList.Builder<String> columnNamesBuilder, String table) {
     StringBuilder query = new StringBuilder(constants.SELECT);
 
-    for (Schema schema : schemas) {
-      String columnName = schema.columnName();
+    for (ColumnSchema columnSchema : columnSchemas) {
+      String columnName = columnSchema.columnName();
       query.append(columnName + constants.COMMA);
       columnNamesBuilder.add(columnName);
     }
@@ -105,7 +105,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     this.dbClient = spanner.getDatabaseClient(db);
   }
 
-   private void executeTableQuery(Table.Builder tableBuilder, Statement query, List<Schema> schemas) throws IOException {
+   private void executeTableQuery(Table.Builder tableBuilder, Statement query, List<ColumnSchema> columnSchemas) throws IOException {
     try (ResultSet resultSet =
       dbClient
       .singleUse() 
@@ -113,7 +113,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
       while (resultSet.next()) {
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
-        for (Schema schema : schemas) {
+        for (ColumnSchema schema : columnSchemas) {
           String columnName = schema.columnName();
  
           // If there is a null in this col here, just print out NULL for now.
