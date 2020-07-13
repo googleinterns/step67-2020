@@ -1,2 +1,9 @@
-com/google/sps/servlets/BeetleDbServlet.class
+com/google/sps/servlets/TablesFromDatabase.class
+com/google/sps/servlets/Table.class
+com/google/sps/servlets/Row.class
 com/google/sps/servlets/ExampleDbServlet.class
+com/google/sps/servlets/AutoValue_Schema.class
+com/google/sps/servlets/DataFromDatabase.class
+com/google/sps/servlets/Schema.class
+com/google/sps/servlets/BeetleDbServlet.class
+com/google/sps/servlets/ColumnsFromTables.class

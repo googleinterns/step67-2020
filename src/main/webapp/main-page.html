@@ -3,14 +3,34 @@
   <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
-    <script src="./select-tables.js"></script>
+    <link rel="stylesheet" href="style.css">
     <script src="./script.js"></script>
     <script src="./database-tables.js"></script>
+    <script src="MillenniaDev_script.js"></script>
+    
   </head>
   <body onload="showDatabase()">
     <h1>Main Page</h1>
- 
+
     <div id="data"></div>
+    
+    <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>
+      <div id="filter-box" style="display: none;">
+        <form action="/main-page.html" method="GET">
+          <h1> Filters</h1>
+
+          <input type="text" id="user_id" placeholder="Enter the user_id">
+          <div style="padding: 10px"></div> 
+          <input type="text" id="device_id" placeholder="Enter the device_id">
+          <div style="padding: 10px"></div>
+          <input type="search" placeholder="Search...">
+          <div style="padding: 10px"></div>
+
+          <div id="table-filters"></div>
+
+          <input type="submit" id="submit" value="submit" onClick=" return isFilterInputEmpty()">
+        </form>  
+      </div>
   </body>
 </html>
 
