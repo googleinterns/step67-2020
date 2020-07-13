@@ -78,7 +78,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
     String isNullableColumn = resultSet.getString(2);
     boolean isNullable = false;
-    if (isNullableColumn.toLowerCase().equals(constants.TRUE)) {
+    if (isNullableColumn.toLowerCase().equals("YES")) {
       isNullable = true;
     }
     return Schema.create(columnName, schemaType, isNullable);
