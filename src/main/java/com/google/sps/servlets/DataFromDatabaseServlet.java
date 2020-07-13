@@ -18,36 +18,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/data-from-db")
-public class DataFromDatabase extends HttpServlet {
-
-  private static final String COMMA = ", ";
-  private static final String DATABASE_PARAM = "list-databases";
-  private static final String EMPTY_STRING = "";
-  private static final String ENCODING_TYPE = "UTF8";
-  private static final String ENDING_APOSTROPHE = "'";
-  private static final String FROM = " FROM ";
-  private static final String NULL = "NULL";
-  private static final String PROJECT = "play-user-data-beetle";
-  private static final String SCHEMA_INFO_SQL = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '";
-  private static final String SELECT = "SELECT ";
-  private static final String TABLE_SELECT_PARAM = "table-select";
-  private static final String TEST_INSTANCE = "test-instance";
-  private static final String TEXT_TYPE = "text/html;";
+public class DataFromDatabaseServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   private String[] selectedTables;
+  private Constants constants = new Constants();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
-    String databaseName = request.getParameter(DATABASE_PARAM);
+    selectedTables = request.getParameterValues(constants.TABLE_SELECT_PARAM);
+    String databaseName = request.getParameter(constants.DATABASE_PARAM);
     initializeDatabase(databaseName);
 
-    response.setContentType(TEXT_TYPE);
+    response.setContentType(constants.TEXT_TYPE);
     List<Table> tables = new ArrayList<>();
 
      for (String table : selectedTables) {
-      String columnQuery = SCHEMA_INFO_SQL + table + ENDING_APOSTROPHE;
+      String columnQuery = constants.SCHEMA_INFO_SQL + table + constants.ENDING_APOSTROPHE;
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
@@ -64,7 +51,7 @@ public class DataFromDatabase extends HttpServlet {
  
         Table tableObject = new Table(table);
         String query = constructQueryString(schemas, tableObject, table);
-        executeTableQuery(tableObject, query, schemas, response);
+        executeTableQuery(tableObject, query, schemas);
         tables.add(tableObject);
       }
     }
@@ -76,29 +63,39 @@ public class DataFromDatabase extends HttpServlet {
   private Schema createSchema(ResultSet resultSet) {
     String columnName = resultSet.getString(0);
     String schemaType = resultSet.getString(1);
-    String nullable = resultSet.getString(2);
+    int indexOfOpeningParen = schemaType.indexOf("(");
+    if (indexOfOpeningParen >= 0) {
+      schemaType = schemaType.substring(0, indexOfOpeningParen);
+    }
+    String nullableString = resultSet.getString(2);
+    boolean nullable = false;
+    if (nullableString.toLowerCase().equals("true")) {
+      nullable = true;
+    }
     return Schema.create(columnName, schemaType, nullable);
   }
 
+  //TODO (issue 15): use StringBuilder instead
   private String constructQueryString(List<Schema> schemas, Table tableObject, String table) {
-    String query = SELECT;
+    String query = constants.SELECT;
     for (Schema schema : schemas) {
       String columnName = schema.columnName();
-      query += (columnName + COMMA);
+      query += (columnName + constants.COMMA);
       tableObject.addColumn(columnName);
     }
     query = query.substring(0, query.length() - 2);
-    query += FROM + table; 
+    query += constants.FROM + table; 
     return query;
   }
 
+  //TODO (issue 15): will get rid of this through DatabaseConnector class
   private void initializeDatabase(String databaseName) {
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of(PROJECT, TEST_INSTANCE, databaseName);
+    DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, databaseName);
     this.dbClient = spanner.getDatabaseClient(db);
   }
 
-   private void executeTableQuery(Table tableObject, String query, List<Schema> schemas, HttpServletResponse response) throws IOException {
+   private void executeTableQuery(Table tableObject, String query, List<Schema> schemas) throws IOException {
     try (ResultSet resultSet =
       dbClient
       .singleUse() 
@@ -111,7 +108,7 @@ public class DataFromDatabase extends HttpServlet {
  
           // If there is a null in this col here, just print out NULL for now.
           if (resultSet.isNull(columnName)) {
-            rowObject.addData(columnName, NULL);
+            rowObject.addData(columnName, constants.NULL);
             continue;
           }
  
@@ -123,40 +120,42 @@ public class DataFromDatabase extends HttpServlet {
     }
   }
 
+  //TODO(issue 15): get rid of Row and change to List of Strings
   private void addDataToRowObject(String dataType, Row rowObject, String columnName, ResultSet resultSet) {
     switch (dataType) {
-      case "STRING(MAX)":
-      case "STRING(250)":
-      case "STRING(1024)":
+      case "STRING":
         rowObject.addData(columnName, resultSet.getString(columnName));
         break;
-      case "TIMESTAMP":
-        rowObject.addData(columnName, EMPTY_STRING + resultSet.getTimestamp(columnName));
+      case "BOOL":
+        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getBoolean(columnName));
         break;
       case "INT64":
-        rowObject.addData(columnName, EMPTY_STRING + resultSet.getLong(columnName));
+        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getLong(columnName));
         break;
-      case "BYTES(MAX)":
       case "BYTES":
         String byteToString = bytesToString(resultSet.getBytes(columnName));
         rowObject.addData(columnName, byteToString);
+        break;
+      case "TIMESTAMP":
+        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
+        break;
+      case "DATE":
+        rowObject.addData(columnName, constants.EMPTY_STRING + resultSet.getDate(columnName));
         break;
       case "ARRAY<INT64>":
         String arrayToString = longArrayToString(resultSet.getLongArray(columnName));
         rowObject.addData(columnName, arrayToString);
         break;
-      case "DATE":
-        rowObject.addData(columnName, EMPTY_STRING + resultSet.getDate(columnName));
-        break;
-      case "BOOL":
-        rowObject.addData(columnName, EMPTY_STRING + resultSet.getBoolean(columnName));
+      default:
+        rowObject.addData(columnName, "This type is not currently supported.");
     }
   }
 
+  //TODO(issue 15): change to String Builder
   private String longArrayToString(long[] longArray) {
     String arrayToString = "[";
     for (long l : longArray) {
-      arrayToString += l + COMMA;
+      arrayToString += l + constants.COMMA;
     }
     arrayToString = arrayToString.substring(0, arrayToString.length() - 2);
     arrayToString += "]";
@@ -166,9 +165,9 @@ public class DataFromDatabase extends HttpServlet {
   private String bytesToString(ByteArray bytes) {
     try {
       byte[] byteArray = bytes.toByteArray();
-      return new String(byteArray, ENCODING_TYPE);
+      return new String(byteArray, constants.ENCODING_TYPE);
     } catch (UnsupportedEncodingException e) {
-      return "Unable to encode";
+      return constants.ENCODING_ERROR;
     }
   }
 

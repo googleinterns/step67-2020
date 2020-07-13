@@ -20,39 +20,34 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns HTML that contains tables in the example database. */
 @WebServlet("/tables-from-db")
-public class TablesFromDatabase extends HttpServlet {
+public class TablesFromDatabaseServlet extends HttpServlet {
 
-  private static final String DATABASE_PARAM = "list-databases";
-  private static final String EMPTY_STRING = "";
-  private static final String GET_TABLE_SQL = "SELECT table_name FROM information_schema.tables WHERE table_catalog = '' and table_schema = ''";
-  private static final String NULL_REDIRECT = "/index.html";
-  private static final String PROJECT_NAME = "play-user-data-beetle";
-  private static final String TEST_INSTANCE = "test-instance";
-  private static final String TEXT_TYPE = "text/html;";
   DatabaseClient dbClient;
   String selectedDatabase;
+  private Constants constants = new Constants();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType(TEXT_TYPE);
+    response.setContentType(constants.TEXT_TYPE);
 
-    if (request.getParameter(DATABASE_PARAM) != null) {
-      selectedDatabase = request.getParameter(DATABASE_PARAM);
+    if (request.getParameter(constants.DATABASE_PARAM) != null) {
+      selectedDatabase = request.getParameter(constants.DATABASE_PARAM);
     }
 
-    if (selectedDatabase == null || selectedDatabase.equals(EMPTY_STRING)) {
-      response.sendRedirect(NULL_REDIRECT);
+    //TODO (issue 8): check if selectedDatabase is supported
+    if (selectedDatabase == null || selectedDatabase.equals(constants.EMPTY_STRING)) {
+      response.sendRedirect(constants.NULL_REDIRECT);
       return;
     }
  
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of(PROJECT_NAME, TEST_INSTANCE, selectedDatabase); 
+    DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, selectedDatabase); 
     this.dbClient = spanner.getDatabaseClient(db);
 
     try (ResultSet resultSet =
         dbClient
             .singleUse() 
-            .executeQuery(Statement.of(GET_TABLE_SQL))) {
+            .executeQuery(Statement.of(constants.GET_TABLE_SQL))) {
       List<String> tables = new ArrayList<>();
       while (resultSet.next()) {
         tables.add(resultSet.getString(0));
