@@ -58,6 +58,7 @@ public class ColumnsFromTables extends HttpServlet {
 
       //Parsing the URL for the query parameters
       String[] listOfTables = request.getParameterValues(TABLE_SELECT_PARAM);
+      System.out.println(listOfTables.length);
 
       String qry = "SELECT table_name, ARRAY_AGG(column_name) FROM information_schema.columns WHERE table_name in ('Singers', 'Songs', 'Albums') group by table_name";
 
