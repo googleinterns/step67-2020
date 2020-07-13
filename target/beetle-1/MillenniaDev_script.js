@@ -97,12 +97,14 @@ function filterColumns() {
 
         console.log(keys, col, tables[keys][0][col]);
       }
-     select.onclick = function() {
+
+      //onclick event that will hide/show column filters
+      select.onclick = function() {
         if (checkboxes.style.display === "none") {
             checkboxes.style.display = "block";
         } else {
             checkboxes.style.display = "none";
-    }
+      }
      };
 
         tableFilters.appendChild(select);
