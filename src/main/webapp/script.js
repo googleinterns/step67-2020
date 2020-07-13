@@ -1,4 +1,3 @@
-
 function getDatabases(){
   fetch("/databases").then(response => response.json()).then((list) => {
     let dropdown = document.getElementById('list-databases');
@@ -104,12 +103,12 @@ function onLoad() {
   getTablesList();
 }
 
-function showShare(){
+function showShare() {
     console.log("Show");
     document.getElementById("share-form").classList.remove("invisible");
 }
 
-function copyLink(){
+function copyLink() {
     var copyText = document.getElementById("share-text");
     copyText.select();
     copyText.setSelectionRange(0, 99999)
@@ -117,6 +116,25 @@ function copyLink(){
     alert("Copied the text: " + copyText.value);
 }
 
-function changeText(){
+var previousText = "placeholder";
+var previousId = "id";
+
+function luckyFilter() {
+    previousId="filter-button";
+    previousText = document.getElementById("filter-button").textContent;
+    document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
+}
+
+function luckyData() {
+    previousId="data-button";
+    previousText = document.getElementById("data-button").textContent;
+    document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
+}
+
+function unlucky() {
+    document.getElementById(previousId).textContent = previousText;
+}
+
+function changeText() {
     document.getElementById("share-text").value = window.location.href;
 }
