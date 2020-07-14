@@ -47,6 +47,7 @@ function getTablesList() {
     }
     
     createForm(tableListSpace);
+    addSpace();
     createSelectElement();
     for (let index = 0; index < list.length; index++) {
       addTableOption(list[index]);
@@ -59,7 +60,7 @@ function getTablesList() {
 
 function addSpace() {
   const spaceDiv = document.createElement("div");
-  spaceDiv.setAttribute("style", "padding:20px");
+  spaceDiv.setAttribute("id", "space");
   document.getElementById("table-form").appendChild(spaceDiv);
 }
  
@@ -67,6 +68,7 @@ function createSelectElement() {
   const select = document.createElement("SELECT");
   select.setAttribute("id", "table-select");
   select.setAttribute("name", "table-select");
+  select.setAttribute("required", "true");
   document.getElementById("table-form").appendChild(select);
   document.getElementById("table-select").multiple = true;
 }
