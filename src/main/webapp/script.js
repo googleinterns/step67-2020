@@ -116,6 +116,7 @@ function copyLink() {
     alert("Copied the text: " + copyText.value);
 }
 
+// The below methods with "Lucky" in the name are rough draft for the easter egg
 var previousText = "placeholder";
 var previousId = "id";
 
