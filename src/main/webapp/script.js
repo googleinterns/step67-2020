@@ -62,6 +62,10 @@ function getDatabaseAndTable(){
     });
 }
 
+function submitDatabaseForm() {
+  document.getElementById("database-select-form").submit();
+}
+ 
 function getTablesList() {
   const tablesUrl = '/tables-from-db';
   const search = window.location.search;
@@ -138,10 +142,18 @@ function addTableOption(text) {
 function onLoad() {
   getDatabases();
   getTablesList();
+  login();
 }
 
 function createListElement(text) {
   const liElement = document.createElement('li');
   liElement.innerText = text;
   return liElement;
+}
+
+function login(){
+  console.log("login");
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
 }

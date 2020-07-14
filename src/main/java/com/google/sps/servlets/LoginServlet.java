@@ -7,7 +7,10 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
 import java.io.IOException;
+import java.util.List;
+import java.util.ArrayList;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,33 +19,31 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
   public static String currentUser;
-  public static String currentUserEmail;
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html");
+    response.setContentType("application/JSON");
 
     UserService userService = UserServiceFactory.getUserService();
+    List<String> userEmail = new ArrayList<String>();
 
     if (!userService.isUserLoggedIn()) {
       String urlToRedirectToAfterUserLogsIn = "/login";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-      response.getWriter().println("<p>Hello stranger.</p>");
-      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
-      //FIXME: always redirects  --  response.sendRedirect("https://accounts.google.com/signin/v2/identifier?");
-      return;
-    }
-    else{
+      userEmail.add("Hello Stranger");
+      response.sendRedirect("https://accounts.google.com/signin/v2/identifier?");
+    } else{
         String urlToRedirectToAfterUserLogsOut = "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin";
         String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
-        String userEmail = userService.getCurrentUser().getEmail();
-
-        if (userEmail == "test@example.com"){
-            response.getWriter().println("<p> You need to login!</p>");
-        }
-        String homePage = "/index.html";
-        response.getWriter().println("<h1> You are Logged in as " + userEmail + "!<h1>");
-        response.getWriter().println("<a href=\"" +homePage+ "\"><button>Home</button/></a>");
-        response.getWriter().println("<a href=\"" + logoutUrl + "\"><button>Logout</button/></a>");
+        String currentUserEmail = userService.getCurrentUser().getEmail();
+        userEmail.add(currentUserEmail);
     }
+    String email = convertToJsonUsingGson(userEmail);
+    response.getWriter().println(email);
+  }
+  
+  private String convertToJsonUsingGson(List<String> email) {
+    Gson gson = new Gson();
+    String json = gson.toJson(email);
+    return json;
   }
 } 
