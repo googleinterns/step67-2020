@@ -24,6 +24,7 @@ function getDatabases(){
 
 function submitDatabaseForm() {
   document.getElementById("database-select-form").submit();
+  console.log('here')
 }
  
 function getTablesList() {
@@ -46,11 +47,12 @@ function getTablesList() {
       return;
     }
     
-    createForm();
+    createForm(tableListSpace);
     createSelectElement();
     for (let index = 0; index < list.length; index++) {
       addTableOption(list[index]);
     }
+    addReasonInput();
     createSubmit();
   });
 }
@@ -63,7 +65,7 @@ function createSelectElement() {
   document.getElementById("table-select").multiple = true;
 }
  
-function createForm() {
+function createForm(tableListSpace) {
   const form = document.createElement("form");
   form.setAttribute("id", "table-form");
   form.setAttribute("action", "/main-page.html" + window.location.search);
@@ -72,7 +74,7 @@ function createForm() {
   const databaseInput = addDatabaseToQueryString();
   form.appendChild(databaseInput);
  
-  document.body.appendChild(form);
+  tableListSpace.appendChild(form);
 }
  
 function addDatabaseToQueryString() {
@@ -84,6 +86,13 @@ function addDatabaseToQueryString() {
   databaseInput.setAttribute("value", database);
   databaseInput.setAttribute("name", "list-databases");
   return databaseInput;
+}
+
+function addReasonInput() {
+  const reason = document.createElement("input");
+  reason.setAttribute("type", "text");
+  reason.setAttribute("id", "reason");
+  document.getElementById("table-form").appendChild(reason);
 }
  
 function createSubmit() {
