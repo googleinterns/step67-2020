@@ -71,3 +71,15 @@ function createTable(name) {
   table.setAttribute("id", "table_" + name);
   return table;
 }
+
+function mainLoad(){
+    showDatabase();
+    login();
+}
+
+function login(){
+  console.log("login");
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
+}
