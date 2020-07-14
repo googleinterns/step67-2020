@@ -35,11 +35,12 @@ public class TablesFromDatabaseServlet extends HttpServlet {
     }
 
     //TODO (issue 8): check if selectedDatabase is supported
-    if (selectedDatabase == null || selectedDatabase.equals(constants.EMPTY_STRING)) {
+    if (selectedDatabase == null || selectedDatabase.equals("")) {
       response.sendRedirect(constants.NULL_REDIRECT);
       return;
     }
  
+    //TODO (issue 8): change this to using DatabaseConnector in later PR
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
     DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, selectedDatabase); 
     this.dbClient = spanner.getDatabaseClient(db);
@@ -56,5 +57,4 @@ public class TablesFromDatabaseServlet extends HttpServlet {
       response.getWriter().println(json);
     }
   }
-
 }

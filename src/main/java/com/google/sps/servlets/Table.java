@@ -8,7 +8,7 @@ import java.util.List;
 @AutoValue
 abstract class Table {
   abstract String name();
-  abstract ImmutableList<String> columns();
+  abstract ImmutableList<String> columns(); //TODO (issue 15): get rid of this list, and instead add a list of Schemas
   abstract ImmutableList<ImmutableList<String>> dataTable();
 
   static Builder builder() {
