@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Login Page Prototype</title>
+    <link rel="stylesheet" href="login.css">
+    <script src="./login.js"></script>
+    <script src="./script.js"></script>
+    <script src="./database-tables.js"></script>
+  </head>
+  <body onload="onLoad()">
+    <div class="centered">
+      <div name="logoImage">
+        <img src="beetleLogo.png" alt="logo here">
+
+        <h2 style="font-family: Trebuchet MS">Beetle</h2>
+      </div>
+
+      <div name="text_enter" class="text-enter">
+        <div id="select-db">
+          <form action="/login.html" method="GET" id="database-select-form" >
+            <select id="list-databases" name="list-databases" class="select" onchange="submitDatabaseForm()">
+              <option id="select-title">Loading...</option>
+            </select>
+          </form>
+        </div>
+    
+        <div id="table-list"></div>
+      </div>
+    </div>
+  </body>
+</html>
