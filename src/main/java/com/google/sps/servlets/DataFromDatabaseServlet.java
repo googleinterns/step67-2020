@@ -42,11 +42,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
-        List<ColumnSchema> columnSchemas = new ArrayList<>();
-        while (resultSet.next()) {
-          columnSchemas.add(createColumnSchema(resultSet));
-        }
-        checkTableHasColumns(columnSchemas);
+          
+        List<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
  
         Table.Builder tableBuilder = Table.builder().setName(table);
         Statement queryStatement = constructQueryStatement(columnSchemas, table);
@@ -75,6 +72,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
       columnNamesBuilder.add(colSchema.columnName());
     }
     return columnNamesBuilder.build();
+  }
+
+  private List<ColumnSchema> initColumnSchemas(ResultSet resultSet) {
+    List<ColumnSchema> columnSchemas = new ArrayList<>();
+    while (resultSet.next()) {
+      columnSchemas.add(createColumnSchema(resultSet));
+    }
+    checkTableHasColumns(columnSchemas);
+    return columnSchemas;
   }
 
   private ColumnSchema createColumnSchema(ResultSet resultSet) {
