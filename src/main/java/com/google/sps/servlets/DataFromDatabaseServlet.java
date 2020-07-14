@@ -13,11 +13,13 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
 
 @WebServlet("/data-from-db")
 public class DataFromDatabaseServlet extends HttpServlet {
@@ -28,38 +30,30 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    response.setContentType(constants.TEXT_TYPE);
     selectedTables = request.getParameterValues(constants.TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(constants.DATABASE_PARAM);
     initDatabaseClient(databaseName);
 
-    response.setContentType(constants.TEXT_TYPE);
     List<Table> tables = new ArrayList<>();
 
     for (String table : selectedTables) {
-      String columnQuery = constants.SCHEMA_INFO_SQL + table + constants.ENDING_APOSTROPHE;
+      String columnQuery = constants.SCHEMA_INFO_SQL + table + "'";
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
-        List<Schema> schemas = new ArrayList<>();
-        while (resultSet.next()) {
-          schemas.add(createSchema(resultSet));
-        }
- 
-        // No columns -> throw error
-        if (schemas.size() == 0) {
-          throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
-        }
+          
+        List<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
  
         Table.Builder tableBuilder = Table.builder().setName(table);
-
-        ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
-        Statement queryStatement = constructQueryStatement(schemas, columnNamesBuilder, table);
-        ImmutableList<String> columnNames = columnNamesBuilder.build();
-        tableBuilder.setColumns(columnNames);
-
-        executeTableQuery(tableBuilder, queryStatement, schemas);
+        Statement queryStatement = constructQueryStatement(columnSchemas, table);
+        executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
+<<<<<<< HEAD
         tableBuilder.setSchemas(schemas);
+=======
+        tableBuilder.setColumns(createColumnNamesList(columnSchemas));
+>>>>>>> master
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
       }
@@ -68,7 +62,32 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  private Schema createSchema(ResultSet resultSet) {
+  private void checkTableHasColumns(List<ColumnSchema> columnSchemas) {
+    // No columns -> throw error
+    if (columnSchemas.size() == 0) {
+      throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
+    }
+  } 
+
+  //TODO (issue 15): get rid of the list of columns for table, because it's already in the ColumnSchema
+  private ImmutableList<String> createColumnNamesList(List<ColumnSchema> columnSchemas) {
+    ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
+    for (ColumnSchema colSchema : columnSchemas) {
+      columnNamesBuilder.add(colSchema.columnName());
+    }
+    return columnNamesBuilder.build();
+  }
+
+  private List<ColumnSchema> initColumnSchemas(ResultSet resultSet) {
+    List<ColumnSchema> columnSchemas = new ArrayList<>();
+    while (resultSet.next()) {
+      columnSchemas.add(createColumnSchema(resultSet));
+    }
+    checkTableHasColumns(columnSchemas);
+    return columnSchemas;
+  }
+
+  private ColumnSchema createColumnSchema(ResultSet resultSet) {
     String columnName = resultSet.getString(0);
     String schemaType = resultSet.getString(1);
 
@@ -77,24 +96,25 @@ public class DataFromDatabaseServlet extends HttpServlet {
     if (indexOfOpeningParen >= 0) {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
-    String nullableString = resultSet.getString(2);
-    boolean nullable = false;
-    if (nullableString.toLowerCase().equals(constants.TRUE)) {
-      nullable = true;
+
+    // Convert YES/NO String to true/false boolean
+    String isNullableColumn = resultSet.getString(2);
+    boolean isNullable = false;
+    if (isNullableColumn.toLowerCase().equals("YES")) {
+      isNullable = true;
     }
-    return Schema.create(columnName, schemaType, nullable);
+    return ColumnSchema.create(columnName, schemaType, isNullable);
   }
 
-  private Statement constructQueryStatement(List<Schema> schemas, ImmutableList.Builder<String> columnNamesBuilder, String table) {
-    StringBuilder query = new StringBuilder(constants.SELECT);
+  // Construct SQL statement of form SELECT <columns list> FROM <table>
+  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table) {
+    StringBuilder query = new StringBuilder("SELECT ");
 
-    for (Schema schema : schemas) {
-      String columnName = schema.columnName();
-      query.append(columnName + constants.COMMA);
-      columnNamesBuilder.add(columnName);
+    for (ColumnSchema columnSchema : columnSchemas) {
+      query.append(columnSchema.columnName() + ", ");
     }
-    query.deleteCharAt(query.length() - 1);
-    query.append(constants.FROM + table); 
+    query.deleteCharAt(query.length() - 1); //Get rid of extra space
+    query.append(" FROM " + table); 
     Statement statement = Statement.newBuilder(query.toString()).build();
     return statement;
   }
@@ -103,23 +123,23 @@ public class DataFromDatabaseServlet extends HttpServlet {
     this.dbClient = DatabaseConnector.getInstance().getDbClient(databaseName);
   }
 
-   private void executeTableQuery(Table.Builder tableBuilder, Statement query, List<Schema> schemas) throws IOException {
+   private void executeTableQuery(Table.Builder tableBuilder, Statement query, List<ColumnSchema> columnSchemas) throws IOException {
     try (ResultSet resultSet =
       dbClient
       .singleUse() 
       .executeQuery(query)) {
-
+        
       while (resultSet.next()) {
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
-        for (Schema schema : schemas) {
+        for (ColumnSchema schema : columnSchemas) {
           String columnName = schema.columnName();
  
-          // If there is a null in this col here, just print out NULL for now.
+          // If there is a null in this col here, print out NULL for now.
           if (resultSet.isNull(columnName)) {
-            rowBuilder.add(constants.NULL);
+            rowBuilder.add("NULL");
             continue;
           }
- 
+
           String dataType = schema.schemaType();
           addDataToRow(dataType, rowBuilder, columnName, resultSet);
         }
@@ -136,20 +156,20 @@ public class DataFromDatabaseServlet extends HttpServlet {
         rowBuilder.add(resultSet.getString(columnName));
         break;
       case "BOOL":
-        rowBuilder.add(constants.EMPTY_STRING + resultSet.getBoolean(columnName));
+        rowBuilder.add("" + resultSet.getBoolean(columnName));
         break;
       case "INT64":
-        rowBuilder.add(constants.EMPTY_STRING + resultSet.getLong(columnName));
+        rowBuilder.add("" + resultSet.getLong(columnName));
         break;
       case "BYTES":
         String byteToString = bytesToString(resultSet.getBytes(columnName));
         rowBuilder.add(byteToString);
         break;
       case "TIMESTAMP":
-        rowBuilder.add(constants.EMPTY_STRING + resultSet.getTimestamp(columnName));
+        rowBuilder.add("" + resultSet.getTimestamp(columnName));
         break;
       case "DATE":
-        rowBuilder.add(constants.EMPTY_STRING + resultSet.getDate(columnName));
+        rowBuilder.add("" + resultSet.getDate(columnName));
         break;
       case "ARRAY<INT64>":
         String arrayToString = longArrayToString(resultSet.getLongArray(columnName));
@@ -161,17 +181,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
   }
 
   private String longArrayToString(long[] longArray) {
-    StringBuilder arrayToStringBuilder = new StringBuilder(constants.OPEN_BRACKET);
-    for (long l : longArray) {
-      arrayToStringBuilder.append(l + constants.COMMA);
-    }
-
-    // Remove extra space and comma at the end
-    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
-    arrayToStringBuilder.deleteCharAt(arrayToStringBuilder.length() - 1);
-    
-    arrayToStringBuilder.append(constants.CLOSE_BRACKET);
-    return arrayToStringBuilder.toString();
+    return "[" + StringUtils.join(longArray, ',') + "]";
   }
 
   private String bytesToString(ByteArray bytes) {

@@ -33,8 +33,7 @@ public class TablesFromDatabaseServlet extends HttpServlet {
     if (request.getParameter(constants.DATABASE_PARAM) != null) {
       selectedDatabase = request.getParameter(constants.DATABASE_PARAM);
     }
-
-    if (selectedDatabase == null || selectedDatabase.equals(constants.EMPTY_STRING)) {
+    if (selectedDatabase == null || selectedDatabase.equals("")) {
       response.sendRedirect(constants.NULL_REDIRECT);
       return;
     }
