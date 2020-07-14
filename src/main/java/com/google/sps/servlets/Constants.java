@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 class Constants {
+  static final String DATABASE_ERROR = "Database not in list";
   static final String DATABASE_PARAM = "list-databases";
   static final String EMPTY_TABLE_ERROR = "Table is empty.";
   static final String ENCODING_ERROR = "Unable to encode";
