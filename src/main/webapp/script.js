@@ -1,4 +1,3 @@
-
 function getDatabases(){
   fetch("/databases").then(response => response.json()).then((list) => {
     let dropdown = document.getElementById('list-databases');
@@ -52,9 +51,16 @@ function getTablesList() {
     for (let index = 0; index < list.length; index++) {
       addTableOption(list[index]);
     }
+    addSpace();
     addReasonInput();
     createSubmit();
   });
+}
+
+function addSpace() {
+  const spaceDiv = document.createElement("div");
+  spaceDiv.setAttribute("style", "padding:20px");
+  document.getElementById("table-form").appendChild(spaceDiv);
 }
  
 function createSelectElement() {
@@ -91,7 +97,9 @@ function addDatabaseToQueryString() {
 function addReasonInput() {
   const reason = document.createElement("input");
   reason.setAttribute("type", "text");
-  reason.setAttribute("id", "reason");
+  reason.setAttribute("name", "reason");
+  reason.setAttribute("placeholder", "Enter reason for use.");
+  reason.setAttribute("required", "true");  
   document.getElementById("table-form").appendChild(reason);
 }
  
