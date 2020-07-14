@@ -24,7 +24,7 @@ function showFiltersPanel(){
 
 //Returns checkbox dropdowns of the selected table's columns which can then be filtered
 function filterColumns() {
-  fetch("/filters").then(response => response.json()).then((tables) => {
+  fetch("/columns-from-tb").then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
     
@@ -79,7 +79,7 @@ function filterColumns() {
             checkboxes.style.display = "block";
         } else {
             checkboxes.style.display = "none";
-      }
+        }
      };
 
         tableFilters.appendChild(select);

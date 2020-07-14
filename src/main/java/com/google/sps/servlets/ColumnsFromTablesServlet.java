@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns an HTML list of all the columns of based on the selected tables. */
-@WebServlet("/filters")
+@WebServlet("/columns-from-tb")
 public class ColumnsFromTables extends HttpServlet {
     private static final String  TABLE_SELECT_PARAM =  "table-select";
     private static final String DATABASE_SELECT_PARAM = "list-databases";
@@ -40,7 +40,6 @@ public class ColumnsFromTables extends HttpServlet {
     private static String SELECTED_TABLES = "";
     private static String GET_COLUMNS_FROM_TABLES = "SELECT table_name, ARRAY_AGG(column_name) FROM information_schema.columns WHERE table_name in(";
     private static String SELECTED_DATABASE = "";
-
 
     DatabaseClient dbClient;
 
