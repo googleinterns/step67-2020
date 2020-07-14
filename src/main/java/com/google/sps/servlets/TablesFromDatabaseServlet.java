@@ -34,7 +34,7 @@ public class TablesFromDatabaseServlet extends HttpServlet {
       selectedDatabase = request.getParameter(constants.DATABASE_PARAM);
     }
 
-    if (selectedDatabase == null || selectedDatabase.equals(constants.EMPTY_STRING)) {
+    if (selectedDatabase == null || selectedDatabase.equals("")) {
       response.sendRedirect(constants.NULL_REDIRECT);
       return;
     }
@@ -51,11 +51,11 @@ public class TablesFromDatabaseServlet extends HttpServlet {
         dbClient
             .singleUse() 
             .executeQuery(Statement.of(constants.GET_TABLE_SQL))) {
-      List<String> tables = new ArrayList<>();
+      List<String> tableNames = new ArrayList<>();
       while (resultSet.next()) {
-        tables.add(resultSet.getString(0));
+        tableNames.add(resultSet.getString(0));
       }
-      String json = new Gson().toJson(tables);
+      String json = new Gson().toJson(tableNames);
       response.getWriter().println(json);
     }
   }
