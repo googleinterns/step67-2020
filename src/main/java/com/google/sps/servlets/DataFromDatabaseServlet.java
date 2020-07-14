@@ -43,13 +43,13 @@ public class DataFromDatabaseServlet extends HttpServlet {
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
           
-        List<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
- 
+        ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
+        
         Table.Builder tableBuilder = Table.builder().setName(table);
+        tableBuilder.setColumnSchemas(columnSchemas);
         Statement queryStatement = constructQueryStatement(columnSchemas, table);
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
-        tableBuilder.setColumns(createColumnNamesList(columnSchemas));
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
       }
@@ -58,27 +58,19 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  private void checkTableHasColumns(List<ColumnSchema> columnSchemas) {
+  private void checkTableHasColumns(ImmutableList<ColumnSchema> columnSchemas) {
     // No columns -> throw error
     if (columnSchemas.size() == 0) {
       throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
     }
   } 
 
-  //TODO (issue 15): get rid of the list of columns for table, because it's already in the ColumnSchema
-  private ImmutableList<String> createColumnNamesList(List<ColumnSchema> columnSchemas) {
-    ImmutableList.Builder<String> columnNamesBuilder = new ImmutableList.Builder<String>();
-    for (ColumnSchema colSchema : columnSchemas) {
-      columnNamesBuilder.add(colSchema.columnName());
-    }
-    return columnNamesBuilder.build();
-  }
-
-  private List<ColumnSchema> initColumnSchemas(ResultSet resultSet) {
-    List<ColumnSchema> columnSchemas = new ArrayList<>();
+  private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet) {
+    ImmutableList.Builder<ColumnSchema> colSchemaBuilder = new ImmutableList.Builder<>();
     while (resultSet.next()) {
-      columnSchemas.add(createColumnSchema(resultSet));
+      colSchemaBuilder.add(createColumnSchema(resultSet));
     }
+    ImmutableList<ColumnSchema> columnSchemas = colSchemaBuilder.build();
     checkTableHasColumns(columnSchemas);
     return columnSchemas;
   }
@@ -127,8 +119,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
         
       while (resultSet.next()) {
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
-        for (ColumnSchema schema : columnSchemas) {
-          String columnName = schema.columnName();
+        for (ColumnSchema columnSchema : columnSchemas) {
+          String columnName = columnSchema.columnName();
  
           // If there is a null in this col here, print out NULL for now.
           if (resultSet.isNull(columnName)) {
@@ -136,7 +128,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
             continue;
           }
 
-          String dataType = schema.schemaType();
+          String dataType = columnSchema.schemaType();
           addDataToRow(dataType, rowBuilder, columnName, resultSet);
         }
 
