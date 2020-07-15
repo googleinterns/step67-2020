@@ -18,6 +18,11 @@ function showDatabase() {
       const table = createTable(name);
       const colSchemas = tableData.columnSchemas;
       table.appendChild(makeTableHeaders(colSchemas));
+
+      const dataTable = tableData.dataTable;
+      let tableObj = new Table(dataTable);
+      tableObj.fetchTable();
+      tablesList.push(tableObj);
  
       // add data
       makeRows(tableData.dataTable, table);
@@ -74,13 +79,75 @@ function createTable(name) {
 }
 
 function mainLoad(){
-    showDatabase();
-    login();
+  showDatabase();
+  login();
 }
 
 function login(){
-  console.log("login");
-  fetch("/login").then(response => response.json()).then((user) => {
-    document.getElementById("user").innerText = user;
-  });
+  // fetch("/login").then(response => response.json()).then((user) => {
+  //   document.getElementById("user").innerText = user;
+  // });
 }
+
+
+
+
+
+
+class Table {
+  constructor(dataTable) {
+    this.dataTable = dataTable;
+    this.setDataTable = this.setDataTable.bind(this);
+  }
+
+  fetchTable() {
+    this.renderLoadingMessage();
+    setTimeout(function() {
+      this.renderTable();
+    }.bind(this), 1000);
+  }
+
+  sortRows() {
+    const newRows = this.rows.slice();
+    newRows.sort();
+    this.setRows(newRows);
+  }
+
+  setDataTable(dataTable) {
+    this.dataTable = dataTable;
+    this.renderTable();
+  }
+
+  renderLoadingMessage() {
+    document.getElementById("tables").innerText = 'Loading...';
+  }
+
+  renderTable() {
+    const table = document.createElement("table");
+
+    let index;
+    for (index in this.dataTable) {
+      const row = this.dataTable[index];
+      const rowElement = document.createElement("tr");
+  
+      let rowIndex;
+      for (rowIndex in row) {
+        const dataPoint = row[rowIndex];
+        const dataPointElement = document.createElement("td");
+        dataPointElement.innerText = dataPoint;
+        rowElement.appendChild(dataPointElement);
+      }
+  
+      table.appendChild(rowElement);
+    }
+
+    let tablesDiv = document.getElementById("tables");
+    tablesDiv.innerText = '';
+    tablesDiv.appendChild(table);
+  }
+}
+
+//let table = new Table();
+//will have to make an object that stores multiple tables?
+
+let tablesList = [];
