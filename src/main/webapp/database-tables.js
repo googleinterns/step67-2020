@@ -1,81 +1,35 @@
 function showDatabase() {
   const search = window.location.search;
   const queryString = '/data-from-db' + search;
+  document.getElementById("tables").innerText = 'Loading...';
+
+  tablesList = [];
  
   fetch(queryString)
   .then(response => response.json())
   .then((data) => { 
     const dataArea = document.getElementById("data");
     
+    let count = 0;
     for (tableIndex in data) {
       const tableData = data[tableIndex];
  
       // Make header for table (show name)
       const name = tableData.name;
-      createTableName(name, dataArea);
  
       // Make table itself, add headers for column names
-      const table = createTable(name);
       const colSchemas = tableData.columnSchemas;
-      table.appendChild(makeTableHeaders(colSchemas));
 
       const dataTable = tableData.dataTable;
-      let tableObj = new Table(dataTable);
+      let tableObj = new Table(dataTable, name, colSchemas, count);
+      document.getElementById("tables").innerText = '';
+
       tableObj.fetchTable();
       tablesList.push(tableObj);
- 
-      // add data
-      makeRows(tableData.dataTable, table);
-      dataArea.appendChild(table);
+      console.log(tablesList.length)
+      count++;
     }
   });
-}
- 
-// Create column name labels for table
-function makeTableHeaders(colSchemas) {
-  const columnNamesRow = document.createElement("tr");
- 
-  let index;
-  for (index in colSchemas) {
-    const colSchema = colSchemas[index];
-    const columnTitle = addColumnHeader(colSchema.columnName);
-    columnNamesRow.appendChild(columnTitle);
-  }
-  return columnNamesRow;
-}
- 
-function makeRows(rows, table) {
-  for (index in rows) {
-    const row = rows[index];
-    const rowElement = document.createElement("tr");
- 
-    for (rowIndex in row) {
-      const dataPoint = row[rowIndex];
-      const dataPointElement = document.createElement("td");
-      dataPointElement.innerText = dataPoint;
-      rowElement.appendChild(dataPointElement);
-    }
- 
-    table.appendChild(rowElement);
-  }
-}
- 
-function addColumnHeader(colName) {
-  const columnHeader = document.createElement("th");
-  columnHeader.innerText = colName;
-  return columnHeader;
-}
- 
-function createTableName(name, dataArea) {
-  const header = document.createElement("h2");
-  header.innerText = name;
-  dataArea.appendChild(header);
-}
- 
-function createTable(name) {
-  const table = document.createElement("table");
-  table.setAttribute("id", "table_" + name);
-  return table;
 }
 
 function mainLoad(){
@@ -95,13 +49,15 @@ function login(){
 
 
 class Table {
-  constructor(dataTable) {
+  constructor(dataTable, name, colSchemas, id) {
     this.dataTable = dataTable;
+    this.name = name;
+    this.colSchemas = colSchemas;
+    this.id = id;
     this.setDataTable = this.setDataTable.bind(this);
   }
 
   fetchTable() {
-    this.renderLoadingMessage();
     setTimeout(function() {
       this.renderTable();
     }.bind(this), 1000);
@@ -118,12 +74,20 @@ class Table {
     this.renderTable();
   }
 
-  renderLoadingMessage() {
-    document.getElementById("tables").innerText = 'Loading...';
+  setTable(dataTable) {
+    this.dataTable = dataTable;
+  }
+
+  remove() {
+    document.getElementById("table_" + this.name).remove();
+    document.getElementById("header_" + this.name).remove();
   }
 
   renderTable() {
     const table = document.createElement("table");
+    table.setAttribute("id", "table_" + this.name);
+
+    table.appendChild(this.makeTableHeaders());
 
     let index;
     for (index in this.dataTable) {
@@ -142,12 +106,69 @@ class Table {
     }
 
     let tablesDiv = document.getElementById("tables");
-    tablesDiv.innerText = '';
+    this.addHeader(tablesDiv);
     tablesDiv.appendChild(table);
+  }
+
+  addHeader(tablesDiv) {
+    const header = document.createElement("h2");
+    header.setAttribute("id", "header_" + this.name);
+    header.innerText = this.name;
+    tablesDiv.appendChild(header);
+  }
+
+  addColumnHeader(colName, index) {
+    const columnHeader = document.createElement("th");
+    const id = this.id;
+    columnHeader.onclick = function() {sort(index, id)};
+    columnHeader.innerText = colName;
+    return columnHeader;
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  // Create column name labels for table
+  makeTableHeaders() {
+    const columnNamesRow = document.createElement("tr");
+  
+    let index;
+    for (index in this.colSchemas) {
+      const colSchema = this.colSchemas[index];
+      const columnTitle = this.addColumnHeader(colSchema.columnName, index);
+      columnNamesRow.appendChild(columnTitle);
+    }
+    return columnNamesRow;
+  }
+
+  getDataTable() {
+    return this.dataTable;
   }
 }
 
-//let table = new Table();
-//will have to make an object that stores multiple tables?
+function sort(index, id) {
+  let table = tablesList[id];
+  const name = table.getName();
+  const tableElement = document.getElementById("table_" + name);
+  tableElement.innerText = "";
+  const headerElement = document.getElementById("header_" + name);
+  headerElement.innerText = "";
+
+  let dataTable = table.getDataTable();
+
+  dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
+
+  table.setTable(dataTable);
+
+  //need to empty and rerender
+  let tableIndex = 0;
+  for (tableIndex in tablesList) {
+    const tableObj = tablesList[tableIndex];
+    tableObj.remove();
+    tableObj.renderTable();
+  }
+  
+}
 
 let tablesList = [];

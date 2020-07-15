@@ -78,9 +78,12 @@ public class ColumnsFromTablesServlet extends HttpServlet {
             }
         }
 
+        constant.QUERY = "";
+
       //Converting resultList into JSON data
       String json = convertToJsonUsingGson(data);
       response.getWriter().println(json);
+      constant.QUERY = "";
     }
 
     private String convertToJsonUsingGson(Multimap<String, Object> data) {
