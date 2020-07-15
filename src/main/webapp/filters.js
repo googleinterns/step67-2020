@@ -14,17 +14,20 @@ function isFilterInputEmpty(){
 }
 
 function showFiltersPanel(){
-  var x = document.getElementById("filter-box");
-  if (x.style.display === "none") {
-    x.style.display = "block";
+  var filterBox = document.getElementById("filter-box");
+  if (filterBox.style.display === "none") {
+    filterBox.style.display = "block";
   } else {
-    x.style.display = "none";
+    filterBox.style.display = "none";
   }
 }
 
 //Returns checkbox dropdowns of the selected table's columns which can then be filtered
 function filterColumns() {
-  fetch("/columns-from-tb").then(response => response.json()).then((tables) => {
+  var queryString = window.location.search;
+  var url = "/columns-from-tables";
+  console.log(url + queryString);
+  fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
     
@@ -69,8 +72,6 @@ function filterColumns() {
         var boxDiv = document.createElement('div');
         boxDiv.style.padding ='4px';
         checkboxes.appendChild(boxDiv);
-
-        console.log(keys, col, tables[keys][0][col]);
       }
 
       //onclick event that will hide/show column filters
@@ -82,11 +83,11 @@ function filterColumns() {
         }
      };
 
-        tableFilters.appendChild(select);
-        tableFilters.appendChild(checkboxes);
-        var div = document.createElement('div');
-        div.style.padding ='10px';
-        tableFilters.appendChild(div);
+      tableFilters.appendChild(select);
+      tableFilters.appendChild(checkboxes);
+      var div = document.createElement('div');
+      div.style.padding ='10px';
+      tableFilters.appendChild(div);
     }   
   });
 }

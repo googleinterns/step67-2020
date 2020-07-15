@@ -5,6 +5,6 @@ com/google/sps/servlets/ExampleDbServlet.class
 com/google/sps/servlets/AutoValue_Schema.class
 com/google/sps/servlets/Schema.class
 com/google/sps/servlets/BeetleDbServlet.class
+com/google/sps/servlets/ColumnsFromTablesServlet.class
 com/google/sps/servlets/DataFromDatabaseServlet.class
-com/google/sps/servlets/ColumnsFromTables.class
 com/google/sps/servlets/Constants.class

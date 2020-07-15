@@ -32,15 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that returns an HTML list of all the columns of based on the selected tables. */
-@WebServlet("/columns-from-tb")
-public class ColumnsFromTables extends HttpServlet {
-    private static final String  TABLE_SELECT_PARAM =  "table-select";
-    private static final String DATABASE_SELECT_PARAM = "list-databases";
-    private static final String COMMA = ", ";
-    private static String SELECTED_TABLES = "";
-    private static String GET_COLUMNS_FROM_TABLES = "SELECT table_name, ARRAY_AGG(column_name) FROM information_schema.columns WHERE table_name in(";
-    private static String SELECTED_DATABASE = "";
-
+@WebServlet("/columns-from-tables")
+public class ColumnsFromTablesServlet extends HttpServlet {
+    Constants constant = new Constants();
+    
     DatabaseClient dbClient;
 
     public void init() {
@@ -56,15 +51,28 @@ public class ColumnsFromTables extends HttpServlet {
       Multimap<String, Object> data = ArrayListMultimap.create();
 
       //Parsing the URL for the query parameters
-      String[] listOfTables = request.getParameterValues(TABLE_SELECT_PARAM);
-      System.out.println(listOfTables.length);
+      String[] listOfTables = request.getParameterValues(constant.TABLE_SELECT_PARAM);
 
-      String qry = "SELECT table_name, ARRAY_AGG(column_name) FROM information_schema.columns WHERE table_name in ('Singers', 'Songs', 'Albums') group by table_name";
+      if(listOfTables.length == 1){
+          constant.QUERY = constant.QUERY + constant.GET_COLUMNS_FROM_TABLES + "\'" + listOfTables[0] + "\'" + constant.GROUP_BY_TABLE_NAMES;
+      }else{
+          constant.QUERY = constant.QUERY + constant.GET_COLUMNS_FROM_TABLES;
+          for(int i = 0; i < listOfTables.length; i++){
+              if(i != listOfTables.length-1){
+                constant.SELECTED_TABLES = "\'" + listOfTables[i] + "\'";
+                constant.QUERY = constant.QUERY + constant.SELECTED_TABLES + constant.COMMA;
+              }else{
+                  constant.SELECTED_TABLES = "\'" + listOfTables[i] + "\'";
+                  constant.QUERY = constant.QUERY + constant.SELECTED_TABLES;
+                }
+            }
+          constant.QUERY = constant.QUERY + constant.GROUP_BY_TABLE_NAMES;   
+        }
 
       try (ResultSet resultSet =
         dbClient
             .singleUse() // Execute a single read or query against Cloud Spanner.
-            .executeQuery(Statement.of(qry))) {
+            .executeQuery(Statement.of(constant.QUERY))) {
             while (resultSet.next()) {
               data.put(resultSet.getString(0), resultSet.getStringList(1));
             }
