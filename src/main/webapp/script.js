@@ -10,11 +10,11 @@ function getDatabases(){
 
     let option;
     
-    for (let i in list) {
+    for (let index in list) {
       option = document.createElement('option');
-      option.text = list[i];
-      option.value = list[i];
-      if(list[i] != null){
+      option.text = list[index];
+      option.value = list[index];
+      if(list[index] != null){
         dropdown.add(option);
       } 
     }
