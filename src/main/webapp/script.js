@@ -66,6 +66,7 @@ function submitDatabaseForm() {
   document.getElementById("database-select-form").submit();
 }
  
+// Get and create list of tables in the selected database
 function getTablesList() {
   const tablesUrl = '/tables-from-db';
   const search = window.location.search;
@@ -100,12 +101,14 @@ function getTablesList() {
   });
 }
 
+// Add spacing for formatting
 function addSpace() {
   const spaceDiv = document.createElement("div");
   spaceDiv.setAttribute("id", "space");
   document.getElementById("table-form").appendChild(spaceDiv);
 }
 
+// Add instructions for table selection
 function addTableSelectInstr() {
   const instruction = document.createElement("p");
   instruction.setAttribute("id", "instruction");
@@ -113,6 +116,7 @@ function addTableSelectInstr() {
   document.getElementById("table-form").appendChild(instruction);
 }
  
+// Create element for table selection
 function createSelectElement() {
   const select = document.createElement("SELECT");
   select.setAttribute("id", "table-select");
@@ -134,6 +138,7 @@ function createForm(tableListSpace) {
   tableListSpace.appendChild(form);
 }
  
+// Add hidden form input to send database name on form submit
 function addDatabaseToQueryString() {
   const searchString = window.location.search;
   const index = searchString.indexOf("=");
