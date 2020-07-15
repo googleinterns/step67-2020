@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ExampleDbServlet extends HttpServlet {
 
   DatabaseClient dbClient;
-
+   
   public void init() {
     Spanner spanner = SpannerOptions.newBuilder().build().getService();
     DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", "example-db");

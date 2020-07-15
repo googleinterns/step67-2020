@@ -21,6 +21,47 @@ function getDatabases(){
   });
 }
 
+function submitDatabaseForm() { 
+  document.getElementById("database-select-form").submit();
+}
+
+//Get database and selected tables from query string and /tables-from-db
+function getDatabaseAndTable(){
+    const tablesUrl = '/tables-from-db';
+    const search = window.location.search;
+    const queryString = tablesUrl + search;
+    var startIndex = 0;
+    var databaseString= "";
+    
+    for (var i = 0; i<search.length; i++){
+        if (search.charAt(i) == '='){
+            startIndex = i;
+        } else if (search.charAt(i) == '&'){
+            break;
+        } else{
+            databaseString += search.charAt(i);
+        }
+    }
+
+    databaseString = databaseString.substring(startIndex);
+    fetch(queryString)
+    .then(response => response.json())
+    .then((list) => { 
+        const dbText = document.createElement('p');
+        dbText.innerText = "Database: " + databaseString;
+        const tableText = document.createElement('p');
+        tableText.innerText = "List of selected tables:  ";
+        const databaseTable = document.getElementById('DB-T');
+        databaseTable.appendChild(dbText);
+        databaseTable.appendChild(tableText);
+
+        for (let index = 0; index < list.length; index++) {
+            databaseTable.appendChild(
+            createListElement(list[index]));
+        }
+    });
+}
+
 function submitDatabaseForm() {
   document.getElementById("database-select-form").submit();
 }
@@ -101,4 +142,18 @@ function addTableOption(text) {
 function onLoad() {
   getDatabases();
   getTablesList();
+  login();
+}
+
+function createListElement(text) {
+  const liElement = document.createElement('li');
+  liElement.innerText = text;
+  return liElement;
+}
+
+function login(){
+  console.log("login");
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
 }

@@ -1,3 +1,4 @@
+
 #filter-box{
     border-style: solid;
     border-width: 1px;
@@ -8,4 +9,10 @@
 
 input{
     margin-left: 4px;
+  
+#user {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  font-size: 18px;
 }
