@@ -38,12 +38,6 @@ public class ColumnsFromTablesServlet extends HttpServlet {
     
     DatabaseClient dbClient;
 
-    public void init() {
-      Spanner spanner = SpannerOptions.newBuilder().build().getService();
-      DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", "example-db");
-      this.dbClient = spanner.getDatabaseClient(db);
-    }
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
       response.setContentType("application/JSON;"); 
@@ -52,6 +46,12 @@ public class ColumnsFromTablesServlet extends HttpServlet {
 
       //Parsing the URL for the query parameters
       String[] listOfTables = request.getParameterValues(constant.TABLE_SELECT_PARAM);
+      String database = request.getParameter(constant.DATABASE_PARAM);
+
+
+      Spanner spanner = SpannerOptions.newBuilder().build().getService();
+      DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", database);
+      this.dbClient = spanner.getDatabaseClient(db);
 
       if(listOfTables.length == 1){
           constant.QUERY = constant.QUERY + constant.GET_COLUMNS_FROM_TABLES + "\'" + listOfTables[0] + "\'" + constant.GROUP_BY_TABLE_NAMES;
