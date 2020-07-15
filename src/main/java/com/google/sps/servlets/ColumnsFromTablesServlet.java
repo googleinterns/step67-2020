@@ -60,7 +60,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
           for(int i = 0; i < listOfTables.length; i++){
               if(i != listOfTables.length-1){
                 constant.SELECTED_TABLES = "\'" + listOfTables[i] + "\'";
-                constant.QUERY = constant.QUERY + constant.SELECTED_TABLES + constant.COMMA;
+                constant.QUERY = constant.QUERY + constant.SELECTED_TABLES + ", ";
               }else{
                   constant.SELECTED_TABLES = "\'" + listOfTables[i] + "\'";
                   constant.QUERY = constant.QUERY + constant.SELECTED_TABLES;
