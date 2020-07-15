@@ -16,8 +16,8 @@ function showDatabase() {
  
       // Make table itself, add headers for column names
       const table = createTable(name);
-      const colsArray = tableData.columns;
-      table.appendChild(makeTableHeaders(colsArray));
+      const colSchemas = tableData.columnSchemas;
+      table.appendChild(makeTableHeaders(colSchemas));
  
       // add data
       makeRows(tableData.dataTable, table);
@@ -27,12 +27,13 @@ function showDatabase() {
 }
  
 // Create column name labels for table
-function makeTableHeaders(colsArray) {
+function makeTableHeaders(colSchemas) {
   const columnNamesRow = document.createElement("tr");
  
   let index;
-  for (index in colsArray) {
-    const columnTitle = addColumnHeader(colsArray[index]);
+  for (index in colSchemas) {
+    const colSchema = colSchemas[index];
+    const columnTitle = addColumnHeader(colSchema.columnName);
     columnNamesRow.appendChild(columnTitle);
   }
   return columnNamesRow;
