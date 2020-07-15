@@ -26,7 +26,6 @@ function showDatabase() {
 
       tableObj.fetchTable();
       tablesList.push(tableObj);
-      console.log(tablesList.length)
       count++;
     }
   });
@@ -54,7 +53,29 @@ class Table {
     this.name = name;
     this.colSchemas = colSchemas;
     this.id = id;
+    this.typeTable = new Array(dataTable.length);
+    this.makeTypeTable();
     this.setDataTable = this.setDataTable.bind(this);
+  }
+
+  makeTypeTable() {
+    let rowIndex = 0;
+    for (rowIndex in this.dataTable) {
+      const row = this.dataTable[rowIndex];
+      this.typeTable[rowIndex] = new Array(row.length);
+  
+      let col;
+      for (col in row) {
+        const cell = row[col];
+        const type = this.getDataType(col);
+        if (type == "INT64") {
+          const cellToInt = parseInt(cell);
+          this.typeTable[rowIndex][col] = cellToInt;
+        } else {
+          this.typeTable[rowIndex][col] = cell;
+        }
+      }
+    }
   }
 
   fetchTable() {
@@ -69,13 +90,13 @@ class Table {
     this.setRows(newRows);
   }
 
-  setDataTable(dataTable) {
-    this.dataTable = dataTable;
+  setDataTable(typeTable) {
+    this.typeTable = typeTable;
     this.renderTable();
   }
 
-  setTable(dataTable) {
-    this.dataTable = dataTable;
+  setTable(typeTable) {
+    this.typeTable = typeTable;
   }
 
   remove() {
@@ -90,8 +111,8 @@ class Table {
     table.appendChild(this.makeTableHeaders());
 
     let index;
-    for (index in this.dataTable) {
-      const row = this.dataTable[index];
+    for (index in this.typeTable) {
+      const row = this.typeTable[index];
       const rowElement = document.createElement("tr");
   
       let rowIndex;
@@ -143,7 +164,12 @@ class Table {
   }
 
   getDataTable() {
-    return this.dataTable;
+    return this.typeTable;
+  }
+
+  getDataType(colIndex) {
+    const colSchema = this.colSchemas[colIndex];
+    return colSchema.schemaType;
   }
 }
 
@@ -156,8 +182,14 @@ function sort(index, id) {
   headerElement.innerText = "";
 
   let dataTable = table.getDataTable();
+  const dataType = table.getDataType(index);
+  console.log(dataType)
 
-  dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
+  if (dataType == "INT64") {
+    dataTable.sort(function(a,b){return a[index] - b[index];});
+  } else {
+    dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
+  }
 
   table.setTable(dataTable);
 
