@@ -64,7 +64,6 @@ function getDatabaseAndTable(){
 
 function submitDatabaseForm() {
   document.getElementById("database-select-form").submit();
-  console.log('here')
 }
  
 function getTablesList() {
@@ -82,6 +81,7 @@ function getTablesList() {
     // No tables in this database
     if (list.length == 0) {
       const errorMessage = document.createElement('p');
+      errorMessage.setAttribute("id", "instruction");
       errorMessage.innerText = "This database has no tables.";
       tableListSpace.appendChild(errorMessage);
       return;
@@ -89,6 +89,7 @@ function getTablesList() {
     
     createForm(tableListSpace);
     addSpace();
+    addTableSelectInstr();
     createSelectElement();
     for (let index = 0; index < list.length; index++) {
       addTableOption(list[index]);
@@ -103,6 +104,13 @@ function addSpace() {
   const spaceDiv = document.createElement("div");
   spaceDiv.setAttribute("id", "space");
   document.getElementById("table-form").appendChild(spaceDiv);
+}
+
+function addTableSelectInstr() {
+  const instruction = document.createElement("p");
+  instruction.setAttribute("id", "instruction");
+  instruction.innerText = "Press CTRL to select multiple."
+  document.getElementById("table-form").appendChild(instruction);
 }
  
 function createSelectElement() {
@@ -172,7 +180,6 @@ function createListElement(text) {
 }
 
 function login(){
-  console.log("login");
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
   });

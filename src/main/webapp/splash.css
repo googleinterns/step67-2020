@@ -54,5 +54,10 @@ input[type=submit] {
 }
 
 #space {
-  padding: 20px;
+  padding: 10px;
+}
+
+#instruction {
+  font-size: 15px;
+  color: white;
 }

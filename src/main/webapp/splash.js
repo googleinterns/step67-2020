@@ -10,7 +10,6 @@ function hideElement() {
 
 function getReason() {
   const input = document.getElementById("reason").value;
-  console.log(input);
 
   const resultArea = document.getElementById("reason-holder");
   resultArea.textContent = input;
