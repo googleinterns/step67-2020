@@ -1,43 +1,45 @@
 //Boolean to ensure data only shows after first click
 var showing = Boolean(false)
+
 function showDatabase() {
-  if (!showing){ 
+  if (!showing) { 
     showing = true;
     const search = window.location.search;
     const queryString = '/data-from-db' + search;
-    
+
     fetch(queryString)
     .then(response => response.json())
     .then((data) => { 
-        const dataArea = document.getElementById("data");
+      const dataArea = document.getElementById("data");
     
-        for (tableIndex in data) {
-            const tableData = data[tableIndex];
-    
-            // Make header for table (show name)
-            const name = tableData.name;
-            createTableName(name, dataArea);
-        
-            // Make table itself, add headers for column names
-            const table = createTable(name);
-            const colsArray = tableData.columns;
-            table.appendChild(makeTableHeaders(colsArray));
-        
-            // add data
-            makeRows(tableData.rows, table, colsArray);
-            dataArea.appendChild(table);
-        }
+      for (tableIndex in data) {
+        const tableData = data[tableIndex];
+
+        // Make header for table (show name)
+        const name = tableData.name;
+        createTableName(name, dataArea);
+
+        // Make table itself, add headers for column names
+        const table = createTable(name);
+        const colSchemas = tableData.columnSchemas;
+        table.appendChild(makeTableHeaders(colSchemas));
+
+        // add data
+        makeRows(tableData.dataTable, table);
+        dataArea.appendChild(table);
+      }
     });
   }
 }
  
 // Create column name labels for table
-function makeTableHeaders(colsArray) {
+function makeTableHeaders(colSchemas) {
   const columnNamesRow = document.createElement("tr");
  
   let index;
-  for (index in colsArray) {
-    const columnTitle = addColumnHeader(colsArray[index]);
+  for (index in colSchemas) {
+    const colSchema = colSchemas[index];
+    const columnTitle = addColumnHeader(colSchema.columnName);
     columnNamesRow.appendChild(columnTitle);
   }
   return columnNamesRow;
@@ -78,12 +80,11 @@ function createTable(name) {
 }
 
 function mainLoad(){
-    showDatabase();
-    login();
+  showDatabase();
+  login();
 }
 
-function login(){
-  console.log("login");
+function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
   });
