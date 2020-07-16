@@ -54,8 +54,11 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       String query = "";
       String selectedTables = "";
 
+      //TODO: use StringBuilder rather than string concatenation
+
       query = query + GET_COLUMNS_FROM_TABLES;
       for (int i = 0; i < listOfTables.length; i++) {
+        //TODO: check if backslash is actually needed here
         selectedTables = "\'" + listOfTables[i] + "\'";
         query = query + selectedTables;
         if (i != listOfTables.length-1) {
