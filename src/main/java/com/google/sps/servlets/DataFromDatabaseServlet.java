@@ -26,6 +26,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   private String[] selectedTables;
+  private String[] selectedColsInTable;
   private Constants constants = new Constants();
 
   @Override
@@ -39,11 +40,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
     for (String table : selectedTables) {
       String columnQuery = constants.SCHEMA_INFO_SQL + table + "'";
+
+      if (request.getParameterValues(table) != null) {
+        selectedColsInTable = request.getParameterValues(table);
+      } 
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
           
-        ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
+        ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
         
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
@@ -65,10 +70,16 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
   } 
 
-  private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet) {
+  private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet, String[] selectedColsInTable) {
     ImmutableList.Builder<ColumnSchema> colSchemaBuilder = new ImmutableList.Builder<>();
+    List<String> selectedCols = new ArrayList<>();
+    if (selectedColsInTable != null) 
+      selectedCols = Arrays.asList(selectedColsInTable);
     while (resultSet.next()) {
-      colSchemaBuilder.add(createColumnSchema(resultSet));
+      String colName = resultSet.getString(0);
+      if (selectedCols.size() == 0 || selectedCols.contains(colName)) {
+        colSchemaBuilder.add(createColumnSchema(resultSet));
+      }
     }
     ImmutableList<ColumnSchema> columnSchemas = colSchemaBuilder.build();
     checkTableHasColumns(columnSchemas);

@@ -13,6 +13,13 @@ function isFilterInputEmpty(){
     return true;
 }
 
+function submitFilters() {
+  //submit
+
+  //return 
+  return isFilterInputEmpty();
+}
+
 function showFiltersPanel(){
   var filterBox = document.getElementById("filter-box");
   if (filterBox.style.display === "none") {
@@ -27,17 +34,41 @@ function filterColumns() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
   console.log(url + queryString);
+
+  var searchParams = new URLSearchParams(window.location.search);
+  const database = searchParams.get('list-databases');
+  const reasonForUse = searchParams.get('reason');
+
+  const filterForm = document.getElementById('filter-form'); 
+  const chosenDatabase = document.createElement('input');
+  chosenDatabase.setAttribute("type", "hidden");
+  chosenDatabase.setAttribute("name", "list-databases");
+  chosenDatabase.setAttribute("value", database);
+  filterForm.appendChild(chosenDatabase);
+
+  const reason = document.createElement('input');
+  reason.type = "hidden";
+  reason.name = "reason";
+  reason.value = reasonForUse;
+  filterForm.appendChild(reason);
+
   fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
     
     //Create a select dropdown based on the table name as keys
     for(var keys in tables){
+      const tableSelect = document.createElement('input');
+      tableSelect.setAttribute("type", "hidden");
+      tableSelect.setAttribute("name", "table-select");
+      tableSelect.setAttribute("value", keys);
+      filterForm.appendChild(tableSelect);
+      
       var select = document.createElement('select');
       select.style.width = '200px';
       select.options.remove(0);
-      select.name = keys;
-      select.id = keys;
+      //select.name = keys;
+      select.id = "table-select";
 
       let defaultOption = document.createElement('option');
       defaultOption.text = keys;
@@ -46,7 +77,6 @@ function filterColumns() {
       select.add(defaultOption);
       select.selectedIndex = 0;
 
-            
       let checkboxes = document.createElement('div');
       
       //Create checkboxes for each column of the table
@@ -54,7 +84,8 @@ function filterColumns() {
         var checkbox = document.createElement('input');
         checkbox.type= 'checkbox';
         checkbox.value = tables[keys][0][col];
-        checkbox.id = tables[keys][0][col];
+        checkbox.id = "column-select";
+        checkbox.name = keys;
 
         var label = document.createElement('label');
         label.innerHTML = tables[keys][0][col];

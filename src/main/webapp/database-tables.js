@@ -1,5 +1,6 @@
 function showDatabase() {
   const search = window.location.search;
+  console.log(search);
   const queryString = '/data-from-db' + search;
  
   fetch(queryString)
@@ -74,13 +75,13 @@ function createTable(name) {
 }
 
 function mainLoad(){
-    showDatabase();
-    login();
+  //showDatabase();
+  login();
 }
 
 function login(){
   console.log("login");
-  fetch("/login").then(response => response.json()).then((user) => {
-    document.getElementById("user").innerText = user;
-  });
+  // fetch("/login").then(response => response.json()).then((user) => {
+  //   document.getElementById("user").innerText = user;
+  // });
 }
