@@ -9,20 +9,16 @@ function showDatabase() {
   .then(response => response.json())
   .then((data) => { 
     const dataArea = document.getElementById("data");
+    document.getElementById("tables").innerText = '';
     
     let count = 0;
     for (tableIndex in data) {
       const tableData = data[tableIndex];
- 
-      // Make header for table (show name)
       const name = tableData.name;
- 
-      // Make table itself, add headers for column names
       const colSchemas = tableData.columnSchemas;
 
       const dataTable = tableData.dataTable;
       let tableObj = new Table(dataTable, name, colSchemas, count);
-      document.getElementById("tables").innerText = '';
 
       tableObj.fetchTable();
       tablesList.push(tableObj);
@@ -53,31 +49,53 @@ class Table {
     this.name = name;
     this.colSchemas = colSchemas;
     this.id = id;
-    this.typeTable = new Array(dataTable.length);
-    this.makeTypeTable();
+    this.tableWithTypes = new Array(dataTable.length); // Number rows
+    this.sortDirections = new Array(colSchemas.length); // Number cols
+    this.maketableWithTypes();
     this.setDataTable = this.setDataTable.bind(this);
+  }
+
+  // 0 is ascending, 1 is descending -- start everything ascending
+  initSortDirectionsArray() {
+    let index = 0;
+    for (index in this.colSchemas.length) {
+      this.sortDirections[index] = 0;
+    }
+  }
+
+  flipSortDirection(index) {
+    let currentDirection = this.sortDirections[index];
+    if (currentDirection == 0) {
+      this.sortDirections[index] = 1;
+    } else {
+      this.sortDirections[index] = 0;
+    }
+  }
+
+  getSortDirection(index) {
+    return this.sortDirections[index];
   }
 
   // make table with actual types
   // TODO rename variables make more clear
-  makeTypeTable() {
+  maketableWithTypes() {
     let rowIndex = 0;
     for (rowIndex in this.dataTable) {
       const row = this.dataTable[rowIndex];
-      this.typeTable[rowIndex] = new Array(row.length);
+      this.tableWithTypes[rowIndex] = new Array(row.length);
   
       let col;
       for (col in row) {
         const cell = row[col];
         const type = this.getDataType(col);
         if (cell == "NULL") {
-          this.typeTable[rowIndex][col] = "";
+          this.tableWithTypes[rowIndex][col] = "";
         } else {
           if (type == "INT64") {
             const cellToInt = parseInt(cell);
-            this.typeTable[rowIndex][col] = cellToInt;
+            this.tableWithTypes[rowIndex][col] = cellToInt;
           } else {
-            this.typeTable[rowIndex][col] = cell;
+            this.tableWithTypes[rowIndex][col] = cell;
           }
         }
       }
@@ -96,13 +114,13 @@ class Table {
     this.setRows(newRows);
   }
 
-  setDataTable(typeTable) {
-    this.typeTable = typeTable;
+  setDataTable(tableWithTypes) {
+    this.tableWithTypes = tableWithTypes;
     this.renderTable();
   }
 
-  setTable(typeTable) {
-    this.typeTable = typeTable;
+  setTable(tableWithTypes) {
+    this.tableWithTypes = tableWithTypes;
   }
 
   remove() {
@@ -117,8 +135,8 @@ class Table {
     table.appendChild(this.makeTableHeaders());
 
     let index;
-    for (index in this.typeTable) {
-      const row = this.typeTable[index];
+    for (index in this.tableWithTypes) {
+      const row = this.tableWithTypes[index];
       const rowElement = document.createElement("tr");
   
       let rowIndex;
@@ -170,7 +188,7 @@ class Table {
   }
 
   getDataTable() {
-    return this.typeTable;
+    return this.tableWithTypes;
   }
 
   getDataType(colIndex) {
@@ -182,20 +200,27 @@ class Table {
 function sort(index, id) {
   let table = tablesList[id];
   const name = table.getName();
-  const tableElement = document.getElementById("table_" + name);
-  tableElement.innerText = "";
-  const headerElement = document.getElementById("header_" + name);
-  headerElement.innerText = "";
 
   let dataTable = table.getDataTable();
   const dataType = table.getDataType(index);
-  console.log(dataType)
+
+  let sortDirection = table.getSortDirection(index);
 
   if (dataType == "INT64") {
-    dataTable.sort(function(a,b){return a[index] - b[index];});
+    if (sortDirection == 0) {
+      dataTable.sort(function(a,b){return a[index] - b[index];});
+    } else {
+      dataTable.sort(function(a,b){return b[index] - a[index];});
+    }
   } else {
-    dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
+    if (sortDirection == 0) {
+      dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
+    } else {
+      dataTable.sort(function(a,b){return b[index].localeCompare(a[index]);});
+    }
   }
+
+  table.flipSortDirection(index);
 
   table.setTable(dataTable);
 
