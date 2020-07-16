@@ -60,7 +60,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  private void checkTableHasColumns(ImmutableList<ColumnSchema> columnSchemas) {
+  private void checkTableHasColumns(List<ColumnSchema> columnSchemas) {
     // No columns -> throw error
     if (columnSchemas.size() == 0) {
       throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
