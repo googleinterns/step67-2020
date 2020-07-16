@@ -38,7 +38,6 @@ import static com.google.sps.servlets.Constants.TABLE_SELECT_PARAM;
 /** Servlet that returns an HTML list of all the columns of based on the selected tables. */
 @WebServlet("/columns-from-tables")
 public class ColumnsFromTablesServlet extends HttpServlet {
-    DatabaseClient dbClient;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -50,7 +49,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       String[] listOfTables = request.getParameterValues(TABLE_SELECT_PARAM);
       String database = request.getParameter(DATABASE_PARAM);
 
-      this.dbClient = DatabaseConnector.getInstance().getDbClient(database);
+      DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
       String query = "";
       String selectedTables = "";
