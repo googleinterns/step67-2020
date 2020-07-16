@@ -54,24 +54,20 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       String query = "";
       String selectedTables = "";
 
-      if (listOfTables.length == 1) {
-        query = query + GET_COLUMNS_FROM_TABLES + "\'" + listOfTables[0] + "\'" + GROUP_BY_TABLE_NAMES;
-      } else {
-        query = query + GET_COLUMNS_FROM_TABLES;
-        for (int i = 0; i < listOfTables.length; i++) {
-          selectedTables = "\'" + listOfTables[i] + "\'";
-          query = query + selectedTables;
-          if (i != listOfTables.length-1) {
-            query = query + ", ";
-          } 
-        }
-        query = query + GROUP_BY_TABLE_NAMES;   
+      query = query + GET_COLUMNS_FROM_TABLES;
+      for (int i = 0; i < listOfTables.length; i++) {
+        selectedTables = "\'" + listOfTables[i] + "\'";
+        query = query + selectedTables;
+        if (i != listOfTables.length-1) {
+          query = query + ", ";
+        } 
       }
+      query = query + GROUP_BY_TABLE_NAMES;   
 
       try (ResultSet resultSet =
-        dbClient
-        .singleUse() 
-        .executeQuery(Statement.of(query))) {
+          dbClient
+          .singleUse() 
+          .executeQuery(Statement.of(query))) {
         while (resultSet.next()) {
           data.put(resultSet.getString(0), resultSet.getStringList(1));
         }
