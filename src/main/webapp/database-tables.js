@@ -13,7 +13,7 @@ function showDatabase() {
     
         for (tableIndex in data) {
             const tableData = data[tableIndex];
- 
+    
             // Make header for table (show name)
             const name = tableData.name;
             createTableName(name, dataArea);
@@ -43,14 +43,13 @@ function makeTableHeaders(colsArray) {
   return columnNamesRow;
 }
  
-function makeRows(rows, table, colsArray) {
+function makeRows(rows, table) {
   for (index in rows) {
-    const row = rows[index].row;
+    const row = rows[index];
     const rowElement = document.createElement("tr");
  
-    for (colIndex in colsArray) {
-      const colName = colsArray[colIndex];
-      const dataPoint = row[colName];
+    for (rowIndex in row) {
+      const dataPoint = row[rowIndex];
       const dataPointElement = document.createElement("td");
       dataPointElement.innerText = dataPoint;
       rowElement.appendChild(dataPointElement);
@@ -76,4 +75,16 @@ function createTable(name) {
   const table = document.createElement("table");
   table.setAttribute("id", "table_" + name);
   return table;
+}
+
+function mainLoad(){
+    showDatabase();
+    login();
+}
+
+function login(){
+  console.log("login");
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
 }

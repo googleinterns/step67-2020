@@ -34,27 +34,29 @@ public class TablesFromDatabaseServlet extends HttpServlet {
       selectedDatabase = request.getParameter(constants.DATABASE_PARAM);
     }
 
-    //TODO (issue 8): check if selectedDatabase is supported
-    if (selectedDatabase == null || selectedDatabase.equals(constants.EMPTY_STRING)) {
+    if (selectedDatabase == null || selectedDatabase.equals("")) {
       response.sendRedirect(constants.NULL_REDIRECT);
       return;
     }
+    if (!DatabaseConnector.getInstance().databaseIsSupported(selectedDatabase)) {
+      throw new RuntimeException("Database " + selectedDatabase + " not supported");
+    }
  
-    Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, selectedDatabase); 
-    this.dbClient = spanner.getDatabaseClient(db);
+    this.dbClient = DatabaseConnector.getInstance().getDbClient(selectedDatabase);
+    executeQuery(response);
+  }
 
+  private void executeQuery(HttpServletResponse response) throws IOException {
     try (ResultSet resultSet =
         dbClient
             .singleUse() 
             .executeQuery(Statement.of(constants.GET_TABLE_SQL))) {
-      List<String> tables = new ArrayList<>();
+      List<String> tableNames = new ArrayList<>();
       while (resultSet.next()) {
-        tables.add(resultSet.getString(0));
+        tableNames.add(resultSet.getString(0));
       }
-      String json = new Gson().toJson(tables);
+      String json = new Gson().toJson(tableNames);
       response.getWriter().println(json);
     }
   }
-
 }
