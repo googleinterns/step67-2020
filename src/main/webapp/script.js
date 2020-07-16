@@ -66,6 +66,7 @@ function submitDatabaseForm() {
   document.getElementById("database-select-form").submit();
 }
  
+// Get and create list of tables in the selected database
 function getTablesList() {
   const tablesUrl = '/tables-from-db';
   const search = window.location.search;
@@ -81,29 +82,51 @@ function getTablesList() {
     // No tables in this database
     if (list.length == 0) {
       const errorMessage = document.createElement('p');
+      errorMessage.setAttribute("id", "instruction");
       errorMessage.innerText = "This database has no tables.";
       tableListSpace.appendChild(errorMessage);
       return;
     }
     
-    createForm();
+    createForm(tableListSpace);
+    addSpace();
+    addTableSelectInstr();
     createSelectElement();
     for (let index = 0; index < list.length; index++) {
       addTableOption(list[index]);
     }
+    addSpace();
+    addReasonInput();
     createSubmit();
   });
 }
+
+// Add spacing for formatting
+function addSpace() {
+  const spaceDiv = document.createElement("div");
+  spaceDiv.setAttribute("id", "space");
+  document.getElementById("table-form").appendChild(spaceDiv);
+}
+
+// Add instructions for table selection
+function addTableSelectInstr() {
+  const instruction = document.createElement("p");
+  instruction.setAttribute("id", "instruction");
+  instruction.innerText = "Press CTRL to select multiple."
+  document.getElementById("table-form").appendChild(instruction);
+}
  
+// Create element for table selection
 function createSelectElement() {
   const select = document.createElement("SELECT");
   select.setAttribute("id", "table-select");
   select.setAttribute("name", "table-select");
+  select.setAttribute("required", "true");
   document.getElementById("table-form").appendChild(select);
   document.getElementById("table-select").multiple = true;
 }
  
-function createForm() {
+function createForm(tableListSpace) {
   const form = document.createElement("form");
   form.setAttribute("id", "table-form");
   form.setAttribute("action", "/main-page.html" + window.location.search);
@@ -112,9 +135,10 @@ function createForm() {
   const databaseInput = addDatabaseToQueryString();
   form.appendChild(databaseInput);
  
-  document.body.appendChild(form);
+  tableListSpace.appendChild(form);
 }
  
+// Add hidden form input to send database name on form submit
 function addDatabaseToQueryString() {
   const searchString = window.location.search;
   const index = searchString.indexOf("=");
@@ -124,6 +148,15 @@ function addDatabaseToQueryString() {
   databaseInput.setAttribute("value", database);
   databaseInput.setAttribute("name", "list-databases");
   return databaseInput;
+}
+
+function addReasonInput() {
+  const reason = document.createElement("input");
+  reason.setAttribute("type", "text");
+  reason.setAttribute("name", "reason");
+  reason.setAttribute("placeholder", "Enter reason for use.");
+  reason.setAttribute("required", "true");  
+  document.getElementById("table-form").appendChild(reason);
 }
  
 function createSubmit() {
@@ -152,7 +185,6 @@ function createListElement(text) {
 }
 
 function login(){
-  console.log("login");
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
   });
