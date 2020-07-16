@@ -30,23 +30,25 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static com.google.sps.servlets.Constants.DATABASE_PARAM;
+import static com.google.sps.servlets.Constants.GET_COLUMNS_FROM_TABLES;
+import static com.google.sps.servlets.Constants.GROUP_BY_TABLE_NAMES;
+import static com.google.sps.servlets.Constants.TABLE_SELECT_PARAM;
 
 /** Servlet that returns an HTML list of all the columns of based on the selected tables. */
 @WebServlet("/columns-from-tables")
 public class ColumnsFromTablesServlet extends HttpServlet {
-    //TODO: get rid of constant instance and instead import constants from file
     DatabaseClient dbClient;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
       response.setContentType("application/JSON;"); 
-      Constants constant = new Constants();
 
       Multimap<String, Object> data = ArrayListMultimap.create();
 
       //Parsing the URL for the query parameters
-      String[] listOfTables = request.getParameterValues(constant.TABLE_SELECT_PARAM);
-      String database = request.getParameter(constant.DATABASE_PARAM);
+      String[] listOfTables = request.getParameterValues(TABLE_SELECT_PARAM);
+      String database = request.getParameter(DATABASE_PARAM);
 
       this.dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
@@ -54,24 +56,22 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       String selectedTables = "";
 
       if (listOfTables.length == 1) {
-        query = query + constant.GET_COLUMNS_FROM_TABLES + "\'" + listOfTables[0] + "\'" + constant.GROUP_BY_TABLE_NAMES;
+        query = query + GET_COLUMNS_FROM_TABLES + "\'" + listOfTables[0] + "\'" + GROUP_BY_TABLE_NAMES;
       } else {
-        query = query + constant.GET_COLUMNS_FROM_TABLES;
+        query = query + GET_COLUMNS_FROM_TABLES;
         for (int i = 0; i < listOfTables.length; i++) {
+          selectedTables = "\'" + listOfTables[i] + "\'";
+          query = query + selectedTables;
           if (i != listOfTables.length-1) {
-            selectedTables = "\'" + listOfTables[i] + "\'";
-            query = query + selectedTables + ", ";
-          } else {
-            selectedTables = "\'" + listOfTables[i] + "\'";
-            query = query + selectedTables;
-          }
+            query = query + ", ";
+          } 
         }
-        query = query + constant.GROUP_BY_TABLE_NAMES;   
+        query = query + GROUP_BY_TABLE_NAMES;   
       }
 
       try (ResultSet resultSet =
         dbClient
-        .singleUse() // Execute a single read or query against Cloud Spanner.
+        .singleUse() 
         .executeQuery(Statement.of(query))) {
         while (resultSet.next()) {
           data.put(resultSet.getString(0), resultSet.getStringList(1));
