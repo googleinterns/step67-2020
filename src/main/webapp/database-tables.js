@@ -76,8 +76,7 @@ class Table {
     return this.sortDirections[index];
   }
 
-  // make table with actual types
-  // TODO rename variables make more clear
+  // Initialize table with actual column types
   maketableWithTypes() {
     let rowIndex = 0;
     for (rowIndex in this.dataTable) {
@@ -164,6 +163,7 @@ class Table {
 
   addColumnHeader(colName, index) {
     const columnHeader = document.createElement("th");
+    columnHeader.setAttribute("id", "colheader_" + colName + this.name);
     const id = this.id;
     columnHeader.onclick = function() {sort(index, id)};
     columnHeader.innerText = colName;
