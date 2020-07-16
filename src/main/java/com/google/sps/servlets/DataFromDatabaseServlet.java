@@ -47,7 +47,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
-          
         ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
         
         Table.Builder tableBuilder = Table.builder().setName(table);
@@ -72,6 +71,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet, String[] selectedColsInTable) {
     ImmutableList.Builder<ColumnSchema> colSchemaBuilder = new ImmutableList.Builder<>();
+    
     List<String> selectedCols = new ArrayList<>();
     if (selectedColsInTable != null) 
       selectedCols = Arrays.asList(selectedColsInTable);

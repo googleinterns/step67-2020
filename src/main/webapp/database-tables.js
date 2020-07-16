@@ -75,13 +75,12 @@ function createTable(name) {
 }
 
 function mainLoad(){
-  //showDatabase();
   login();
 }
 
 function login(){
   console.log("login");
-  // fetch("/login").then(response => response.json()).then((user) => {
-  //   document.getElementById("user").innerText = user;
-  // });
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
 }

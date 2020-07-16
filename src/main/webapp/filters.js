@@ -2,21 +2,18 @@
 //Checks whether the user has left both of the user_id/device_id input box empty. If true, the user cannot submit the filter
 // query,if false submit
 function isFilterInputEmpty(){
-    var userID = document.getElementById("user_id").value;
-    var deviceID = document.getElementById("device_id").value;
+  var userID = document.getElementById("user_id").value;
+  var deviceID = document.getElementById("device_id").value;
 
-    //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
-    if(userID == "" && deviceID == ""){
-        alert("Applying filters failed: Please input either user_id, device_id or both.");
-        return false;
-    }
-    return true;
+  //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
+  if(userID == "" && deviceID == ""){
+    alert("Applying filters failed: Please input either user_id, device_id or both.");
+    return false;
+  }
+  return true;
 }
 
 function submitFilters() {
-  //submit
-
-  //return 
   return isFilterInputEmpty();
 }
 
@@ -29,45 +26,53 @@ function showFiltersPanel(){
   }
 }
 
-//Returns checkbox dropdowns of the selected table's columns which can then be filtered
-function filterColumns() {
-  var queryString = window.location.search;
-  var url = "/columns-from-tables";
-  console.log(url + queryString);
-
-  var searchParams = new URLSearchParams(window.location.search);
-  const database = searchParams.get('list-databases');
-  const reasonForUse = searchParams.get('reason');
-
-  const filterForm = document.getElementById('filter-form'); 
+function addDatabaseToForm(database, filterForm) {
   const chosenDatabase = document.createElement('input');
-  chosenDatabase.setAttribute("type", "hidden");
-  chosenDatabase.setAttribute("name", "list-databases");
-  chosenDatabase.setAttribute("value", database);
+  chosenDatabase.type = "hidden";
+  chosenDatabase.name = "list-databases";
+  chosenDatabase.value = database;
   filterForm.appendChild(chosenDatabase);
+}
 
+function addReasonToForm(reasonForUse,filterForm) {
   const reason = document.createElement('input');
   reason.type = "hidden";
   reason.name = "reason";
   reason.value = reasonForUse;
   filterForm.appendChild(reason);
+}
 
+function addSelectedTableToForm(keys, filterForm) {
+  const tableSelect = document.createElement('input');
+  tableSelect.type = "hidden";
+  tableSelect.name = "table-select";
+  tableSelect.value = keys;
+  filterForm.appendChild(tableSelect);
+}
+
+//Returns checkbox dropdowns of the selected table's columns which can then be filtered
+function filterColumns() {
+  var queryString = window.location.search;
+  var url = "/columns-from-tables";
+
+  var searchParams = new URLSearchParams(window.location.search);
+  const filterForm = document.getElementById('filter-form'); 
+  const reasonForUse = searchParams.get('reason');
+  const database = searchParams.get('list-databases');
+  addDatabaseToForm(database, filterForm);
+  addReasonToForm(reasonForUse, filterForm);
+  
   fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
     
     //Create a select dropdown based on the table name as keys
     for(var keys in tables){
-      const tableSelect = document.createElement('input');
-      tableSelect.setAttribute("type", "hidden");
-      tableSelect.setAttribute("name", "table-select");
-      tableSelect.setAttribute("value", keys);
-      filterForm.appendChild(tableSelect);
+      addSelectedTableToForm(keys, filterForm);
       
       var select = document.createElement('select');
       select.style.width = '200px';
       select.options.remove(0);
-      //select.name = keys;
       select.id = "table-select";
 
       let defaultOption = document.createElement('option');
