@@ -80,10 +80,6 @@ function createTable(name) {
 }
 
 function mainLoad(){
-<<<<<<< HEAD
-=======
-  showDatabase();
->>>>>>> master
   login();
 }
 
