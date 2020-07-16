@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/columns-from-tables")
 public class ColumnsFromTablesServlet extends HttpServlet {
     Constants constant = new Constants();
-    
     DatabaseClient dbClient;
 
     @Override
@@ -48,35 +47,35 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       String[] listOfTables = request.getParameterValues(constant.TABLE_SELECT_PARAM);
       String database = request.getParameter(constant.DATABASE_PARAM);
 
+      this.dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
-      Spanner spanner = SpannerOptions.newBuilder().build().getService();
-      DatabaseId db = DatabaseId.of("play-user-data-beetle", "test-instance", database);
-      this.dbClient = spanner.getDatabaseClient(db);
+      String query = "";
+      String selectedTables = "";
 
-      if(listOfTables.length == 1){
-          constant.QUERY = constant.QUERY + constant.GET_COLUMNS_FROM_TABLES + "\'" + listOfTables[0] + "\'" + constant.GROUP_BY_TABLE_NAMES;
-      }else{
-          constant.QUERY = constant.QUERY + constant.GET_COLUMNS_FROM_TABLES;
-          for(int i = 0; i < listOfTables.length; i++){
-              if(i != listOfTables.length-1){
-                constant.SELECTED_TABLES = "\'" + listOfTables[i] + "\'";
-                constant.QUERY = constant.QUERY + constant.SELECTED_TABLES + ", ";
-              }else{
-                  constant.SELECTED_TABLES = "\'" + listOfTables[i] + "\'";
-                  constant.QUERY = constant.QUERY + constant.SELECTED_TABLES;
-                }
-            }
-          constant.QUERY = constant.QUERY + constant.GROUP_BY_TABLE_NAMES;   
+      if (listOfTables.length == 1) {
+        query = query + constant.GET_COLUMNS_FROM_TABLES + "\'" + listOfTables[0] + "\'" + constant.GROUP_BY_TABLE_NAMES;
+      } else {
+        query = query + constant.GET_COLUMNS_FROM_TABLES;
+        for (int i = 0; i < listOfTables.length; i++) {
+          if (i != listOfTables.length-1) {
+            selectedTables = "\'" + listOfTables[i] + "\'";
+            query = query + selectedTables + ", ";
+          } else {
+            selectedTables = "\'" + listOfTables[i] + "\'";
+            query = query + selectedTables;
+          }
         }
+        query = query + constant.GROUP_BY_TABLE_NAMES;   
+      }
 
       try (ResultSet resultSet =
         dbClient
-            .singleUse() // Execute a single read or query against Cloud Spanner.
-            .executeQuery(Statement.of(constant.QUERY))) {
-            while (resultSet.next()) {
-              data.put(resultSet.getString(0), resultSet.getStringList(1));
-            }
+        .singleUse() // Execute a single read or query against Cloud Spanner.
+        .executeQuery(Statement.of(query))) {
+        while (resultSet.next()) {
+          data.put(resultSet.getString(0), resultSet.getStringList(1));
         }
+      }
 
       //Converting resultList into JSON data
       String json = convertToJsonUsingGson(data);

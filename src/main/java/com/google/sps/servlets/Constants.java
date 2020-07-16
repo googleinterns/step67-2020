@@ -11,9 +11,7 @@ class Constants {
   static final String GROUP_BY_TABLE_NAMES = ") group by table_name";
   static final String NULL_REDIRECT = "/index.html";
   static final String PROJECT = "play-user-data-beetle";
-  static String QUERY = "";
   static final String SCHEMA_INFO_SQL = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '";
-  static String SELECTED_TABLES = "";
   static final String TABLE_SELECT_PARAM = "table-select";
   static final String TEST_INSTANCE = "test-instance";
   static final String TEXT_TYPE = "text/html;";
