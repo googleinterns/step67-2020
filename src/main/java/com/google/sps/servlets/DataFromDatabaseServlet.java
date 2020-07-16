@@ -33,7 +33,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.setContentType(constants.TEXT_TYPE);
     selectedTables = request.getParameterValues(constants.TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(constants.DATABASE_PARAM);
-    initializeDatabase(databaseName);
+    initDatabaseClient(databaseName);
 
     List<Table> tables = new ArrayList<>();
 
@@ -115,11 +115,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return statement;
   }
 
-  //TODO (issue 15): will get rid of this through DatabaseConnector class
-  private void initializeDatabase(String databaseName) {
-    Spanner spanner = SpannerOptions.newBuilder().build().getService();
-    DatabaseId db = DatabaseId.of(constants.PROJECT, constants.TEST_INSTANCE, databaseName);
-    this.dbClient = spanner.getDatabaseClient(db);
+  private void initDatabaseClient(String databaseName) {
+    this.dbClient = DatabaseConnector.getInstance().getDbClient(databaseName);
   }
 
    private void executeTableQuery(Table.Builder tableBuilder, Statement query, List<ColumnSchema> columnSchemas) throws IOException {
@@ -127,6 +124,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
       dbClient
       .singleUse() 
       .executeQuery(query)) {
+        
       while (resultSet.next()) {
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (ColumnSchema schema : columnSchemas) {
@@ -190,5 +188,4 @@ public class DataFromDatabaseServlet extends HttpServlet {
       return constants.ENCODING_ERROR;
     }
   }
-
 }
