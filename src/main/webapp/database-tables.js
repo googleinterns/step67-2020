@@ -33,15 +33,10 @@ function mainLoad(){
 }
 
 function login(){
-  // fetch("/login").then(response => response.json()).then((user) => {
-  //   document.getElementById("user").innerText = user;
-  // });
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
 }
-
-
-
-
-
 
 class Table {
   constructor(dataTable, name, colSchemas, id) {
@@ -200,10 +195,8 @@ class Table {
 function sort(index, id) {
   let table = tablesList[id];
   const name = table.getName();
-
   let dataTable = table.getDataTable();
   const dataType = table.getDataType(index);
-
   let sortDirection = table.getSortDirection(index);
 
   if (dataType == "INT64") {
@@ -221,7 +214,6 @@ function sort(index, id) {
   }
 
   table.flipSortDirection(index);
-
   table.setTable(dataTable);
 
   //need to empty and rerender
@@ -231,7 +223,6 @@ function sort(index, id) {
     tableObj.remove();
     tableObj.renderTable();
   }
-  
 }
 
 let tablesList = [];
