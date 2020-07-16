@@ -58,6 +58,8 @@ class Table {
     this.setDataTable = this.setDataTable.bind(this);
   }
 
+  // make table with actual types
+  // TODO rename variables make more clear
   makeTypeTable() {
     let rowIndex = 0;
     for (rowIndex in this.dataTable) {
@@ -68,11 +70,15 @@ class Table {
       for (col in row) {
         const cell = row[col];
         const type = this.getDataType(col);
-        if (type == "INT64") {
-          const cellToInt = parseInt(cell);
-          this.typeTable[rowIndex][col] = cellToInt;
+        if (cell == "NULL") {
+          this.typeTable[rowIndex][col] = "";
         } else {
-          this.typeTable[rowIndex][col] = cell;
+          if (type == "INT64") {
+            const cellToInt = parseInt(cell);
+            this.typeTable[rowIndex][col] = cellToInt;
+          } else {
+            this.typeTable[rowIndex][col] = cell;
+          }
         }
       }
     }
