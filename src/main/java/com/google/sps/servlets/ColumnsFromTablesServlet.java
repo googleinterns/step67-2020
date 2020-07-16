@@ -34,12 +34,13 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns an HTML list of all the columns of based on the selected tables. */
 @WebServlet("/columns-from-tables")
 public class ColumnsFromTablesServlet extends HttpServlet {
-    Constants constant = new Constants();
+    //TODO: get rid of constant instance and instead import constants from file
     DatabaseClient dbClient;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
       response.setContentType("application/JSON;"); 
+      Constants constant = new Constants();
 
       Multimap<String, Object> data = ArrayListMultimap.create();
 

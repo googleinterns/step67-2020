@@ -27,6 +27,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
   DatabaseClient dbClient;
   private String[] selectedTables;
   private Constants constants = new Constants();
+  //TODO: (issue 15) get rid of this instance, and instead import constants
+    // example: import static com.google.sps.servlets.Constants. GET_COLUMNS_FROM_TABLES;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
