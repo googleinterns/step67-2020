@@ -20,7 +20,6 @@
   left: 50%;
   top: 50%;
   transform: translateX(-50%) translateY(-50%);
-  background-color: rgb(20,170,100);
   padding-left: 100px;
   padding-right: 100px;
   padding-top: 50px;
@@ -29,4 +28,22 @@
 
 .invisible {
   display: none;
+}
+
+#toggle {
+  display: inline-block;
+}
+
+#toggle-button {
+  color: red;
+  flex: left;
+}
+
+.closeButton{
+  position: absolute;
+  top: 0;
+  right: 25px;
+  margin-left: 50px;
+  margin-top: 20px;
+  color: black;
 }

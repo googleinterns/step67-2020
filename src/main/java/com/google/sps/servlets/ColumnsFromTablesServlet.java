@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import static com.google.sps.servlets.Constants.DATABASE_PARAM;
 import static com.google.sps.servlets.Constants.GET_COLUMNS_FROM_TABLES;
+import static com.google.sps.servlets.Constants.GET_PRIMARY_KEYS_FROM_TABLES;
+import static com.google.sps.servlets.Constants.GROUP_BY_PRIMARY_KEYS;
 import static com.google.sps.servlets.Constants.GROUP_BY_TABLE_NAMES;
 import static com.google.sps.servlets.Constants.TABLE_SELECT_PARAM;
 
@@ -43,7 +45,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
       response.setContentType("application/JSON;"); 
 
-      Multimap<String, Object> data = ArrayListMultimap.create();
+      Multimap<String, List> data = ArrayListMultimap.create();
 
       //Parsing the URL for the query parameters
       String[] listOfTables = request.getParameterValues(TABLE_SELECT_PARAM);
@@ -56,7 +58,8 @@ public class ColumnsFromTablesServlet extends HttpServlet {
 
       //TODO: use StringBuilder rather than string concatenation
 
-      query = query + GET_COLUMNS_FROM_TABLES;
+      //query = query + GET_COLUMNS_FROM_TABLES;
+      query = query + GET_PRIMARY_KEYS_FROM_TABLES;
       for (int i = 0; i < listOfTables.length; i++) {
         //TODO: check if backslash is actually needed here
         selectedTables = "\'" + listOfTables[i] + "\'";
@@ -65,14 +68,17 @@ public class ColumnsFromTablesServlet extends HttpServlet {
           query = query + ", ";
         } 
       }
-      query = query + GROUP_BY_TABLE_NAMES;   
+      query = query + GROUP_BY_TABLE_NAMES + GROUP_BY_PRIMARY_KEYS;   // Queries list of columns and primary keys of the selected tables
 
       try (ResultSet resultSet =
           dbClient
           .singleUse() 
           .executeQuery(Statement.of(query))) {
         while (resultSet.next()) {
+          data.put(resultSet.getString(0), resultSet.getStringList(2));
+                    //[table_name]        [primary_keys]
           data.put(resultSet.getString(0), resultSet.getStringList(1));
+                    //[table_name]        [columns_list]
         }
       }
 
@@ -81,7 +87,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       response.getWriter().println(json);
     }
 
-    private String convertToJsonUsingGson(Multimap<String, Object> data) {
+    private String convertToJsonUsingGson(Multimap<String, List> data) {
       Gson gson = new Gson();
       String json = gson.toJson(data.asMap());
       return json;

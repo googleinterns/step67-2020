@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="main-style.css">
+    <script src="./script.js"></script>
+    <script src="./database-tables.js"></script>
+    <script src="filters.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+    
+  <body onload="mainLoad()">
+    <h1>Main Page</h1>
+
+    <div id="data"></div>
+
+    <div id = "header">
+      <div class = "button-box">
+        <a href = "index.html"><button>Splash Page</button></a>
+        <button id = "filter-button" onmouseover = "luckyFilter()" onClick="showFiltersPanel(); filterColumns()" onmouseout="unlucky()">Show Filters </button>
+        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
+        <button onclick = "showShare()" >Share Query</button>
+      </div>
+    </div>
+
+    <div id = "share-form" class = "invisible">
+      <h4>Share Query</h4>
+      <input type="text" id = "share-text" placeholder="Share with a fellow Googler.">
+      <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
+    </div>
+    
+    <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
+    <div id="toggle">Default</div>
+      <div id="filter-box" name="filter-box" style="display: none;">
+        <p>FILTERS</p>
+        <form action="/main-page.html" method="GET">
+          <p class ="closeButton">Close</p>
+
+          <input type="text" id="user_id" placeholder="Enter the user_id">
+          <div style="padding: 10px"></div> 
+          <input type="text" id="device_id" placeholder="Enter the device_id">
+          <div style="padding: 10px"></div>
+          <input type="search" placeholder="Search...">
+          <div style="padding: 10px"></div>
+
+          <div id="column-filters"></div>
+          <div id="primarykey-filters" style="display: none;"></div>
+
+          <input type="submit" id="submit" value="submit" onClick=" return isFilterInputEmpty()">
+        </form>  
+      </div>
+    <div id="user"></div>
+  </body>
+</html>

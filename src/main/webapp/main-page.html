@@ -18,7 +18,7 @@
     <div id = "header">
       <div class = "button-box">
         <a href = "index.html"><button>Splash Page</button></a>
-        <button id = "filter-button" onmouseover = "luckyFilter()" onclick = "showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
+        <button id = "filter-button" onmouseover = "luckyFilter()" onClick="showFiltersPanel(); filterColumns()" onmouseout="unlucky()">Show Filters </button>
         <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
         <button onclick = "showShare()" >Share Query</button>
       </div>
@@ -30,10 +30,12 @@
       <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
     </div>
     
-    <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>
-      <div id="filter-box" style="display: none;">
+    <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
+    <div id="toggle">Default</div>
+      <div id="filter-box" name="filter-box" style="display: none;">
+        <p>FILTERS</p>
         <form action="/main-page.html" method="GET">
-          <h1> Filters</h1>
+          <p class ="closeButton">Close</p>
 
           <input type="text" id="user_id" placeholder="Enter the user_id">
           <div style="padding: 10px"></div> 
@@ -42,7 +44,8 @@
           <input type="search" placeholder="Search...">
           <div style="padding: 10px"></div>
 
-          <div id="table-filters"></div>
+          <div id="column-filters"></div>
+          <div id="primarykey-filters" style="display: none;"></div>
 
           <input type="submit" id="submit" value="submit" onClick=" return isFilterInputEmpty()">
         </form>  
