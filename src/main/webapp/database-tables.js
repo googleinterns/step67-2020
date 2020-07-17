@@ -80,6 +80,7 @@ function createTable(name) {
 }
 
 function mainLoad(){
+  console.log("main");
   login();
   showReason();
 }
@@ -87,6 +88,23 @@ function mainLoad(){
 function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
+    var currentUser = user;
+    if (currentUser[0] == "Stranger"){
+        window.location.assign("https://accounts.google.com/signin/v2/identifier?");
+        return;
+    }
+
+    var usersWithAccess = ["jiaxinz@google.com","gagomez@google.com",/*"test@example.com",*/"hilakey@google.com","sasymer@google.com","williamdc@google.com"];
+    console.log(currentUser[0]);
+    console.log("current user");
+    for (var i =0; i < usersWithAccess.length; i++){
+        if (currentUser[0] == usersWithAccess[i]){
+            return;
+        }
+    }
+    //TODO: Make sure this url is for the deployed version
+    window.location.assign("https://8080-25c0ac2a-87ce-4126-a0a0-8231fedddb09.us-central1.cloudshell.dev/denied.html");
+    // window.location.assign("https://play-user-data-beetle.uc.r.appspot.com/denied.html");
   });
 }
 

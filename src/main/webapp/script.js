@@ -187,14 +187,13 @@ function createListElement(text) {
 var shareShowing = Boolean(false)
 function showShare() {
     if (!shareShowing){
-        shareShowing = true;
         document.getElementById("share-form").classList.remove("invisible");
         document.getElementById("share-button").textContent = "Hide Share";
     } else {
-        shareShowing= false;
         document.getElementById("share-button").textContent = "Share Query";
         document.getElementById("share-form").classList.add("invisible");
     }
+    shareShowing = !shareShowing;
 }
 
 function copyLink() {
@@ -232,11 +231,9 @@ function changeText() {
 function login(){
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
+    var currentUser = user;
+    var myArray = ["jiaxinz@google.com","gagomez@google.com","hilakey@google.com","sasymer@google.com","williamdc@google.com"];
+    console.log(currentUser[0]);
+    console.log("current user");
   });
-}
-
-function permissionDenied(){
-    //document.getelemby id (user)
-    //if user not in list of people permitted (maybe get this with a fetch)
-    //window.location.href = permissions denied page
 }
