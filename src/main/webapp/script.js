@@ -222,7 +222,7 @@ function changeText() {
 }
 
 function login(){
-  fetch("/login").then(response => response.json()).then((user) => {
-    document.getElementById("user").innerText = user;
-  });
+  // fetch("/login").then(response => response.json()).then((user) => {
+  //   document.getElementById("user").innerText = user;
+  // });
 }

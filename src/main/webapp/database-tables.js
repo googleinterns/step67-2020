@@ -35,7 +35,6 @@ function showDatabase() {
 }
 
 function mainLoad(){
-  showDatabase();
   login();
 }
 

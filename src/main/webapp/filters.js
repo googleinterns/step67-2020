@@ -2,15 +2,19 @@
 //Checks whether the user has left both of the user_id/device_id input box empty. If true, the user cannot submit the filter
 // query,if false submit
 function isFilterInputEmpty(){
-    var userID = document.getElementById("user_id").value;
-    var deviceID = document.getElementById("device_id").value;
+  var userID = document.getElementById("user_id").value;
+  var deviceID = document.getElementById("device_id").value;
 
-    //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
-    if(userID == "" && deviceID == ""){
-        alert("Applying filters failed: Please input either user_id, device_id or both.");
-        return false;
-    }
-    return true;
+  //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
+  if(userID == "" && deviceID == ""){
+    alert("Applying filters failed: Please input either user_id, device_id or both.");
+    return false;
+  }
+  return true;
+}
+
+function submitFilters() {
+  return isFilterInputEmpty();
 }
 
 function showFiltersPanel(){
@@ -22,22 +26,54 @@ function showFiltersPanel(){
   }
 }
 
+function addDatabaseToForm(database, filterForm) {
+  const chosenDatabase = document.createElement('input');
+  chosenDatabase.type = "hidden";
+  chosenDatabase.name = "list-databases";
+  chosenDatabase.value = database;
+  filterForm.appendChild(chosenDatabase);
+}
+
+function addReasonToForm(reasonForUse,filterForm) {
+  const reason = document.createElement('input');
+  reason.type = "hidden";
+  reason.name = "reason";
+  reason.value = reasonForUse;
+  filterForm.appendChild(reason);
+}
+
+function addSelectedTableToForm(keys, filterForm) {
+  const tableSelect = document.createElement('input');
+  tableSelect.type = "hidden";
+  tableSelect.name = "table-select";
+  tableSelect.value = keys;
+  filterForm.appendChild(tableSelect);
+}
+
 //Returns checkbox dropdowns of the selected table's columns which can then be filtered
 function filterColumns() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
-  console.log(url + queryString);
+
+  var searchParams = new URLSearchParams(window.location.search);
+  const filterForm = document.getElementById('filter-form'); 
+  const reasonForUse = searchParams.get('reason');
+  const database = searchParams.get('list-databases');
+  addDatabaseToForm(database, filterForm);
+  addReasonToForm(reasonForUse, filterForm);
+  
   fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
     
     //Create a select dropdown based on the table name as keys
     for(var keys in tables){
+      addSelectedTableToForm(keys, filterForm);
+      
       var select = document.createElement('select');
       select.style.width = '200px';
       select.options.remove(0);
-      select.name = keys;
-      select.id = keys;
+      select.id = "table-select";
 
       let defaultOption = document.createElement('option');
       defaultOption.text = keys;
@@ -46,7 +82,6 @@ function filterColumns() {
       select.add(defaultOption);
       select.selectedIndex = 0;
 
-            
       let checkboxes = document.createElement('div');
       
       //Create checkboxes for each column of the table
@@ -54,7 +89,8 @@ function filterColumns() {
         var checkbox = document.createElement('input');
         checkbox.type= 'checkbox';
         checkbox.value = tables[keys][0][col];
-        checkbox.id = tables[keys][0][col];
+        checkbox.id = "column-select";
+        checkbox.name = keys;
 
         var label = document.createElement('label');
         label.innerHTML = tables[keys][0][col];
@@ -77,9 +113,9 @@ function filterColumns() {
       //onclick event that will hide/show column filters
       select.onclick = function() {
         if (checkboxes.style.display === "none") {
-            checkboxes.style.display = "block";
+          checkboxes.style.display = "block";
         } else {
-            checkboxes.style.display = "none";
+          checkboxes.style.display = "none";
         }
      };
 
