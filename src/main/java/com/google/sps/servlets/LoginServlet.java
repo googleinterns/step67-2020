@@ -27,13 +27,11 @@ public class LoginServlet extends HttpServlet {
     List<String> userEmail = new ArrayList<String>();
 
     if (!userService.isUserLoggedIn()) {
-      String urlToRedirectToAfterUserLogsIn = "/login";
+      String urlToRedirectToAfterUserLogsIn = "/splash.html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-      userEmail.add("Hello Stranger");
-      response.sendRedirect("https://accounts.google.com/signin/v2/identifier?");
+      userEmail.add("Stranger");
+      //  response.sendRedirect("https://accounts.google.com/signin/v2/identifier?");
     } else{
-        String urlToRedirectToAfterUserLogsOut = "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin";
-        String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
         String currentUserEmail = userService.getCurrentUser().getEmail();
         userEmail.add(currentUserEmail);
     }

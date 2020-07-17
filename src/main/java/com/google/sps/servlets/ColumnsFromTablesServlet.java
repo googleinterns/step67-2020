@@ -31,10 +31,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import static com.google.sps.servlets.Constants.DATABASE_PARAM;
+<<<<<<< HEAD
 import static com.google.sps.servlets.Constants.GET_COLUMNS_FROM_TABLES;
 import static com.google.sps.servlets.Constants.GET_PRIMARY_KEYS_FROM_TABLES;
 import static com.google.sps.servlets.Constants.GROUP_BY_PRIMARY_KEYS;
 import static com.google.sps.servlets.Constants.GROUP_BY_TABLE_NAMES;
+=======
+>>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
 import static com.google.sps.servlets.Constants.TABLE_SELECT_PARAM;
 
 /** Servlet that returns an HTML list of all the columns of based on the selected tables. */
@@ -53,6 +56,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
 
       DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
+<<<<<<< HEAD
       String query = "";
       String selectedTables = "";
 
@@ -69,6 +73,9 @@ public class ColumnsFromTablesServlet extends HttpServlet {
         } 
       }
       query = query + GROUP_BY_TABLE_NAMES + GROUP_BY_PRIMARY_KEYS;   // Queries list of columns and primary keys of the selected tables
+=======
+      String query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
+>>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
 
       try (ResultSet resultSet =
           dbClient
@@ -81,7 +88,6 @@ public class ColumnsFromTablesServlet extends HttpServlet {
                     //[table_name]        [columns_list]
         }
       }
-
       //Converting resultList into JSON data
       String json = convertToJsonUsingGson(data);
       response.getWriter().println(json);

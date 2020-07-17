@@ -2,32 +2,73 @@
 //Checks whether the user has left both of the user_id/device_id input box empty. If true, the user cannot submit the filter
 // query,if false submit
 function isFilterInputEmpty(){
-    var userID = document.getElementById("user_id").value;
-    var deviceID = document.getElementById("device_id").value;
+  var userID = document.getElementById("user_id").value;
+  var deviceID = document.getElementById("device_id").value;
 
-    //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
-    if(userID == "" && deviceID == ""){
-        alert("Applying filters failed: Please input either user_id, device_id or both.");
-        return false;
-    }
-    return true;
+  //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
+  if(userID == "" && deviceID == ""){
+    alert("Applying filters failed: Please input either user_id, device_id or both.");
+    return false;
+  }
+  return true;
 }
 
-function showFiltersPanel(){
+function submitFilters() {
+  return isFilterInputEmpty();
+}
+
+function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
+<<<<<<< HEAD
   document.getElementById("filter-button").style.visibility = "hidden";
+=======
+  var filterButton = document.getElementById("filter-button");
+>>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
   if (filterBox.style.display === "none") {
     filterBox.style.display = "block";
+    filterButton.textContent = "Hide Filters"
   } else {
     filterBox.style.display = "none";
+    filterButton.textContent = "Show Filters"
   }
+}
+
+function addDatabaseToForm(database, filterForm) {
+  const chosenDatabase = document.createElement('input');
+  chosenDatabase.type = "hidden";
+  chosenDatabase.name = "list-databases";
+  chosenDatabase.value = database;
+  filterForm.appendChild(chosenDatabase);
+}
+
+function addReasonToForm(reasonForUse,filterForm) {
+  const reason = document.createElement('input');
+  reason.type = "hidden";
+  reason.name = "reason";
+  reason.value = reasonForUse;
+  filterForm.appendChild(reason);
+}
+
+function addSelectedTableToForm(keys, filterForm) {
+  const tableSelect = document.createElement('input');
+  tableSelect.type = "hidden";
+  tableSelect.name = "table-select";
+  tableSelect.value = keys;
+  filterForm.appendChild(tableSelect);
 }
 
 //Returns checkbox dropdowns of the selected table's columns which can then be filtered
 function filterColumns() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
-  console.log(url + queryString);
+
+  var searchParams = new URLSearchParams(window.location.search);
+  const filterForm = document.getElementById('filter-form'); 
+  const reasonForUse = searchParams.get('reason');
+  const database = searchParams.get('list-databases');
+  addDatabaseToForm(database, filterForm);
+  addReasonToForm(reasonForUse, filterForm);
+  
   fetch(url + queryString).then(response => response.json()).then((tables) => {
       console.log(tables);
     const columnDiv = document.getElementById('column-filters');
@@ -49,6 +90,8 @@ function filterColumns() {
       column_select.name = keys;
       column_select.id = keys;
 
+      addSelectedTableToForm(keys, filterForm);
+      
       let colDefaultOption = document.createElement('option');
       let pkDefaultOption = document.createElement('option');
         colDefaultOption.text = keys;
@@ -60,17 +103,18 @@ function filterColumns() {
       column_select.selectedIndex = 0;
       primkey_select.add(pkDefaultOption);
       primkey_select.selectedIndex = 0;
-
             
       let colFilters = document.createElement('div'); //div for columns filter
       let primkeyFilters = document.createElement('div');//div for primary keys filter
+      
       
       //Create checkboxes for each column of the table
       for(var col in tables[keys][0]){
         var col_checkbox = document.createElement('input');
         col_checkbox.type= 'checkbox';
         col_checkbox.value = tables[keys][0][col];
-        col_checkbox.id = tables[keys][0][col];
+        col_checkbox.id = "column-select" + col;
+        col_checkbox.name = keys;
 
         var label = document.createElement('label');
         label.innerHTML = tables[keys][0][col];
@@ -116,7 +160,7 @@ function filterColumns() {
             primkeyFilters.appendChild(pkBoxDiv);
             console.log("checkbox was made for the primary key" + tables[keys][1][col]);
         }
-      //onclick event that will hide/show column filters
+      //onclick event that will hide/show primary key filters
       primkey_select.onclick = function() {
       if (primkeyFilters.style.display === "none") {
         primkeyFilters.style.display = "block";
@@ -125,7 +169,7 @@ function filterColumns() {
         }
       };
 
-      //onclick event that will hide/show column filters
+      //onclick event that will hide/show column list filters
       column_select.onclick = function() {
         if (colFilters.style.display === "none") {
             colFilters.style.display = "block";

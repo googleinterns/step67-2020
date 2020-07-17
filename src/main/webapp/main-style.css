@@ -14,16 +14,21 @@
   padding-right: 10px;
 }
 
-#share {
+#share-form {
   text-align: center;
   position: absolute;
   left: 50%;
   top: 50%;
+<<<<<<< HEAD
   transform: translateX(-50%) translateY(-50%);
+=======
+  background-color: rgb(20,170,100);
+>>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
   padding-left: 100px;
   padding-right: 100px;
   padding-top: 50px;
   padding-bottom: 50px;
+  font-size: 24px;
 }
 
 .invisible {
