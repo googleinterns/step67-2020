@@ -1,3 +1,5 @@
+let tablesList = [];
+
 function showDatabase() {
   const search = window.location.search;
   const queryString = '/data-from-db' + search;
@@ -38,16 +40,92 @@ function login(){
   });
 }
 
+function sort(index, id) {
+  let table = tablesList[id];
+  const name = table.getName();
+  let dataTable = table.getDataTable();
+  const dataType = table.getDataType(index);
+  let sortDirection = table.getSortDirection(index);
+
+  if (dataType == "INT64") {
+    if (sortDirection == 0) {
+      dataTable.sort(function(a,b){return a[index] - b[index];});
+    } else {
+      dataTable.sort(function(a,b){return b[index] - a[index];});
+    }
+  } else {
+    if (sortDirection == 0) {
+      dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
+    } else {
+      dataTable.sort(function(a,b){return b[index].localeCompare(a[index]);});
+    }
+  }
+
+  table.flipSortDirection(index);
+  table.setTable(dataTable);
+
+  //need to empty and rerender
+  let tableIndex = 0;
+  for (tableIndex in tablesList) {
+    const tableObj = tablesList[tableIndex];
+    tableObj.remove();
+    tableObj.renderTable();
+  }
+}
+
 class Table {
   constructor(dataTable, name, colSchemas, id) {
-    this.dataTable = dataTable;
     this.name = name;
     this.colSchemas = colSchemas;
     this.id = id;
-    this.tableWithTypes = new Array(dataTable.length); // Number rows
+    this.dataTable = new Array(dataTable.length); // Number rows
     this.sortDirections = new Array(colSchemas.length); // Number cols
-    this.maketableWithTypes();
-    this.setDataTable = this.setDataTable.bind(this);
+    this.makeTableWithTypes(dataTable);
+    this.setTable = this.setTable.bind(this);
+  }
+
+  getName() {
+    return this.name;
+  }
+
+  getDataTable() {
+    return this.dataTable;
+  }
+
+  getDataType(colIndex) {
+    const colSchema = this.colSchemas[colIndex];
+    return colSchema.schemaType;
+  }
+
+  // Initialize table with actual column types
+  makeTableWithTypes(dataTable) {
+    let rowIndex = 0;
+    for (rowIndex in dataTable) {
+      const row = dataTable[rowIndex];
+      this.dataTable[rowIndex] = new Array(row.length);
+  
+      let col;
+      for (col in row) {
+        const cell = row[col];
+        const type = this.getDataType(col);
+        if (cell == "NULL") {
+          this.dataTable[rowIndex][col] = "";
+        } else {
+          if (type == "INT64") {
+            const cellToInt = parseInt(cell);
+            this.dataTable[rowIndex][col] = cellToInt;
+          } else {
+            this.dataTable[rowIndex][col] = cell;
+          }
+        }
+      }
+    }
+  }
+
+  fetchTable() {
+    setTimeout(function() {
+      this.renderTable();
+    }.bind(this), 0);
   }
 
   // 0 is ascending, 1 is descending -- start everything ascending
@@ -71,50 +149,14 @@ class Table {
     return this.sortDirections[index];
   }
 
-  // Initialize table with actual column types
-  maketableWithTypes() {
-    let rowIndex = 0;
-    for (rowIndex in this.dataTable) {
-      const row = this.dataTable[rowIndex];
-      this.tableWithTypes[rowIndex] = new Array(row.length);
-  
-      let col;
-      for (col in row) {
-        const cell = row[col];
-        const type = this.getDataType(col);
-        if (cell == "NULL") {
-          this.tableWithTypes[rowIndex][col] = "";
-        } else {
-          if (type == "INT64") {
-            const cellToInt = parseInt(cell);
-            this.tableWithTypes[rowIndex][col] = cellToInt;
-          } else {
-            this.tableWithTypes[rowIndex][col] = cell;
-          }
-        }
-      }
-    }
-  }
-
-  fetchTable() {
-    setTimeout(function() {
-      this.renderTable();
-    }.bind(this), 1000);
-  }
-
   sortRows() {
     const newRows = this.rows.slice();
     newRows.sort();
     this.setRows(newRows);
   }
 
-  setDataTable(tableWithTypes) {
-    this.tableWithTypes = tableWithTypes;
-    this.renderTable();
-  }
-
-  setTable(tableWithTypes) {
-    this.tableWithTypes = tableWithTypes;
+  setTable(dataTable) {
+    this.dataTable = dataTable;
   }
 
   remove() {
@@ -129,8 +171,8 @@ class Table {
     table.appendChild(this.makeTableHeaders());
 
     let index;
-    for (index in this.tableWithTypes) {
-      const row = this.tableWithTypes[index];
+    for (index in this.dataTable) {
+      const row = this.dataTable[index];
       const rowElement = document.createElement("tr");
   
       let rowIndex;
@@ -165,10 +207,6 @@ class Table {
     return columnHeader;
   }
 
-  getName() {
-    return this.name;
-  }
-
   // Create column name labels for table
   makeTableHeaders() {
     const columnNamesRow = document.createElement("tr");
@@ -181,48 +219,4 @@ class Table {
     }
     return columnNamesRow;
   }
-
-  getDataTable() {
-    return this.tableWithTypes;
-  }
-
-  getDataType(colIndex) {
-    const colSchema = this.colSchemas[colIndex];
-    return colSchema.schemaType;
-  }
 }
-
-function sort(index, id) {
-  let table = tablesList[id];
-  const name = table.getName();
-  let dataTable = table.getDataTable();
-  const dataType = table.getDataType(index);
-  let sortDirection = table.getSortDirection(index);
-
-  if (dataType == "INT64") {
-    if (sortDirection == 0) {
-      dataTable.sort(function(a,b){return a[index] - b[index];});
-    } else {
-      dataTable.sort(function(a,b){return b[index] - a[index];});
-    }
-  } else {
-    if (sortDirection == 0) {
-      dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
-    } else {
-      dataTable.sort(function(a,b){return b[index].localeCompare(a[index]);});
-    }
-  }
-
-  table.flipSortDirection(index);
-  table.setTable(dataTable);
-
-  //need to empty and rerender
-  let tableIndex = 0;
-  for (tableIndex in tablesList) {
-    const tableObj = tablesList[tableIndex];
-    tableObj.remove();
-    tableObj.renderTable();
-  }
-}
-
-let tablesList = [];
