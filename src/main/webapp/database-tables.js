@@ -1,31 +1,37 @@
 let tablesList = [];
 
+//Boolean to ensure data only shows after first click
+var showing = Boolean(false)
+
 function showDatabase() {
-  const search = window.location.search;
-  const queryString = '/data-from-db' + search;
-  document.getElementById("tables").innerText = 'Loading...';
+  if (!showing) { 
+    showing = true;
+    const search = window.location.search;
+    const queryString = '/data-from-db' + search;
+    document.getElementById("tables").innerText = 'Loading...';
 
-  tablesList = [];
+    tablesList = [];
  
-  fetch(queryString)
-  .then(response => response.json())
-  .then((data) => { 
-    document.getElementById("tables").innerText = '';
-    
-    let count = 0;
-    for (tableIndex in data) {
-      const tableData = data[tableIndex];
-      const name = tableData.name;
-      const colSchemas = tableData.columnSchemas;
+    fetch(queryString)
+    .then(response => response.json())
+    .then((data) => { 
+      document.getElementById("tables").innerText = '';
+      
+      let count = 0;
+      for (tableIndex in data) {
+        const tableData = data[tableIndex];
+        const name = tableData.name;
+        const colSchemas = tableData.columnSchemas;
 
-      const dataTable = tableData.dataTable;
-      let tableObj = new Table(dataTable, name, colSchemas, count);
+        const dataTable = tableData.dataTable;
+        let tableObj = new Table(dataTable, name, colSchemas, count);
 
-      tableObj.fetchTable();
-      tablesList.push(tableObj);
-      count++;
-    }
-  });
+        tableObj.fetchTable();
+        tablesList.push(tableObj);
+        count++;
+      }
+    });
+  }
 }
 
 function mainLoad(){
@@ -70,4 +76,3 @@ function sort(index, id) {
     tableObj.renderTable();
   }
 }
-
