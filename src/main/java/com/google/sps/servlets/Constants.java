@@ -11,7 +11,6 @@ class Constants {
   static final String GET_TABLE_SQL = "SELECT table_name FROM information_schema.tables WHERE table_catalog = '' and table_schema = ''";
   static final String GROUP_BY_TABLE_NAMES = ") group by table_name";
   static final String GROUP_BY_PRIMARY_KEYS = ", constraint_name=\"PRIMARY_KEY\"";
-  static final String GET_TABLE_SQL = "SELECT table_name FROM information_schema.tables WHERE table_catalog = '' and table_schema = ''";
   static final String NULL_REDIRECT = "/index.html";
   static final String PROJECT = "play-user-data-beetle";
   static final String TABLE_SELECT_PARAM = "table-select";

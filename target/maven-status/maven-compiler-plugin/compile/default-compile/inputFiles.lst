@@ -1,5 +1,6 @@
 /home/hilakey/step67-2020/src/main/java/com/google/sps/servlets/BeetleDbServlet.java
 /home/hilakey/step67-2020/src/main/java/com/google/sps/servlets/ReasonServlet.java
+/home/hilakey/step67-2020/src/main/java/com/google/sps/servlets/QueryFactory.java
 /home/hilakey/step67-2020/src/main/java/com/google/sps/servlets/TablesFromDatabaseServlet.java
 /home/hilakey/step67-2020/src/main/java/com/google/sps/servlets/Constants.java
 /home/hilakey/step67-2020/src/main/java/com/google/sps/servlets/DataFromDatabaseServlet.java

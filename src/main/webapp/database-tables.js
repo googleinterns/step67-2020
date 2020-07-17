@@ -97,25 +97,7 @@ function sort(index, id) {
 
 //Note: this method will show the reason assuming the reason is the last thing in the querystring
 function showReason() {
-  var startIndex = 0;
-  var reason = "";
-  const search = window.location.search;
-  for (var i = search.length-1; i > 0; i--) {
-    if (search.charAt(i) == '=') {
-       startIndex = i;
-       break;
-    } else if (search.charAt(i) == '&') {
-        break;
-    }
-  }
-  reason = search.substring(startIndex+1,search.length);
-  var finalReason="";
-  for(var i = 0; i <reason.length; i++) {
-      if (reason.charAt(i) == "+") {
-         finalReason += " ";
-      } else {
-          finalReason += reason.charAt(i);
-      }
-  }
-  document.getElementById("justification").innerText = "Justification: " + finalReason;
+  const params = new URLSearchParams(window.location.search);
+  var reasonFinal = params.get('reason');
+  document.getElementById("justification").innerText = "Justification: " + reasonFinal;
 }

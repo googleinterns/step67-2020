@@ -112,7 +112,7 @@ function filterColumns() {
         var col_checkbox = document.createElement('input');
         col_checkbox.type= 'checkbox';
         col_checkbox.value = tables[keys][0][col];
-        col_checkbox.id = "column-select" + col;
+        col_checkbox.id = tables[keys][0][col];
         col_checkbox.name = keys;
 
         var label = document.createElement('label');
@@ -158,38 +158,37 @@ function filterColumns() {
             pkBoxDiv.style.padding ='4px';
             primkeyFilters.appendChild(pkBoxDiv);
             console.log("checkbox was made for the primary key" + tables[keys][1][col]);
-        }
-      //onclick event that will hide/show primary key filters
-      primkey_select.onclick = function() {
-      if (primkeyFilters.style.display === "none") {
-        primkeyFilters.style.display = "block";
-      } else {
+
+            //onclick event that will hide/show primary key filters
+            primkey_select.onclick = function() {
+            if (primkeyFilters.style.display === "none") {
+              primkeyFilters.style.display = "block";
+            } else {
             primkeyFilters.style.display = "none";
+            }};
+
+             //appending primary keys filter dropdown
+            primkeyDiv.appendChild(primkey_select);
+            primkeyDiv.appendChild(primkeyFilters);
+            var div = document.createElement('div');
+            div.style.padding ='10px';
+            primkeyDiv.appendChild(div);
+
         }
-      };
 
       //onclick event that will hide/show column list filters
-      column_select.onclick = function() {
+        column_select.onclick = function() {
         if (colFilters.style.display === "none") {
-            colFilters.style.display = "block";
+             colFilters.style.display = "block";
         } else {
             colFilters.style.display = "none";
-        }
-     };
-
+        }};
       //appending colum filter dropdown
       columnDiv.appendChild(column_select);
       columnDiv.appendChild(colFilters);
       var div = document.createElement('div');
       div.style.padding ='10px';
       columnDiv.appendChild(div);
- 
-    //appending primary keys filter dropdown
-      primkeyDiv.appendChild(primkey_select);
-      primkeyDiv.appendChild(primkeyFilters);
-      var div = document.createElement('div');
-      div.style.padding ='10px';
-      primkeyDiv.appendChild(div);
     }
  });
 }
