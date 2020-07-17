@@ -18,10 +18,11 @@
 
     <div id = "header">
       <div class = "button-box">
-        <a href = "index.html"><button>Splash Page</button></a>
-        <button id = "filter-button" onmouseover = "luckyFilter()" onclick = "showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
-        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
-        <button onclick = "showShare()" >Share Query</button>
+        <a href = "splash.html"><button>Back to Splash Page</button></a>
+        <button id = "filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id = "data-button" onmouseover = "luckyData()" onclick = "login(); showDatabase()" onmouseout="unlucky()">Load Data </button>
+        <button id = "share-button" onclick = "showShare()" >Share Query</button>
+        <button onclick = "clearFilters()"> Clear Filters </button>
       </div>
     </div>
 
@@ -51,7 +52,6 @@
 
     <div id="user"></div>
     <div id="tables"></div>
-
-    <button onclick="showDatabase()">Show Data</button>
+    <div id ="justification"></div>
   </body>
 </html>

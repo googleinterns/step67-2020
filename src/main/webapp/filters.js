@@ -17,12 +17,15 @@ function submitFilters() {
   return isFilterInputEmpty();
 }
 
-function showFiltersPanel(){
+function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
   if (filterBox.style.display === "none") {
     filterBox.style.display = "block";
+    filterButton.textContent = "Hide Filters"
   } else {
     filterBox.style.display = "none";
+    filterButton.textContent = "Show Filters"
   }
 }
 
@@ -89,7 +92,7 @@ function filterColumns() {
         var checkbox = document.createElement('input');
         checkbox.type= 'checkbox';
         checkbox.value = tables[keys][0][col];
-        checkbox.id = "column-select";
+        checkbox.id = "column-select" + col;
         checkbox.name = keys;
 
         var label = document.createElement('label');
