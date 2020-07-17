@@ -36,17 +36,16 @@ final class QueryFactory {
   }
 
   static String buildColumnsQuery(String[] listOfTables) {
-    //TODO: use StringBuilder rather than string concatenation
-    String query = GET_COLUMNS_FROM_TABLES;
+    StringBuilder queryBuilder = new StringBuilder(GET_COLUMNS_FROM_TABLES);
     for (int i = 0; i < listOfTables.length; i++) {
       //TODO: check if backslash is actually needed here
       String selectedTables = "\'" + listOfTables[i] + "\'";
-      query = query + selectedTables;
+      queryBuilder.append(selectedTables);
       if (i != listOfTables.length-1) {
-        query = query + ", ";
+        queryBuilder.append(", ");
       } 
     }
-    query = query + GROUP_BY_TABLE_NAMES;   
-    return query;
+    queryBuilder.append(GROUP_BY_TABLE_NAMES);   
+    return queryBuilder.toString();
   }
 }
