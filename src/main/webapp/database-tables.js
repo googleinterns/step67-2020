@@ -10,7 +10,6 @@ function showDatabase() {
   fetch(queryString)
   .then(response => response.json())
   .then((data) => { 
-    const dataArea = document.getElementById("data");
     document.getElementById("tables").innerText = '';
     
     let count = 0;
@@ -42,7 +41,6 @@ function login(){
 
 function sort(index, id) {
   let table = tablesList[id];
-  const name = table.getName();
   let dataTable = table.getDataTable();
   const dataType = table.getDataType(index);
   let sortDirection = table.getSortDirection(index);
