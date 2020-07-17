@@ -59,7 +59,6 @@ public class ColumnsFromTablesServlet extends HttpServlet {
           data.put(resultSet.getString(0), resultSet.getStringList(1));
         }
       }
-
       //Converting resultList into JSON data
       String json = convertToJsonUsingGson(data);
       response.getWriter().println(json);
