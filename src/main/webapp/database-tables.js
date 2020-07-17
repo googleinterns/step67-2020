@@ -2,7 +2,7 @@
 var showing = Boolean(false)
 
 function showDatabase() {
-  if (!showing) { 
+  if (!showing){
     showing = true;
     const search = window.location.search;
     const queryString = '/data-from-db' + search;
@@ -80,12 +80,37 @@ function createTable(name) {
 }
 
 function mainLoad(){
-  showDatabase();
   login();
+  showReason();
 }
 
 function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
   });
+}
+
+//Note: this method will show the reason assuming the reason is the last thing in the querystring
+function showReason() {
+  var startIndex = 0;
+  var reason = "";
+  const search = window.location.search;
+  for (var i = search.length-1; i > 0; i--) {
+    if (search.charAt(i) == '=') {
+       startIndex = i;
+       break;
+    } else if (search.charAt(i) == '&') {
+        break;
+    }
+  }
+  reason = search.substring(startIndex+1,search.length);
+  var finalReason="";
+  for(var i = 0; i <reason.length; i++) {
+      if (reason.charAt(i) == "+") {
+         finalReason += " ";
+      } else {
+          finalReason += reason.charAt(i);
+      }
+  }
+  document.getElementById("justification").innerText = "Justification: " + finalReason;
 }

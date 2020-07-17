@@ -17,10 +17,11 @@
 
     <div id = "header">
       <div class = "button-box">
-        <a href = "index.html"><button>Splash Page</button></a>
-        <button id = "filter-button" onmouseover = "luckyFilter()" onclick = "showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
-        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
-        <button onclick = "showShare()" >Share Query</button>
+        <a href = "splash.html"><button>Back to Splash Page</button></a>
+        <button id = "filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id = "data-button" onmouseover = "luckyData()" onclick = "login(); showDatabase()" onmouseout="unlucky()">Load Data </button>
+        <button id = "share-button" onclick = "showShare()" >Share Query</button>
+        <button onclick = "clearFilters()"> Clear Filters </button>
       </div>
     </div>
 
@@ -30,23 +31,23 @@
       <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
     </div>
     
-    <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>
-      <div id="filter-box" style="display: none;">
-        <form action="/main-page.html" method="GET">
-          <h1> Filters</h1>
+    <div id="filter-box" style="display: none;">
+      <form action="/main-page.html" method="GET">
+        <h1> Filters</h1>
 
-          <input type="text" id="user_id" placeholder="Enter the user_id">
-          <div style="padding: 10px"></div> 
-          <input type="text" id="device_id" placeholder="Enter the device_id">
-          <div style="padding: 10px"></div>
-          <input type="search" placeholder="Search...">
-          <div style="padding: 10px"></div>
+        <input type="text" id="user_id" placeholder="Enter the user_id">
+        <div style="padding: 10px"></div> 
+        <input type="text" id="device_id" placeholder="Enter the device_id">
+        <div style="padding: 10px"></div>
+        <input type="search" placeholder="Search...">
+        <div style="padding: 10px"></div>
 
-          <div id="table-filters"></div>
+        <div id="table-filters"></div>
 
-          <input type="submit" id="submit" value="submit" onClick=" return isFilterInputEmpty()">
+        <input type="submit" id="submit" value="submit" onClick=" return isFilterInputEmpty()">
         </form>  
       </div>
     <div id="user"></div>
+    <div id ="justification"></div>
   </body>
 </html>
