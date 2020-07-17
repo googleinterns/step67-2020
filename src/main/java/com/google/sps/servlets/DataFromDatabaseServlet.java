@@ -33,7 +33,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   private String[] selectedTables;
-  
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType(TEXT_TYPE);
@@ -83,7 +83,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
       selectedCols = Arrays.asList(selectedColsInTable);
     while (resultSet.next()) {
       String colName = resultSet.getString(0);
-      System.out.println(colName);
       if (selectedColsInTable == null || selectedCols.contains(colName)) {
         colSchemaBuilder.add(createColumnSchema(resultSet));
       }
