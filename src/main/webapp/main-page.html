@@ -18,18 +18,13 @@
 
     <div id = "header">
       <div class = "button-box">
-<<<<<<< HEAD
-        <a href = "index.html"><button>Splash Page</button></a>
-        <button id = "filter-button" onmouseover = "luckyFilter()" onClick="showFiltersPanel(); filterColumns()" onmouseout="unlucky()">Show Filters </button>
-        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
-        <button onclick = "showShare()" >Share Query</button>
-=======
+
         <a href = "splash.html"><button>Back to Splash Page</button></a>
         <button id = "filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button id = "data-button" onmouseover = "luckyData()" onclick = "login(); showDatabase()" onmouseout="unlucky()">Load Data </button>
         <button id = "share-button" onclick = "showShare()" >Share Query</button>
         <button onclick = "clearFilters()"> Clear Filters </button>
->>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
+
       </div>
     </div>
 
@@ -39,19 +34,11 @@
       <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
     </div>
     
-<<<<<<< HEAD
     <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
     <div id="toggle">Default</div>
-      <div id="filter-box" name="filter-box" style="display: none;">
-        <p>FILTERS</p>
-        <form action="/main-page.html" method="GET">
-          <p class ="closeButton">Close</p>
-=======
-    <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>
     <div id="filter-box" style="display: none;">
       <form id="filter-form" action="/main-page.html" method="GET">
         <h1> Filters</h1>
->>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
 
         <input type="text" id="user_id" placeholder="Enter the user_id">
         <div style="padding: 10px"></div> 
@@ -60,16 +47,15 @@
         <input type="search" placeholder="Search...">
         <div style="padding: 10px"></div>
 
-<<<<<<< HEAD
+
           <div id="column-filters"></div>
           <div id="primarykey-filters" style="display: none;"></div>
-=======
+
         <div id="table-filters"></div>
 
         <input type="submit" id="submit" value="submit" onClick="return submitFilters()">
       </form>  
     </div>
->>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
 
     <div id="user"></div>
     <div id="tables"></div>

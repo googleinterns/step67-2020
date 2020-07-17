@@ -56,7 +56,6 @@ public class ColumnsFromTablesServlet extends HttpServlet {
 
       DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
-<<<<<<< HEAD
       String query = "";
       String selectedTables = "";
 
@@ -73,9 +72,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
         } 
       }
       query = query + GROUP_BY_TABLE_NAMES + GROUP_BY_PRIMARY_KEYS;   // Queries list of columns and primary keys of the selected tables
-=======
-      String query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
->>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
+      //String query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
 
       try (ResultSet resultSet =
           dbClient

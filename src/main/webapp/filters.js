@@ -19,11 +19,10 @@ function submitFilters() {
 
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
-<<<<<<< HEAD
-  document.getElementById("filter-button").style.visibility = "hidden";
-=======
+
   var filterButton = document.getElementById("filter-button");
->>>>>>> e0393bebaf7d87f15efbf389f509f9e781e7f76d
+  filterButton.style.visibility = "hidden";
+
   if (filterBox.style.display === "none") {
     filterBox.style.display = "block";
     filterButton.textContent = "Hide Filters"
