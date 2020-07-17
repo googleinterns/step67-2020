@@ -4,8 +4,11 @@ import com.google.cloud.spanner.Statement;
 import java.util.List;
 
 final class QueryFactory {
-  private static final String SCHEMA_INFO_SQL = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '";
+  
   private static final QueryFactory instance = new QueryFactory();
+  private static final String GET_COLUMNS_FROM_TABLES = "SELECT table_name, ARRAY_AGG(column_name) FROM information_schema.columns WHERE table_name in(";
+  private static final String GROUP_BY_TABLE_NAMES = ") group by table_name";
+  private static final String SCHEMA_INFO_SQL = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '";
 
   private QueryFactory() {
     // Private because static class
@@ -30,5 +33,20 @@ final class QueryFactory {
     query.append(" FROM " + table); 
     Statement statement = Statement.newBuilder(query.toString()).build();
     return statement;
+  }
+
+  static String buildColumnsQuery(String[] listOfTables) {
+    //TODO: use StringBuilder rather than string concatenation
+    String query = GET_COLUMNS_FROM_TABLES;
+    for (int i = 0; i < listOfTables.length; i++) {
+      //TODO: check if backslash is actually needed here
+      String selectedTables = "\'" + listOfTables[i] + "\'";
+      query = query + selectedTables;
+      if (i != listOfTables.length-1) {
+        query = query + ", ";
+      } 
+    }
+    query = query + GROUP_BY_TABLE_NAMES;   
+    return query;
   }
 }
