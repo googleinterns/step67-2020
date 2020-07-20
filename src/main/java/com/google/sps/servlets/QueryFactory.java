@@ -6,7 +6,6 @@ import java.util.List;
 final class QueryFactory {
   
   private static final QueryFactory instance = new QueryFactory();
-  private static final String GET_COLUMNS_FROM_TABLES = "SELECT table_name, ARRAY_AGG(column_name) FROM information_schema.columns WHERE table_name in(";
   private static final String GROUP_BY_TABLE_NAMES = ") group by table_name";
 
   private QueryFactory() {
@@ -37,7 +36,10 @@ final class QueryFactory {
   }
 
   static Statement buildColumnsQuery(String[] listOfTables) {
-    StringBuilder queryBuilder = new StringBuilder(GET_COLUMNS_FROM_TABLES);
+    String getColumnsSql = "SELECT table_name, ARRAY_AGG(column_name) ";
+    getColumnsSql += "FROM information_schema.columns WHERE table_name in(";
+    StringBuilder queryBuilder = new StringBuilder(getColumnsSql);
+
     for (int i = 0; i < listOfTables.length; i++) {
       String selectedTables = "'" + listOfTables[i] + "'";
       queryBuilder.append(selectedTables);
@@ -45,7 +47,7 @@ final class QueryFactory {
         queryBuilder.append(", ");
       } 
     }
-    queryBuilder.append(GROUP_BY_TABLE_NAMES);   
+    queryBuilder.append(") group by table_name");   
     return Statement.newBuilder(queryBuilder.toString()).build();
   }
 }
