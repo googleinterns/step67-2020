@@ -8,7 +8,6 @@ final class QueryFactory {
   private static final QueryFactory instance = new QueryFactory();
   private static final String GET_COLUMNS_FROM_TABLES = "SELECT table_name, ARRAY_AGG(column_name) FROM information_schema.columns WHERE table_name in(";
   private static final String GROUP_BY_TABLE_NAMES = ") group by table_name";
-  private static final String SCHEMA_INFO_SQL = "SELECT column_name, spanner_type, is_nullable FROM information_schema.columns WHERE table_name = '";
 
   private QueryFactory() {
     // Private because static class
@@ -18,8 +17,10 @@ final class QueryFactory {
     return instance;
   }
 
-  static String buildSchemaQuery(String table) {
-    return SCHEMA_INFO_SQL + table + "'";
+  static Statement buildSchemaQuery(String table) {
+    StringBuilder query = new StringBuilder("SELECT column_name, spanner_type, is_nullable ");
+    query.append("FROM information_schema.columns WHERE table_name = '%s'");
+    return Statement.newBuilder(String.format(query.toString(), table)).build();
   }
 
   // Construct SQL statement of form SELECT <columns list> FROM <table>
