@@ -80,7 +80,7 @@ function getTablesList(dbName) {
     tableListSpace.innerText = "";
 
     // No tables in this database
-    if (list.length == 0) {
+    if (tableList.length == 0) {
       const errorMessage = document.createElement('p');
       errorMessage.setAttribute("id", "instruction");
       errorMessage.innerText = "This database has no tables.";
@@ -88,20 +88,22 @@ function getTablesList(dbName) {
       return;
     }
     
-    createForm(tableListSpace, dbName);
-    addSpace();
-    addTableSelectInstr();
-    createSelectElement();
-    for (let index = 0; index < list.length; index++) {
-      addTableOption(list[index]);
-    }
-    addSpace();
-    addReasonInput();
-    createSubmit();
+    makeTableListAndReason(tableListSpace, dbName, tableList);
   });
 }
 
-function makeTableListAndReason(tableListSpace, dbName, list)
+function makeTableListAndReason(tableListSpace, dbName, tableList) {
+  createForm(tableListSpace, dbName);
+  addSpace();
+  addTableSelectInstr();
+  createSelectElement();
+  for (let index = 0; index < tableList.length; index++) {
+    addTableOption(tableList[index]);
+  }
+  addSpace();
+  addReasonInput();
+  createSubmit();
+}
 
 // Add spacing for formatting
 function addSpace() {

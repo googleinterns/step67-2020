@@ -39,8 +39,7 @@ final class QueryFactory {
   static String buildColumnsQuery(String[] listOfTables) {
     StringBuilder queryBuilder = new StringBuilder(GET_COLUMNS_FROM_TABLES);
     for (int i = 0; i < listOfTables.length; i++) {
-      //TODO: check if backslash is actually needed here
-      String selectedTables = "\'" + listOfTables[i] + "\'";
+      String selectedTables = "'" + listOfTables[i] + "'";
       queryBuilder.append(selectedTables);
       if (i != listOfTables.length-1) {
         queryBuilder.append(", ");

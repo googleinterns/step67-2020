@@ -44,10 +44,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
     List<Table> tables = new ArrayList<>();
 
     for (String table : selectedTables) {
-      String columnQuery = QueryFactory.getInstance().buildSchemaQuery(table);
+      Statement columnQuery = QueryFactory.getInstance().buildSchemaQuery(table);
  
       try (ResultSet resultSet =
-        dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
+        dbClient.singleUse().executeQuery(columnQuery)) {
         ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
         
         Table.Builder tableBuilder = Table.builder().setName(table);
