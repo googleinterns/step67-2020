@@ -50,7 +50,7 @@ function addSelectedTableToForm(keys, filterForm) {
   filterForm.appendChild(tableSelect);
 }
 
-//Returns checkbox dropdowns of the selected table's columns which can then be filtered
+//Returns textInput dropdowns of the selected table's columns which can then be filtered
 function filterColumns() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
@@ -82,45 +82,46 @@ function filterColumns() {
       select.add(defaultOption);
       select.selectedIndex = 0;
 
-      let checkboxes = document.createElement('div');
+      let textInputs = document.createElement('div');
       
-      //Create checkboxes for each column of the table
+      //Create textInputs for each column of the table
       for(var col in tables[keys][0]){
-        var checkbox = document.createElement('input');
-        checkbox.type= 'checkbox';
-        checkbox.value = tables[keys][0][col];
-        checkbox.id = "column-select";
-        checkbox.name = keys;
+        var textInput = document.createElement('input');
+        textInput.type= 'text';
+        textInput.placeholder = tables[keys][0][col];
+        textInput.id = "column-select";
+        textInput.name = keys + "-" + tables[keys][0][col];
+        console.log(textInput.name)
 
         var label = document.createElement('label');
         label.innerHTML = tables[keys][0][col];
         label.htmlFor =  tables[keys][0][col];
-        checkbox.innerHTML = label.outerHTML;
+        textInput.innerHTML = label.outerHTML;
                 
-        checkbox.appendChild(label);
-        checkboxes.appendChild(checkbox);
-        checkboxes.appendChild(label);
+        //textInput.appendChild(label);
+        textInputs.appendChild(textInput);
+        //textInputs.appendChild(label);
 
-        checkboxes.style.border = "1px solid";
-        checkboxes.style.display = "none";
-        checkboxes.style.width = '200px';
+        textInputs.style.border = "1px solid";
+        textInputs.style.display = "none";
+        textInputs.style.width = '200px';
 
         var boxDiv = document.createElement('div');
         boxDiv.style.padding ='4px';
-        checkboxes.appendChild(boxDiv);
+        textInputs.appendChild(boxDiv);
       }
 
       //onclick event that will hide/show column filters
       select.onclick = function() {
-        if (checkboxes.style.display === "none") {
-            checkboxes.style.display = "block";
+        if (textInputs.style.display === "none") {
+            textInputs.style.display = "block";
         } else {
-            checkboxes.style.display = "none";
+            textInputs.style.display = "none";
         }
      };
 
       tableFilters.appendChild(select);
-      tableFilters.appendChild(checkboxes);
+      tableFilters.appendChild(textInputs);
       var div = document.createElement('div');
       div.style.padding ='10px';
       tableFilters.appendChild(div);

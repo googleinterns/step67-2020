@@ -26,7 +26,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   private String[] selectedTables;
-  private String[] selectedColsInTable;
   private Constants constants = new Constants();
   //TODO: (issue 15) get rid of this instance, and instead import constants
     // example: import static com.google.sps.servlets.Constants. GET_COLUMNS_FROM_TABLES;
@@ -43,6 +42,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
     for (String table : selectedTables) {
       String columnQuery = constants.SCHEMA_INFO_SQL + table + "'";
 
+      String[] perTableFilters = null;
+      String[] selectedColsInTable = null;
+
       if (request.getParameterValues(table) != null) {
         selectedColsInTable = request.getParameterValues(table);
       } 
@@ -50,10 +52,13 @@ public class DataFromDatabaseServlet extends HttpServlet {
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
         ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
+
+        //get filters
+        String where = getPerTableFilters(columnSchemas, table, request);
         
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
-        Statement queryStatement = constructQueryStatement(columnSchemas, table);
+        Statement queryStatement = constructQueryStatement(columnSchemas, table, where);
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
@@ -62,6 +67,30 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
     String json = new Gson().toJson(tables);
     response.getWriter().println(json);
+  }
+
+  //TODO: put this in QueryFactory class once merged
+  //TODO: print out a message if there are no rows with this value
+  private String getPerTableFilters(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
+    String whereQuery = "WHERE ";
+    
+    for (ColumnSchema colSchema : columnSchemas) {
+      String colName = colSchema.columnName();
+      String colType = colSchema.schemaType();
+      System.out.println(colType);
+      String filterValue = request.getParameter(table + "-" + colName);
+      if (filterValue != null && !filterValue.equals("")) {
+        if (colType.equals("STRING")) {
+          filterValue = "\"" + filterValue + "\"";
+        }
+        whereQuery += colName + "=" + filterValue + ",";
+      }
+    }
+    if (whereQuery.equals("WHERE ")) {
+      return "";
+    } else {
+      return whereQuery.substring(0, whereQuery.length() - 1);
+    }
   }
 
   private void checkTableHasColumns(List<ColumnSchema> columnSchemas) {
@@ -108,7 +137,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
   }
 
   // Construct SQL statement of form SELECT <columns list> FROM <table>
-  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table) {
+  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table, String where) {
     StringBuilder query = new StringBuilder("SELECT ");
 
     for (ColumnSchema columnSchema : columnSchemas) {
@@ -116,6 +145,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
     query.deleteCharAt(query.length() - 1); //Get rid of extra space
     query.append(" FROM " + table); 
+    query.append(" " + where);
     Statement statement = Statement.newBuilder(query.toString()).build();
     return statement;
   }
@@ -130,7 +160,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
       .singleUse() 
       .executeQuery(query)) {
         
+      int resultCount = 0;
       while (resultSet.next()) {
+        resultCount++;
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (ColumnSchema columnSchema : columnSchemas) {
           String columnName = columnSchema.columnName();
@@ -147,6 +179,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
         ImmutableList<String> immutableRow = rowBuilder.build();
         tableBuilder.addRow(immutableRow);
+      }
+
+      // TODO: if no rows, find out a way to display this info on the screen
+      if (resultCount == 0) {  
+        System.out.println("No rows in table");
       }
     }
   }
