@@ -49,12 +49,12 @@ public class ColumnsFromTablesServlet extends HttpServlet {
 
       DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
-      String query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
+      Statement query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
 
       try (ResultSet resultSet =
           dbClient
           .singleUse() 
-          .executeQuery(Statement.of(query))) {
+          .executeQuery(query)) {
         while (resultSet.next()) {
           data.put(resultSet.getString(0), resultSet.getStringList(1));
         }

@@ -17,6 +17,7 @@ final class QueryFactory {
     return instance;
   }
 
+  //TODO: try to do binding w/ parameters
   static Statement buildSchemaQuery(String table) {
     StringBuilder query = new StringBuilder("SELECT column_name, spanner_type, is_nullable ");
     query.append("FROM information_schema.columns WHERE table_name = '%s'");
@@ -32,11 +33,10 @@ final class QueryFactory {
     }
     query.deleteCharAt(query.length() - 1); //Get rid of extra space
     query.append(" FROM " + table); 
-    Statement statement = Statement.newBuilder(query.toString()).build();
-    return statement;
+    return Statement.newBuilder(query.toString()).build();
   }
 
-  static String buildColumnsQuery(String[] listOfTables) {
+  static Statement buildColumnsQuery(String[] listOfTables) {
     StringBuilder queryBuilder = new StringBuilder(GET_COLUMNS_FROM_TABLES);
     for (int i = 0; i < listOfTables.length; i++) {
       String selectedTables = "'" + listOfTables[i] + "'";
@@ -46,6 +46,6 @@ final class QueryFactory {
       } 
     }
     queryBuilder.append(GROUP_BY_TABLE_NAMES);   
-    return queryBuilder.toString();
+    return Statement.newBuilder(queryBuilder.toString()).build();
   }
 }
