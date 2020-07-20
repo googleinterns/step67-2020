@@ -67,21 +67,18 @@ function getDatabaseAndTable(){
  
 // Get and create list of tables in the selected database
 function getTablesList(dbName) {
-  console.log(dbName)
   const tablesUrl = '/tables-from-db';
   const search = "?list-databases=" +dbName;
-  if (!search.includes("list-databases")) {
-    return;
-  }
+
+  const tableListSpace = document.getElementById('table-list');
+  tableListSpace.innerText = "Loading...";
+  
   const queryString = tablesUrl + search;
   fetch(queryString)
   .then(response => response.json())
-  .then((list) => { 
-    const tableListSpace = document.getElementById('table-list');
+  .then((tableList) => { 
+    tableListSpace.innerText = "";
 
-    // Clear out space
-    tableListSpace.innerText = '';
- 
     // No tables in this database
     if (list.length == 0) {
       const errorMessage = document.createElement('p');
@@ -103,6 +100,8 @@ function getTablesList(dbName) {
     createSubmit();
   });
 }
+
+function makeTableListAndReason(tableListSpace, dbName, list)
 
 // Add spacing for formatting
 function addSpace() {
