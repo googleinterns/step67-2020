@@ -22,7 +22,10 @@ function getDatabases(){
 }
 
 function submitDatabaseForm() { 
-  document.getElementById("database-select-form").submit();
+  let database = document.getElementById("list-databases").value;
+  if (database != "Select a Database") {
+    getTablesList(database);
+  }
 }
 
 //Get database and selected tables from query string and /tables-from-db
@@ -61,15 +64,12 @@ function getDatabaseAndTable(){
         }
     });
 }
-
-function submitDatabaseForm() {
-  document.getElementById("database-select-form").submit();
-}
  
 // Get and create list of tables in the selected database
-function getTablesList() {
+function getTablesList(dbName) {
+  console.log(dbName)
   const tablesUrl = '/tables-from-db';
-  const search = window.location.search;
+  const search = "?list-databases=" +dbName;
   if (!search.includes("list-databases")) {
     return;
   }
@@ -78,6 +78,9 @@ function getTablesList() {
   .then(response => response.json())
   .then((list) => { 
     const tableListSpace = document.getElementById('table-list');
+
+    // Clear out space
+    tableListSpace.innerText = '';
  
     // No tables in this database
     if (list.length == 0) {
@@ -88,7 +91,7 @@ function getTablesList() {
       return;
     }
     
-    createForm(tableListSpace);
+    createForm(tableListSpace, dbName);
     addSpace();
     addTableSelectInstr();
     createSelectElement();
@@ -126,26 +129,23 @@ function createSelectElement() {
   document.getElementById("table-select").multiple = true;
 }
  
-function createForm(tableListSpace) {
+function createForm(tableListSpace, databaseName) {
   const form = document.createElement("form");
   form.setAttribute("id", "table-form");
   form.setAttribute("action", "/main-page.html" + window.location.search);
   form.setAttribute("method", "GET");
  
-  const databaseInput = addDatabaseToQueryString();
+  const databaseInput = addDatabaseToQueryString(databaseName);
   form.appendChild(databaseInput);
  
   tableListSpace.appendChild(form);
 }
  
 // Add hidden form input to send database name on form submit
-function addDatabaseToQueryString() {
-  const searchString = window.location.search;
-  const index = searchString.indexOf("=");
-  const database = searchString.substring(index + 1);
+function addDatabaseToQueryString(databaseName) {
   const databaseInput = document.createElement("input");
   databaseInput.setAttribute("type", "hidden");
-  databaseInput.setAttribute("value", database);
+  databaseInput.setAttribute("value", databaseName);
   databaseInput.setAttribute("name", "list-databases");
   return databaseInput;
 }
@@ -174,7 +174,6 @@ function addTableOption(text) {
  
 function onLoad() {
   getDatabases();
-  getTablesList();
   login();
 }
 
@@ -185,8 +184,7 @@ function createListElement(text) {
 }
 
 function showShare() {
-    console.log("Show");
-    document.getElementById("share-form").classList.remove("invisible");
+  document.getElementById("share-form").classList.remove("invisible");
 }
 
 function copyLink() {
