@@ -27,7 +27,10 @@
 
     <div id = "share-form" class = "invisible">
       <h4>Share Query</h4>
-      <input type="text" id = "share-text" placeholder="Share with a fellow Googler.">
+      <input type="text" id = "share-text" placeholder="Share with a fellow Googler." disabled>
+      <!-- Note that disabling text box does not allow copy to work -->
+      <!-- TODO: research another method of copying link -->
+      <!-- TODO: Hide share query onclick of copy Link -->
       <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
     </div>
     

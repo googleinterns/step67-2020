@@ -227,13 +227,3 @@ function unlucky() {
 function changeText() {
     document.getElementById("share-text").value = window.location.href;
 }
-
-function login(){
-  fetch("/login").then(response => response.json()).then((user) => {
-    document.getElementById("user").innerText = user;
-    var currentUser = user;
-    var myArray = ["jiaxinz@google.com","gagomez@google.com","hilakey@google.com","sasymer@google.com","williamdc@google.com"];
-    console.log(currentUser[0]);
-    console.log("current user");
-  });
-}

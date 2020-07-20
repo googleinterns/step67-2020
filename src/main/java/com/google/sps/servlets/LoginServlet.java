@@ -30,8 +30,10 @@ public class LoginServlet extends HttpServlet {
       String urlToRedirectToAfterUserLogsIn = "/splash.html";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
       userEmail.add("Stranger");
-      //  response.sendRedirect("https://accounts.google.com/signin/v2/identifier?");
+      response.sendRedirect("https://accounts.google.com/AccountChooser/signinchooser?flowName=GlifWebSignIn&flowEntry=AccountChooser");
     } else{
+        String urlAfterLogout = "https://accounts.google.com/AccountChooser/signinchooser?flowName=GlifWebSignIn&flowEntry=AccountChooser";
+        String logoutUrl = userService.createLogoutURL(urlAfterLogout);
         String currentUserEmail = userService.getCurrentUser().getEmail();
         userEmail.add(currentUserEmail);
     }

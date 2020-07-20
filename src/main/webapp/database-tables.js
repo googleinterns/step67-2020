@@ -89,12 +89,13 @@ function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
     var currentUser = user;
+    console.log(user);
     if (currentUser[0] == "Stranger"){
         window.location.assign("https://accounts.google.com/signin/v2/identifier?");
         return;
     }
 
-    var usersWithAccess = ["jiaxinz@google.com","gagomez@google.com",/*"test@example.com",*/"hilakey@google.com","sasymer@google.com","williamdc@google.com"];
+    var usersWithAccess = ["jiaxinz@google.com","gagomez@google.com","test@example.com","hilakey@google.com","sasymer@google.com","williamdc@google.com"];
     console.log(currentUser[0]);
     console.log("current user");
     for (var i =0; i < usersWithAccess.length; i++){
@@ -108,27 +109,8 @@ function login() {
   });
 }
 
-//Note: this method will show the reason assuming the reason is the last thing in the querystring
 function showReason() {
-  var startIndex = 0;
-  var reason = "";
-  const search = window.location.search;
-  for (var i = search.length-1; i > 0; i--) {
-    if (search.charAt(i) == '=') {
-       startIndex = i;
-       break;
-    } else if (search.charAt(i) == '&') {
-        break;
-    }
-  }
-  reason = search.substring(startIndex+1,search.length);
-  var finalReason="";
-  for(var i = 0; i <reason.length; i++) {
-      if (reason.charAt(i) == "+") {
-         finalReason += " ";
-      } else {
-          finalReason += reason.charAt(i);
-      }
-  }
-  document.getElementById("justification").innerText = "Justification: " + finalReason;
+  const params = new URLSearchParams(window.location.search);
+  var reason = params.get('reason');
+  document.getElementById("justification").innerText = "Justification: " + reason;
 }
