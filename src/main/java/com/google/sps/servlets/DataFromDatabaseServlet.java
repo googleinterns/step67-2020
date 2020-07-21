@@ -20,42 +20,47 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import static com.google.sps.servlets.Constants.DATABASE_PARAM;
+import static com.google.sps.servlets.Constants.EMPTY_TABLE_ERROR;
+import static com.google.sps.servlets.Constants.ENCODING_ERROR;
+import static com.google.sps.servlets.Constants.ENCODING_TYPE;
+import static com.google.sps.servlets.Constants.TABLE_SELECT_PARAM;
+import static com.google.sps.servlets.Constants.TEXT_TYPE;
+import static com.google.sps.servlets.Constants.UNSUPPORT_ERROR;
 
 @WebServlet("/data-from-db")
 public class DataFromDatabaseServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   private String[] selectedTables;
-  private Constants constants = new Constants();
-  //TODO: (issue 15) get rid of this instance, and instead import constants
-    // example: import static com.google.sps.servlets.Constants. GET_COLUMNS_FROM_TABLES;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType(constants.TEXT_TYPE);
-    selectedTables = request.getParameterValues(constants.TABLE_SELECT_PARAM);
-    String databaseName = request.getParameter(constants.DATABASE_PARAM);
+    response.setContentType(TEXT_TYPE);
+    selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
+    String databaseName = request.getParameter(DATABASE_PARAM);
     initDatabaseClient(databaseName);
+    QueryFactory queryFactory = QueryFactory.getInstance();
 
     List<Table> tables = new ArrayList<>();
 
     for (String table : selectedTables) {
-      String columnQuery = constants.SCHEMA_INFO_SQL + table + "'";
-
       String[] selectedColsInTable = null;
       if (request.getParameterValues(table) != null) {
         selectedColsInTable = request.getParameterValues(table);
       } 
  
+      Statement columnQuery = queryFactory.buildSchemaQuery(table);
+ 
       try (ResultSet resultSet =
-        dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
+        dbClient.singleUse().executeQuery(columnQuery)) {
         ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
+        String whereStatement = queryFactory.getWhereStatement(columnSchemas, table, request);
 
-        String whereStatement = getWhereStatement(columnSchemas, table, request);
-        
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
-        Statement queryStatement = constructQueryStatement(columnSchemas, table, whereStatement);
+        Statement queryStatement = queryFactory.constructQueryStatement(columnSchemas, table, whereStatement);
+
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
@@ -66,35 +71,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.getWriter().println(json);
   }
 
-  //TODO: put this in QueryFactory class once merged
-  //TODO: print out a message if there are no rows with this value
-  private String getWhereStatement(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
-    List<String> conditions = new ArrayList<>();
-    
-    for (ColumnSchema colSchema : columnSchemas) {
-      String colName = colSchema.columnName();
-      String colType = colSchema.schemaType();
-      String filterValue = request.getParameter(table + "-" + colName);
-      if (filterValue != null && !filterValue.equals("")) {
-        if (colType.equals("STRING")) {
-          filterValue = "\"" + filterValue + "\"";
-        }
-        conditions.add(colName + "=" + filterValue);
-      }
-    }
-
-    String whereQuerytoString = "WHERE " + String.join(" AND ", conditions);
-    if (conditions.size() == 0) {
-      return "";
-    } else {
-      return whereQuerytoString;
-    }
-  }
-
   private void checkTableHasColumns(List<ColumnSchema> columnSchemas) {
     // No columns -> throw error
     if (columnSchemas.size() == 0) {
-      throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
+      throw new RuntimeException(EMPTY_TABLE_ERROR);
     }
   } 
 
@@ -134,20 +114,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
     return ColumnSchema.create(columnName, schemaType, isNullable);
   }
 
-  // Construct SQL statement of form SELECT <columns list> FROM <table>
-  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table, String where) {
-    StringBuilder query = new StringBuilder("SELECT ");
-
-    for (ColumnSchema columnSchema : columnSchemas) {
-      query.append(columnSchema.columnName() + ", ");
-    }
-    query.deleteCharAt(query.length() - 1); //Get rid of extra space
-    query.append(" FROM " + table); 
-    query.append(" " + where);
-    Statement statement = Statement.newBuilder(query.toString()).build();
-    return statement;
-  }
-
   private void initDatabaseClient(String databaseName) {
     this.dbClient = DatabaseConnector.getInstance().getDbClient(databaseName);
   }
@@ -164,7 +130,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (ColumnSchema columnSchema : columnSchemas) {
           String columnName = columnSchema.columnName();
- 
+
           // If there is a null in this col here, print out NULL for now.
           if (resultSet.isNull(columnName)) {
             rowBuilder.add("NULL");
@@ -213,7 +179,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         rowBuilder.add(arrayToString);
         break;
       default:
-        rowBuilder.add(constants.UNSUPPORT_ERROR);
+        rowBuilder.add(UNSUPPORT_ERROR);
     }
   }
 
@@ -224,9 +190,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
   private String bytesToString(ByteArray bytes) {
     try {
       byte[] byteArray = bytes.toByteArray();
-      return new String(byteArray, constants.ENCODING_TYPE);
+      return new String(byteArray, ENCODING_TYPE);
     } catch (UnsupportedEncodingException e) {
-      return constants.ENCODING_ERROR;
+      return ENCODING_ERROR;
     }
   }
 }

@@ -22,65 +22,65 @@ function getDatabases(){
 }
 
 function submitDatabaseForm() { 
-  document.getElementById("database-select-form").submit();
+  let database = document.getElementById("list-databases").value;
+  if (database != "Select a Database") {
+    getTablesList(database);
+  }
 }
 
 //Get database and selected tables from query string and /tables-from-db
 function getDatabaseAndTable(){
-    const tablesUrl = '/tables-from-db';
-    const search = window.location.search;
-    const queryString = tablesUrl + search;
-    var startIndex = 0;
-    var databaseString= "";
-    
-    for (var i = 0; i<search.length; i++){
-        if (search.charAt(i) == '='){
-            startIndex = i;
-        } else if (search.charAt(i) == '&'){
-            break;
-        } else{
-            databaseString += search.charAt(i);
-        }
-    }
-
-    databaseString = databaseString.substring(startIndex);
-    fetch(queryString)
-    .then(response => response.json())
-    .then((list) => { 
-        const dbText = document.createElement('p');
-        dbText.innerText = "Database: " + databaseString;
-        const tableText = document.createElement('p');
-        tableText.innerText = "List of selected tables:  ";
-        const databaseTable = document.getElementById('DB-T');
-        databaseTable.appendChild(dbText);
-        databaseTable.appendChild(tableText);
-
-        for (let index = 0; index < list.length; index++) {
-            databaseTable.appendChild(
-            createListElement(list[index]));
-        }
-    });
-}
-
-function submitDatabaseForm() {
-  document.getElementById("database-select-form").submit();
-}
- 
-// Get and create list of tables in the selected database
-function getTablesList() {
   const tablesUrl = '/tables-from-db';
   const search = window.location.search;
-  if (!search.includes("list-databases")) {
-    return;
-  }
   const queryString = tablesUrl + search;
+  var startIndex = 0;
+  var databaseString= "";
+  
+  for (var i = 0; i<search.length; i++){
+      if (search.charAt(i) == '='){
+          startIndex = i;
+      } else if (search.charAt(i) == '&'){
+          break;
+      } else{
+          databaseString += search.charAt(i);
+      }
+  }
+
+  databaseString = databaseString.substring(startIndex);
   fetch(queryString)
   .then(response => response.json())
   .then((list) => { 
-    const tableListSpace = document.getElementById('table-list');
+      const dbText = document.createElement('p');
+      dbText.innerText = "Database: " + databaseString;
+      const tableText = document.createElement('p');
+      tableText.innerText = "List of selected tables:  ";
+      const databaseTable = document.getElementById('DB-T');
+      databaseTable.appendChild(dbText);
+      databaseTable.appendChild(tableText);
+
+      for (let index = 0; index < list.length; index++) {
+          databaseTable.appendChild(
+          createListElement(list[index]));
+      }
+  });
+}
  
+// Get and create list of tables in the selected database
+function getTablesList(dbName) {
+  const tablesUrl = '/tables-from-db';
+  const search = "?list-databases=" +dbName;
+
+  const tableListSpace = document.getElementById('table-list');
+  tableListSpace.innerText = "Loading...";
+  
+  const queryString = tablesUrl + search;
+  fetch(queryString)
+  .then(response => response.json())
+  .then((tableList) => { 
+    tableListSpace.innerText = "";
+
     // No tables in this database
-    if (list.length == 0) {
+    if (tableList.length == 0) {
       const errorMessage = document.createElement('p');
       errorMessage.setAttribute("id", "instruction");
       errorMessage.innerText = "This database has no tables.";
@@ -88,17 +88,21 @@ function getTablesList() {
       return;
     }
     
-    createForm(tableListSpace);
-    addSpace();
-    addTableSelectInstr();
-    createSelectElement();
-    for (let index = 0; index < list.length; index++) {
-      addTableOption(list[index]);
-    }
-    addSpace();
-    addReasonInput();
-    createSubmit();
+    makeTableListAndReason(tableListSpace, dbName, tableList);
   });
+}
+
+function makeTableListAndReason(tableListSpace, dbName, tableList) {
+  createForm(tableListSpace, dbName);
+  addSpace();
+  addTableSelectInstr();
+  createSelectElement();
+  for (let index = 0; index < tableList.length; index++) {
+    addTableOption(tableList[index]);
+  }
+  addSpace();
+  addReasonInput();
+  createSubmit();
 }
 
 // Add spacing for formatting
@@ -126,26 +130,23 @@ function createSelectElement() {
   document.getElementById("table-select").multiple = true;
 }
  
-function createForm(tableListSpace) {
+function createForm(tableListSpace, databaseName) {
   const form = document.createElement("form");
   form.setAttribute("id", "table-form");
   form.setAttribute("action", "/main-page.html" + window.location.search);
   form.setAttribute("method", "GET");
  
-  const databaseInput = addDatabaseToQueryString();
+  const databaseInput = addDatabaseToQueryString(databaseName);
   form.appendChild(databaseInput);
  
   tableListSpace.appendChild(form);
 }
  
 // Add hidden form input to send database name on form submit
-function addDatabaseToQueryString() {
-  const searchString = window.location.search;
-  const index = searchString.indexOf("=");
-  const database = searchString.substring(index + 1);
+function addDatabaseToQueryString(databaseName) {
   const databaseInput = document.createElement("input");
   databaseInput.setAttribute("type", "hidden");
-  databaseInput.setAttribute("value", database);
+  databaseInput.setAttribute("value", databaseName);
   databaseInput.setAttribute("name", "list-databases");
   return databaseInput;
 }
@@ -174,7 +175,6 @@ function addTableOption(text) {
  
 function onLoad() {
   getDatabases();
-  getTablesList();
   login();
 }
 
@@ -185,16 +185,15 @@ function createListElement(text) {
 }
 
 function showShare() {
-    console.log("Show");
-    document.getElementById("share-form").classList.remove("invisible");
+  document.getElementById("share-form").classList.remove("invisible");
 }
 
 function copyLink() {
-    var copyText = document.getElementById("share-text");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999)
-    document.execCommand("copy");
-    alert("Copied the text: " + copyText.value);
+  var copyText = document.getElementById("share-text");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999)
+  document.execCommand("copy");
+  alert("Copied the text: " + copyText.value);
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
@@ -202,27 +201,27 @@ var previousText = "placeholder";
 var previousId = "id";
 
 function luckyFilter() {
-    previousId="filter-button";
-    previousText = document.getElementById("filter-button").textContent;
-    document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
+  previousId="filter-button";
+  previousText = document.getElementById("filter-button").textContent;
+  document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
 }
 
 function luckyData() {
-    previousId="data-button";
-    previousText = document.getElementById("data-button").textContent;
-    document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
+  previousId="data-button";
+  previousText = document.getElementById("data-button").textContent;
+  document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
 }
 
 function unlucky() {
-    document.getElementById(previousId).textContent = previousText;
+  document.getElementById(previousId).textContent = previousText;
 }
 
 function changeText() {
-    document.getElementById("share-text").value = window.location.href;
+  document.getElementById("share-text").value = window.location.href;
 }
 
 function login(){
-  // fetch("/login").then(response => response.json()).then((user) => {
-  //   document.getElementById("user").innerText = user;
-  // });
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
 }

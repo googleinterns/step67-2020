@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import static com.google.sps.servlets.Constants.DATABASE_PARAM;
-import static com.google.sps.servlets.Constants.GET_COLUMNS_FROM_TABLES;
-import static com.google.sps.servlets.Constants.GROUP_BY_TABLE_NAMES;
 import static com.google.sps.servlets.Constants.TABLE_SELECT_PARAM;
 
 /** Servlet that returns an HTML list of all the columns of based on the selected tables. */
@@ -51,26 +49,12 @@ public class ColumnsFromTablesServlet extends HttpServlet {
 
       DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
-      String query = "";
-      String selectedTables = "";
-
-      //TODO: use StringBuilder rather than string concatenation
-
-      query = query + GET_COLUMNS_FROM_TABLES;
-      for (int i = 0; i < listOfTables.length; i++) {
-        //TODO: check if backslash is actually needed here
-        selectedTables = "\'" + listOfTables[i] + "\'";
-        query = query + selectedTables;
-        if (i != listOfTables.length-1) {
-          query = query + ", ";
-        } 
-      }
-      query = query + GROUP_BY_TABLE_NAMES;   
+      Statement query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
 
       try (ResultSet resultSet =
           dbClient
           .singleUse() 
-          .executeQuery(Statement.of(query))) {
+          .executeQuery(query)) {
         while (resultSet.next()) {
           data.put(resultSet.getString(0), resultSet.getStringList(1));
         }
