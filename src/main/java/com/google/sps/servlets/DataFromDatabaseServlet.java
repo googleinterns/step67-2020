@@ -113,7 +113,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (ColumnSchema columnSchema : columnSchemas) {
           String columnName = columnSchema.columnName();
- 
+
           // If there is a null in this col here, print out NULL for now.
           if (resultSet.isNull(columnName)) {
             rowBuilder.add("NULL");

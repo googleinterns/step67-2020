@@ -2,6 +2,7 @@ package com.google.sps.servlets;
 
 import com.google.cloud.spanner.Statement;
 import java.util.List;
+import java.util.stream.Collectors;
 
 final class QueryFactory {
   
@@ -16,10 +17,9 @@ final class QueryFactory {
     return instance;
   }
 
-  //TODO: try to do binding w/ parameters
   static Statement buildSchemaQuery(String table) {
-    StringBuilder query = new StringBuilder("SELECT column_name, spanner_type, is_nullable ");
-    query.append("FROM information_schema.columns WHERE table_name = '%s'");
+    String query = "SELECT column_name, spanner_type, is_nullable ";
+    query += "FROM information_schema.columns WHERE table_name = '%s'";
     return Statement.newBuilder(String.format(query.toString(), table)).build();
   }
 
@@ -32,7 +32,11 @@ final class QueryFactory {
     }
     query.deleteCharAt(query.length() - 1); //Get rid of extra space
     query.append(" FROM " + table); 
+
     return Statement.newBuilder(query.toString()).build();
+    // String queryString = String.format("SELECT @columns FROM %s", table);
+    // String cols = String.join(", ", columnSchemas.stream().map(ColumnSchema::columnName).collect(Collectors.toList()));
+    // return Statement.newBuilder(queryString).bind("columns").to(cols).build();
   }
 
   static Statement buildColumnsQuery(String[] listOfTables) {
