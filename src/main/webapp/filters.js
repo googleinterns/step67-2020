@@ -41,7 +41,6 @@ function showFiltersPanel() {
 function filterColumns() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
-  console.log(url + queryString);
   fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';

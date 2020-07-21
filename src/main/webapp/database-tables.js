@@ -80,7 +80,6 @@ function createTable(name) {
 }
 
 function mainLoad(){
-  console.log("main");
   login();
   showReason();
   showFiltersPanel();
@@ -90,7 +89,6 @@ function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
     var currentUser = user;
-    console.log(user);
     if (currentUser == "deny"){
         window.location.assign("/denied.html");
     }
