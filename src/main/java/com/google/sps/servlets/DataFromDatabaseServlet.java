@@ -69,7 +69,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
   //TODO: put this in QueryFactory class once merged
   //TODO: print out a message if there are no rows with this value
   private String getWhereStatement(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
-    StringBuilder whereQuery = new StringBuilder("WHERE ");
+    List<String> conditions = new ArrayList<>();
     
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
@@ -79,18 +79,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
         if (colType.equals("STRING")) {
           filterValue = "\"" + filterValue + "\"";
         }
-        whereQuery.append(colName);
-        whereQuery.append("=");
-        whereQuery.append(filterValue);
-        whereQuery.append(",");
+        conditions.add(colName + "=" + filterValue);
       }
     }
 
-    String whereQuerytoString = whereQuery.toString();
-    if (whereQuerytoString.equals("WHERE ")) {
+    String whereQuerytoString = "WHERE " + String.join(" AND ", conditions);
+    if (conditions.size() == 0) {
       return "";
     } else {
-      return whereQuerytoString.substring(0, whereQuerytoString.length() - 1);
+      return whereQuerytoString;
     }
   }
 
@@ -182,9 +179,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
         tableBuilder.addRow(immutableRow);
       }
 
-      // TODO: if no rows, find out a way to display this info on the screen
       if (resultCount == 0) {  
-        System.out.println("No rows in table");
+        tableBuilder.setIsEmpty(true);
+      } else {
+        tableBuilder.setIsEmpty(false);
       }
     }
   }

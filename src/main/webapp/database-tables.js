@@ -19,6 +19,12 @@ function showDatabase() {
         const name = tableData.name;
         createTableName(name, dataArea);
 
+        const isEmpty = tableData.isEmpty;
+        if (isEmpty) {
+          createIsEmptyElement(dataArea);
+          continue;
+        }
+
         // Make table itself, add headers for column names
         const table = createTable(name);
         const colSchemas = tableData.columnSchemas;
@@ -30,6 +36,12 @@ function showDatabase() {
       }
     });
   }
+}
+
+function createIsEmptyElement(dataArea) {
+  const element = document.createElement("p");
+  element.innerText = "No rows in table with applied filters.";
+  dataArea.appendChild(element);
 }
  
 // Create column name labels for table
