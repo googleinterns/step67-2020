@@ -184,30 +184,19 @@ function createListElement(text) {
   return liElement;
 }
 
-var shareShowing = Boolean(false)
-function showShare() {
-    if (!shareShowing){
-        document.getElementById("share-form").classList.remove("invisible");
-        document.getElementById("share-button").textContent = "Hide Share";
-    } else {
-        document.getElementById("share-button").textContent = "Share Query";
-        document.getElementById("share-form").classList.add("invisible");
-    }
-    shareShowing = !shareShowing;
-}
-
 function copyLink() {
-    var copyText = document.getElementById("share-text");
     // Create temporary input to copy text and then remove input
     var tempInput = document.createElement("input");
-    tempInput.value = copyText.value;
+    tempInput.value = window.location.href;
     document.body.appendChild(tempInput);
     tempInput.select();
     document.execCommand("copy");
     document.body.removeChild(tempInput);
-    //Since this logic is now known I can remove share query box and copy right away
-    //TODO: ask pod how share should look
-    alert("Copied the text: " + copyText.value);
+    document.getElementById("alert").classList.remove("invisible");
+}
+
+function closeAlert() {
+   document.getElementById("alert").classList.add("invisible");
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
@@ -228,8 +217,4 @@ function luckyData() {
 
 function unlucky() {
     document.getElementById(previousId).textContent = previousText;
-}
-
-function changeText() {
-    document.getElementById("share-text").value = window.location.href;
 }

@@ -10,6 +10,7 @@ function isFilterInputEmpty(){
         alert("Applying filters failed: Please input either user_id, device_id or both.");
         return false;
     }
+    document.getElementById("instruction").style.display = "none";
     showDatabase();
     hideUserDeviceId();
     return true;

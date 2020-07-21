@@ -23,3 +23,33 @@ input{
   right: 16px;
   font-size: 18px; 
 }
+
+#instruction {
+    color: gray;
+}
+
+#alert {
+  float: right;
+  margin-right: 90px;
+  padding: 1px;
+  background-color: red;
+  color: white;
+  width: 110px;
+  font-size: 12px;
+}
+
+.closebtn {
+  margin-left: 5px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 14px;
+  line-height: 12px;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.id {
+    left:0;
+    margin-right: 10px;
+}
