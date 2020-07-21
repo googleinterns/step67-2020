@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginServlet extends HttpServlet {
     Set<String> usersWithAccess = new HashSet<String>();
     public void init(){
+        usersWithAccess.add("test@example.com");
         usersWithAccess.add("jiaxinz@google.com");
         usersWithAccess.add("gagomez@google.com");
         usersWithAccess.add("hilakey@google.com");
@@ -32,32 +33,28 @@ public class LoginServlet extends HttpServlet {
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("application/JSON");
+    response.setContentType("text/html");
 
     UserService userService = UserServiceFactory.getUserService();
-    List<String> userEmail = new ArrayList<String>();
+    String userEmail = "";
 
     if (!userService.isUserLoggedIn()) {
-      String urlToRedirectToAfterUserLogsIn = "/splash.html";
-      String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
-      userEmail.add("Stranger");
-      response.sendRedirect("https://accounts.google.com/AccountChooser/signinchooser?flowName=GlifWebSignIn&flowEntry=AccountChooser");
-    } else{
-        String urlAfterLogout = "https://accounts.google.com/AccountChooser/signinchooser?flowName=GlifWebSignIn&flowEntry=AccountChooser";
-        String logoutUrl = userService.createLogoutURL(urlAfterLogout);
+      String loginUrl = userService.createLoginURL("/login");
+      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+      userEmail = "Stranger";
+    } else {
         String currentUserEmail = userService.getCurrentUser().getEmail();
-        userEmail.add(currentUserEmail);
-        currentUser = currentUserEmail;
+        userEmail = currentUserEmail;
+        if (!usersWithAccess.contains(currentUserEmail)){
+            userEmail="deny";
+        }
     }
-    if (!usersWithAccess.contains(currentUser)){
-        userEmail.remove(0);
-        userEmail.add("deny");
-    }
+    
     String email = convertToJsonUsingGson(userEmail);
     response.getWriter().println(email);
   }
   
-  private String convertToJsonUsingGson(List<String> email) {
+  private String convertToJsonUsingGson(String email) {
     Gson gson = new Gson();
     String json = gson.toJson(email);
     return json;

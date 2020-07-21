@@ -91,11 +91,11 @@ function login() {
     document.getElementById("user").innerText = user;
     var currentUser = user;
     console.log(user);
-    if (currentUser[0] == "Stranger"){
-        window.location.assign("https://accounts.google.com/signin/v2/identifier?");
-    }
-    if(currentUser[0] =="deny"){
+    if (currentUser == "deny"){
         window.location.assign("/denied.html");
+    }
+    else if (currentUser[0] == "<") {
+        window.location.assign("/login");
     }
   });
 }
