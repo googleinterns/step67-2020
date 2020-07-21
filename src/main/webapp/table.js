@@ -92,7 +92,6 @@ class Table {
   renderTable() {
     const table = document.createElement("table");
     table.setAttribute("id", "table_" + this.name);
-
     table.appendChild(this.makeTableHeaders());
 
     let index;
@@ -107,7 +106,6 @@ class Table {
         dataPointElement.innerText = dataPoint;
         rowElement.appendChild(dataPointElement);
       }
-  
       table.appendChild(rowElement);
     }
 
