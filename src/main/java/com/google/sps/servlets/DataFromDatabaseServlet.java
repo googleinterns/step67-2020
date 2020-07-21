@@ -42,9 +42,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     for (String table : selectedTables) {
       String columnQuery = constants.SCHEMA_INFO_SQL + table + "'";
 
-      String[] perTableFilters = null;
       String[] selectedColsInTable = null;
-
       if (request.getParameterValues(table) != null) {
         selectedColsInTable = request.getParameterValues(table);
       } 
@@ -53,12 +51,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
         dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
         ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
 
-        //get filters
-        String where = getPerTableFilters(columnSchemas, table, request);
+        String whereStatement = getWhereStatement(columnSchemas, table, request);
         
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
-        Statement queryStatement = constructQueryStatement(columnSchemas, table, where);
+        Statement queryStatement = constructQueryStatement(columnSchemas, table, whereStatement);
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
@@ -71,25 +68,29 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   //TODO: put this in QueryFactory class once merged
   //TODO: print out a message if there are no rows with this value
-  private String getPerTableFilters(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
-    String whereQuery = "WHERE ";
+  private String getWhereStatement(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
+    StringBuilder whereQuery = new StringBuilder("WHERE ");
     
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
       String colType = colSchema.schemaType();
-      System.out.println(colType);
       String filterValue = request.getParameter(table + "-" + colName);
       if (filterValue != null && !filterValue.equals("")) {
         if (colType.equals("STRING")) {
           filterValue = "\"" + filterValue + "\"";
         }
-        whereQuery += colName + "=" + filterValue + ",";
+        whereQuery.append(colName);
+        whereQuery.append("=");
+        whereQuery.append(filterValue);
+        whereQuery.append(",");
       }
     }
-    if (whereQuery.equals("WHERE ")) {
+
+    String whereQuerytoString = whereQuery.toString();
+    if (whereQuerytoString.equals("WHERE ")) {
       return "";
     } else {
-      return whereQuery.substring(0, whereQuery.length() - 1);
+      return whereQuerytoString.substring(0, whereQuerytoString.length() - 1);
     }
   }
 
