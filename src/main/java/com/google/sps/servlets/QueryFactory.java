@@ -34,15 +34,6 @@ final class QueryFactory {
     query.append(" FROM " + table); 
 
     return Statement.newBuilder(query.toString()).build();
-
-
-    // String queryString = String.format("SELECT @columns FROM %s", table);
-    // List<String> colsList = columnSchemas.stream().map(ColumnSchema::columnName).collect(Collectors.toList());
-    // for (String str : colsList) {
-    //   System.out.println(str);
-    // }
-    // String cols = String.join(", ", colsList);
-    // return Statement.newBuilder(queryString).bind("columns").to("SingerId").build();
   }
 
   static Statement buildColumnsQuery(String[] listOfTables) {
