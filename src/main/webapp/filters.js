@@ -10,7 +10,19 @@ function isFilterInputEmpty(){
         alert("Applying filters failed: Please input either user_id, device_id or both.");
         return false;
     }
+    showDatabase();
+    hideUserDeviceId();
     return true;
+}
+
+function hideUserDeviceId() {
+    if (document.getElementById("user_id").style.display == "none") {
+         document.getElementById("user_id").style.display = "block";
+         document.getElementById("device_id").style.display = "block";
+    } else {
+    document.getElementById("user_id").style.display = "none";
+    document.getElementById("device_id").style.display = "none";
+    }
 }
 
 function showFiltersPanel() {

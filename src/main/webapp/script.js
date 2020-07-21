@@ -198,9 +198,15 @@ function showShare() {
 
 function copyLink() {
     var copyText = document.getElementById("share-text");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999)
+    // Create temporary input to copy text and then remove input
+    var tempInput = document.createElement("input");
+    tempInput.value = copyText.value;
+    document.body.appendChild(tempInput);
+    tempInput.select();
     document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    //Since this logic is now known I can remove share query box and copy right away
+    //TODO: ask pod how share should look
     alert("Copied the text: " + copyText.value);
 }
 

@@ -15,42 +15,43 @@
 
     <div id="data"></div>
 
-    <div id = "header">
-      <div class = "button-box">
-        <a href = "splash.html"><button>Back to Splash Page</button></a>
-        <button id = "filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
-        <button id = "data-button" onmouseover = "luckyData()" onclick = "login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
-        <button id = "share-button" onclick = "showShare()"> Share Query </button>
-        <button onclick = "clearFilters()"> Clear Filters </button>
+    <div id="header">
+      <div class="button-box">
+        <input type="text" id="user_id" placeholder="Enter the user_id">
+        <input type="text" id="device_id" placeholder="Enter the device_id">
+        <a href="splash.html"><button>Previous Page</button></a>
+        <button id="filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id="data-button" onmouseover="luckyData()" onclick="login(); isFilterInputEmpty()" onmouseout="unlucky()"> Load Data </button>
+        <button id="share-button" onclick="showShare()"> Share Query </button>
+        <button onclick="clearFilters()"> Clear Filters </button>
       </div>
     </div>
 
-    <div id = "share-form" class = "invisible">
+    <div id="share-form" class="invisible">
       <h4>Share Query</h4>
-      <input type="text" id = "share-text" placeholder="Share with a fellow Googler." disabled>
+      <input type="text" id="share-text" placeholder="Share with a fellow Googler." disabled>
       <!-- Note that disabling text box does not allow copy to work -->
       <!-- TODO: research another method of copying link -->
-      <!-- TODO: Hide share query onclick of copy Link -->
-      <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
+      <button onmouseover="changeText()" onclick="copyLink(); showShare()" > Copy Link </button>
     </div>
     
     <div id="filter-box" style="display: none;">
       <form action="/main-page.html" method="GET">
         <h1> Filters</h1>
 
-        <input type="text" id="user_id" placeholder="Enter the user_id">
+        <!-- <input type="text" id="user_id" placeholder="Enter the user_id">
         <div style="padding: 10px"></div> 
         <input type="text" id="device_id" placeholder="Enter the device_id">
-        <div style="padding: 10px"></div>
+        <div style="padding: 10px"></div> -->
         <input type="search" placeholder="Search...">
         <div style="padding: 10px"></div>
 
         <div id="table-filters"></div>
 
-        <input type="submit" id="submit" value="submit" onClick=" return isFilterInputEmpty()">
+        <input type="submit" id="submit" value="Apply Filters" onClick=" return isFilterInputEmpty()">
         </form>  
       </div>
     <div id="user"></div>
-    <div id ="justification"></div>
+    <div id="justification"></div>
   </body>
 </html>
