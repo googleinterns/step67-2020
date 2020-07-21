@@ -50,6 +50,7 @@ function addSelectedTableToForm(tableName, filterForm) {
   filterForm.appendChild(tableSelect);
 }
 
+//TODO: try to split this into more separate functions once Sanna + Millennia code merged together
 //Returns textInput dropdowns of the selected table's columns which can then be filtered
 function filterColumns() {
   var queryString = window.location.search;
