@@ -42,11 +42,11 @@ function addReasonToForm(reasonForUse,filterForm) {
   filterForm.appendChild(reason);
 }
 
-function addSelectedTableToForm(keys, filterForm) {
+function addSelectedTableToForm(tableName, filterForm) {
   const tableSelect = document.createElement('input');
   tableSelect.type = "hidden";
   tableSelect.name = "table-select";
-  tableSelect.value = keys;
+  tableSelect.value = tableName;
   filterForm.appendChild(tableSelect);
 }
 
@@ -66,9 +66,9 @@ function filterColumns() {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
     
-    //Create a select dropdown based on the table name as keys
-    for(var keys in tables){
-      addSelectedTableToForm(keys, filterForm);
+    //Create a select dropdown based on the table name as tableName
+    for(var tableName in tables){
+      addSelectedTableToForm(tableName, filterForm);
       
       var select = document.createElement('select');
       select.style.width = '200px';
@@ -76,7 +76,7 @@ function filterColumns() {
       select.id = "table-select";
 
       let defaultOption = document.createElement('option');
-      defaultOption.text = keys;
+      defaultOption.text = tableName;
       defaultOption.style.display = 'none'; //Hiding table name as a valid option to select
 
       select.add(defaultOption);
@@ -85,22 +85,19 @@ function filterColumns() {
       let textInputs = document.createElement('div');
       
       //Create textInputs for each column of the table
-      for(var col in tables[keys][0]){
+      for(var col in tables[tableName][0]){
         var textInput = document.createElement('input');
         textInput.type= 'text';
-        textInput.placeholder = tables[keys][0][col];
+        textInput.placeholder = tables[tableName][0][col];
         textInput.id = "column-select";
-        textInput.name = keys + "-" + tables[keys][0][col];
-        console.log(textInput.name)
+        textInput.name = tableName + "-" + tables[tableName][0][col];
 
         var label = document.createElement('label');
-        label.innerHTML = tables[keys][0][col];
-        label.htmlFor =  tables[keys][0][col];
+        label.innerHTML = tables[tableName][0][col];
+        label.htmlFor =  tables[tableName][0][col];
         textInput.innerHTML = label.outerHTML;
                 
-        //textInput.appendChild(label);
         textInputs.appendChild(textInput);
-        //textInputs.appendChild(label);
 
         textInputs.style.border = "1px solid";
         textInputs.style.display = "none";
@@ -114,9 +111,9 @@ function filterColumns() {
       //onclick event that will hide/show column filters
       select.onclick = function() {
         if (textInputs.style.display === "none") {
-            textInputs.style.display = "block";
+          textInputs.style.display = "block";
         } else {
-            textInputs.style.display = "none";
+          textInputs.style.display = "none";
         }
      };
 
