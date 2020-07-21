@@ -25,18 +25,24 @@ final class QueryFactory {
 
   // Construct SQL statement of form SELECT <columns list> FROM <table>
   static Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table) {
-    StringBuilder query = new StringBuilder("SELECT ");
+    // StringBuilder query = new StringBuilder("SELECT ");
 
-    for (ColumnSchema columnSchema : columnSchemas) {
-      query.append(columnSchema.columnName() + ", ");
+    // for (ColumnSchema columnSchema : columnSchemas) {
+    //   query.append(columnSchema.columnName() + ", ");
+    // }
+    // query.deleteCharAt(query.length() - 1); //Get rid of extra space
+    // query.append(" FROM " + table); 
+
+    // return Statement.newBuilder(query.toString()).build();
+
+
+    String queryString = String.format("SELECT @columns FROM %s", table);
+    List<String> colsList = columnSchemas.stream().map(ColumnSchema::columnName).collect(Collectors.toList());
+    for (String str : colsList) {
+      System.out.println(str);
     }
-    query.deleteCharAt(query.length() - 1); //Get rid of extra space
-    query.append(" FROM " + table); 
-
-    return Statement.newBuilder(query.toString()).build();
-    // String queryString = String.format("SELECT @columns FROM %s", table);
-    // String cols = String.join(", ", columnSchemas.stream().map(ColumnSchema::columnName).collect(Collectors.toList()));
-    // return Statement.newBuilder(queryString).bind("columns").to(cols).build();
+    String cols = String.join(", ", colsList);
+    return Statement.newBuilder(queryString).bind("columns").to(cols).build();
   }
 
   static Statement buildColumnsQuery(String[] listOfTables) {
