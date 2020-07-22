@@ -26,32 +26,57 @@ final class QueryFactory {
   }
 
   // Construct SQL statement of form SELECT <columns list> FROM <table>
-  static Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table, String where) {
-    StringBuilder query = new StringBuilder("SELECT ");
+  static Statement constructQueryStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
+    //StringBuilder query = new StringBuilder("SELECT ");
+    builder.append("SELECT ");
 
+    int loopCount = 0;
     for (ColumnSchema columnSchema : columnSchemas) {
-      query.append(columnSchema.columnName() + ", ");
+      if (loopCount != 0) {
+        builder.append(", ");
+      }
+      //query.append(columnSchema.columnName() + ", ");
+      builder.append(columnSchema.columnName());
+      loopCount++;
     }
-    query.deleteCharAt(query.length() - 1); //Get rid of extra space
-    query.append(" FROM " + table); 
-    query.append(" " + where);
-    return Statement.newBuilder(query.toString()).build();
+    // query.deleteCharAt(query.length() - 1); //Get rid of extra space
+    // query.append(" FROM " + table); 
+    // query.append(" " + where);
+
+    builder.append(String.format(" FROM %s ", table));
+    getWhereStatement(builder, columnSchemas, table, request);
+    //return Statement.newBuilder(query.toString()).build();
+    Statement s = builder.build();
+    System.out.println(s.toString());
+    return builder.build();
   }
 
   //TODO add binding here for condition values
   //TODO deal with types other than int and string
-  static String getWhereStatement(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
+  static String getWhereStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
     List<String> conditions = new ArrayList<>();
     
+    int loopCount = 0;
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
       String colType = colSchema.schemaType();
       String filterValue = request.getParameter(table + "-" + colName);
       if (filterValue != null && !filterValue.equals("")) {
+        if (loopCount == 0) {
+          builder.append("WHERE ");
+        } else {
+          builder.append(" AND ");
+        }
+        
         if (colType.equals("STRING")) {
           filterValue = "\"" + filterValue + "\"";
         }
-        conditions.add(colName + "=" + filterValue);
+        String condition = colName + "=" + filterValue;
+        conditions.add(condition);
+        String condString = colName + " = @" + colName;
+        //builder.append(condString).bind("\"" + colName + "\"").to(filterValue);
+        builder.append(condition);
+        loopCount++;
       }
     }
 
