@@ -105,11 +105,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
 
-    // Convert YES/NO String to true/false boolean
     boolean isNullable = stringToBoolean(resultSet.getString(2));
     return ColumnSchema.create(columnName, schemaType, isNullable);
   }
 
+  // Convert YES/NO String to true/false boolean
   private boolean stringToBoolean(String isNullableColumn) {
     boolean isNullable = false;
     if (isNullableColumn.toLowerCase().equals("YES")) {
