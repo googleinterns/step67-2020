@@ -25,15 +25,10 @@ final class QueryFactory {
 
   // Construct SQL statement of form SELECT <columns list> FROM <table>
   static Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table) {
-    StringBuilder query = new StringBuilder("SELECT ");
+    String columns = String.join(", ", columnSchemas.stream().map(ColumnSchema::columnName).collect(Collectors.toList()));
+    String query = String.format("SELECT %s FROM %s", columns, table);
 
-    for (ColumnSchema columnSchema : columnSchemas) {
-      query.append(columnSchema.columnName() + ", ");
-    }
-    query.deleteCharAt(query.length() - 1); //Get rid of extra space
-    query.append(" FROM " + table); 
-
-    return Statement.newBuilder(query.toString()).build();
+    return Statement.newBuilder(query).build();
   }
 
   static Statement buildColumnsQuery(String[] listOfTables) {
