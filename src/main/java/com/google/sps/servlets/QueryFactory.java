@@ -1,6 +1,7 @@
 package com.google.sps.servlets; 
 
 import com.google.cloud.spanner.Statement;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,17 +34,12 @@ final class QueryFactory {
 
   static Statement buildColumnsQuery(String[] listOfTables) {
     String getColumnsSql = "SELECT table_name, ARRAY_AGG(column_name) ";
-    getColumnsSql += "FROM information_schema.columns WHERE table_name in(";
-    StringBuilder queryBuilder = new StringBuilder(getColumnsSql);
-
-    for (int i = 0; i < listOfTables.length; i++) {
-      String selectedTables = "'" + listOfTables[i] + "'";
-      queryBuilder.append(selectedTables);
-      if (i != listOfTables.length-1) {
-        queryBuilder.append(", ");
-      } 
-    }
-    queryBuilder.append(") group by table_name");   
-    return Statement.newBuilder(queryBuilder.toString()).build();
+    getColumnsSql += "FROM information_schema.columns WHERE table_name in(%s) group by table_name";
+    
+    List<String> tablesList = Arrays.stream(listOfTables)
+      .map(table -> String.format("'%s'", table)).collect(Collectors.toList());
+    String tables = String.join(", ", tablesList);
+  
+    return Statement.newBuilder(String.format(getColumnsSql, tables)).build();
   }
 }
