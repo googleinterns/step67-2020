@@ -41,19 +41,15 @@ final class QueryFactory {
     builder.append(String.format(" FROM %s ", table));
     getWhereStatement(builder, columnSchemas, table, request);
     Statement statement = builder.build();
-    System.out.println(s.toString());
     return statement;
   }
 
   //TODO add binding here for condition values
   //TODO deal with types other than int and string
-  static String getWhereStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
-    List<String> conditions = new ArrayList<>();
-    
+  static void getWhereStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
     int loopCount = 0;
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
-      String colType = colSchema.schemaType();
       String filterValue = request.getParameter(table + "-" + colName);
       if (filterValue != null && !filterValue.equals("")) {
         if (loopCount == 0) {
@@ -61,26 +57,27 @@ final class QueryFactory {
         } else {
           builder.append(" AND ");
         }
-        
-        if (colType.equals("STRING")) {
-          filterValue = "\"" + filterValue + "\"";
-        }
-        String condition = colName + "=" + filterValue;
-        conditions.add(condition);
-        String condString = colName + " = @" + colName;
-        //builder.append(condString).bind("\"" + colName + "\"").to(filterValue);
-        builder.append(condition);
+        appendCondition(filterValue, builder, colSchema.schemaType(), colName);
         loopCount++;
       }
     }
-
-    String whereQuerytoString = "WHERE " + String.join(" AND ", conditions);
-    if (conditions.size() == 0) {
-      return "";
-    } else {
-      return whereQuerytoString;
-    }
   }
+
+  private static void appendCondition(String filterValue, Statement.Builder builder, String colType, String colName) {
+    String condString = colName + " = @" + colName;
+    switch (colType) {
+      case "STRING": 
+        builder.append(condString).bind(colName).to(filterValue);
+        break;
+      case "INT64":
+        int value = Integer.parseInt(filterValue);
+        builder.append(condString).bind(colName).to(value);
+        break;
+      case "BOOL":
+        boolean bool = Boolean.getBoolean(filterValue);
+        builder.append(condString).bind(colName).to(bool);
+    }
+  } 
 
   static Statement buildColumnsQuery(String[] listOfTables) {
     String getColumnsSql = "SELECT table_name, ARRAY_AGG(column_name) ";
