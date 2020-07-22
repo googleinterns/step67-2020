@@ -25,9 +25,8 @@ final class QueryFactory {
     return Statement.newBuilder(query.toString()).bind("name").to(table).build();
   }
 
-  // Construct SQL statement of form SELECT <columns list> FROM <table>
+  // Construct SQL statement of form SELECT <columns list> FROM <table> WHERE <conditions>
   static Statement constructQueryStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
-    //StringBuilder query = new StringBuilder("SELECT ");
     builder.append("SELECT ");
 
     int loopCount = 0;
@@ -35,20 +34,15 @@ final class QueryFactory {
       if (loopCount != 0) {
         builder.append(", ");
       }
-      //query.append(columnSchema.columnName() + ", ");
       builder.append(columnSchema.columnName());
       loopCount++;
     }
-    // query.deleteCharAt(query.length() - 1); //Get rid of extra space
-    // query.append(" FROM " + table); 
-    // query.append(" " + where);
 
     builder.append(String.format(" FROM %s ", table));
     getWhereStatement(builder, columnSchemas, table, request);
-    //return Statement.newBuilder(query.toString()).build();
-    Statement s = builder.build();
+    Statement statement = builder.build();
     System.out.println(s.toString());
-    return builder.build();
+    return statement;
   }
 
   //TODO add binding here for condition values
