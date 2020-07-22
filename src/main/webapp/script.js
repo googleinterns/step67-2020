@@ -184,6 +184,43 @@ function createListElement(text) {
   return liElement;
 }
 
+function showShare() {
+    console.log("Show");
+    document.getElementById("share-form").classList.remove("invisible");
+}
+
+function copyLink() {
+    var copyText = document.getElementById("share-text");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999)
+    document.execCommand("copy");
+    alert("Copied the text: " + copyText.value);
+}
+
+// The below methods with "Lucky" in the name are rough draft for the easter egg
+var previousText = "placeholder";
+var previousId = "id";
+
+function luckyFilter() {
+    previousId="filter-button";
+    previousText = document.getElementById("filter-button").textContent;
+    document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
+}
+
+function luckyData() {
+    previousId="data-button";
+    previousText = document.getElementById("data-button").textContent;
+    document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
+}
+
+function unlucky() {
+    document.getElementById(previousId).textContent = previousText;
+}
+
+function changeText() {
+    document.getElementById("share-text").value = window.location.href;
+}
+
 function login(){
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
