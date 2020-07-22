@@ -21,8 +21,8 @@ final class QueryFactory {
 
   static Statement buildSchemaQuery(String table) {
     String query = "SELECT column_name, spanner_type, is_nullable ";
-    query += "FROM information_schema.columns WHERE table_name = '%s'";
-    return Statement.newBuilder(String.format(query.toString(), table)).build();
+    query += "FROM information_schema.columns WHERE table_name = @name";
+    return Statement.newBuilder(query.toString()).bind("name").to(table).build();
   }
 
   // Construct SQL statement of form SELECT <columns list> FROM <table>
@@ -38,8 +38,8 @@ final class QueryFactory {
     return Statement.newBuilder(query.toString()).build();
   }
 
-  //TODO add binding here
-  
+  //TODO add binding here for condition values
+  //TODO deal with types other than int and string
   static String getWhereStatement(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
     List<String> conditions = new ArrayList<>();
     
