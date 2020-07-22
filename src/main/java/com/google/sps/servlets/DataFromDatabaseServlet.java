@@ -56,7 +56,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
         dbClient.singleUse().executeQuery(columnQuery)) {
         ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
         Statement.Builder builder = Statement.newBuilder("");
-        //String whereStatement = queryFactory.getWhereStatement(builder, columnSchemas, table, request);
 
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);

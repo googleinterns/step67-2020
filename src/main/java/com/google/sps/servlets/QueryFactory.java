@@ -44,8 +44,6 @@ final class QueryFactory {
     return statement;
   }
 
-  //TODO add binding here for condition values
-  //TODO deal with types other than int and string
   static void getWhereStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
     int loopCount = 0;
     for (ColumnSchema colSchema : columnSchemas) {
@@ -63,6 +61,7 @@ final class QueryFactory {
     }
   }
 
+  //TODO add types other than primitives
   private static void appendCondition(String filterValue, Statement.Builder builder, String colType, String colName) {
     String condString = colName + " = @" + colName;
     switch (colType) {
