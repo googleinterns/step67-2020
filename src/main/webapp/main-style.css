@@ -30,3 +30,16 @@
 .invisible {
   display: none;
 }
+
+#sql {
+  bottom: 0;
+  /*position: absolute;*/
+  width: 50%;
+  height: 10%;
+  font-size: 12px;
+  line-height: 50%;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  float: left;
+  overflow: scroll;
+}

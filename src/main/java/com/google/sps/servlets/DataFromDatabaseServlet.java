@@ -54,6 +54,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         tableBuilder.setColumnSchemas(columnSchemas);
         Statement queryStatement = QueryFactory.getInstance().constructQueryStatement(columnSchemas, table);
         System.out.println(queryStatement.toString());
+        tableBuilder.setSql(queryStatement.toString());
         
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         

@@ -1,4 +1,3 @@
-
 let tablesList = [];
 
 //Boolean to ensure data only shows after first click
@@ -17,12 +16,14 @@ function showDatabase() {
     .then(response => response.json())
     .then((data) => { 
       document.getElementById("tables").innerText = '';
+      document.getElementById("sql").innerText = '';
       
       let count = 0;
       for (tableIndex in data) {
         const tableData = data[tableIndex];
         const name = tableData.name;
         const colSchemas = tableData.columnSchemas;
+        updateSQLString(tableData.sql);
 
         const dataTable = tableData.dataTable;
         let tableObj = new Table(dataTable, name, colSchemas, count);
@@ -35,7 +36,12 @@ function showDatabase() {
   }
 }
 
-
+function updateSQLString(sql) {
+  const sqlDiv = document.getElementById("sql");
+  const newSql = document.createElement("p");
+  newSql.innerText = sql;
+  sqlDiv.appendChild(newSql);
+}
 
 function mainLoad(){
   showDatabase();
