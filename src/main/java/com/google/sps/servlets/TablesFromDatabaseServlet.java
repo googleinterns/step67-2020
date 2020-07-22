@@ -17,6 +17,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static com.google.sps.servlets.Constants.DATABASE_PARAM;
+import static com.google.sps.servlets.Constants.GET_TABLE_SQL;
+import static com.google.sps.servlets.Constants.NULL_REDIRECT;
+import static com.google.sps.servlets.Constants.TEXT_TYPE;
 
 /** Servlet that returns HTML that contains tables in the example database. */
 @WebServlet("/tables-from-db")
@@ -24,22 +28,21 @@ public class TablesFromDatabaseServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   String selectedDatabase;
-  private Constants constants = new Constants();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType(constants.TEXT_TYPE);
+    response.setContentType(TEXT_TYPE);
 
-    if (request.getParameter(constants.DATABASE_PARAM) != null) {
-      selectedDatabase = request.getParameter(constants.DATABASE_PARAM);
+    if (request.getParameter(DATABASE_PARAM) != null) {
+      selectedDatabase = request.getParameter(DATABASE_PARAM);
     }
 
     if (selectedDatabase == null || selectedDatabase.equals("")) {
-      response.sendRedirect(constants.NULL_REDIRECT);
+      response.sendRedirect(NULL_REDIRECT);
       return;
     }
     if (!DatabaseConnector.getInstance().databaseIsSupported(selectedDatabase)) {
-      throw new RuntimeException("Database " + selectedDatabase + " not supported");
+      throw new RuntimeException(String.format("Database %s not supported", selectedDatabase));
     }
  
     this.dbClient = DatabaseConnector.getInstance().getDbClient(selectedDatabase);
@@ -50,7 +53,7 @@ public class TablesFromDatabaseServlet extends HttpServlet {
     try (ResultSet resultSet =
         dbClient
             .singleUse() 
-            .executeQuery(Statement.of(constants.GET_TABLE_SQL))) {
+            .executeQuery(Statement.of(GET_TABLE_SQL))) {
       List<String> tableNames = new ArrayList<>();
       while (resultSet.next()) {
         tableNames.add(resultSet.getString(0));
