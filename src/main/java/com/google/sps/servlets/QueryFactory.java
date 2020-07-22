@@ -38,7 +38,8 @@ final class QueryFactory {
     return Statement.newBuilder(query.toString()).build();
   }
 
-  //TODO maybe could do binding here?
+  //TODO add binding here
+  
   static String getWhereStatement(List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
     List<String> conditions = new ArrayList<>();
     
