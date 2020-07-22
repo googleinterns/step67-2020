@@ -9,6 +9,8 @@
     <script src="table.js"></script>
     <script src="filters.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="table-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   </head>
     
   <body onload="mainLoad()">
@@ -18,7 +20,7 @@
 
     <div id = "header">
       <div class = "button-box">
-        <a href = "index.html"><button>Splash Page</button></a>
+        <a href = "index.html"><button style="z-index:2; width:20px;">Splash Page</button></a>
         <button id = "filter-button" onmouseover = "luckyFilter()" onclick = "showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
         <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
         <button onclick = "showShare()" >Share Query</button>
