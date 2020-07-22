@@ -60,6 +60,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
         
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
+      } catch (RuntimeException e) {
+        // Do something?
       }
     }
     String json = new Gson().toJson(tables);
