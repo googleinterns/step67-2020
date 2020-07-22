@@ -36,8 +36,10 @@ final class QueryFactory {
     String getColumnsSql = "SELECT table_name, ARRAY_AGG(column_name) ";
     getColumnsSql += "FROM information_schema.columns WHERE table_name in(%s) group by table_name";
     
-    List<String> tablesList = Arrays.stream(listOfTables)
-      .map(table -> String.format("'%s'", table)).collect(Collectors.toList());
+    List<String> tablesList = 
+        Arrays.stream(listOfTables)
+            .map(table -> String.format("'%s'", table))
+            .collect(Collectors.toList());
     String tables = String.join(", ", tablesList);
   
     return Statement.newBuilder(String.format(getColumnsSql, tables)).build();
