@@ -56,7 +56,10 @@ public class TablesFromDatabaseServlet extends HttpServlet {
             .executeQuery(Statement.of(GET_TABLE_SQL))) {
       List<String> tableNames = new ArrayList<>();
       while (resultSet.next()) {
-        tableNames.add(resultSet.getString(0));
+        String tableName = resultSet.getString(0);
+        if (!tableName.toLowerCase().equals("auditlog")) {
+          tableNames.add(tableName);
+        }
       }
       String json = new Gson().toJson(tableNames);
       response.getWriter().println(json);

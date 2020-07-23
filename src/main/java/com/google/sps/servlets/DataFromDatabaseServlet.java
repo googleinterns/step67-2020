@@ -45,6 +45,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
     List<Table> tables = new ArrayList<>();
 
     for (String table : selectedTables) {
+      //Prevent people trying to see AuditLog
+      if (table.toLowerCase().equals("auditlog")) {
+        continue;
+      }
+
       String[] selectedColsInTable = null;
       if (request.getParameterValues(table) != null) {
         selectedColsInTable = request.getParameterValues(table);
