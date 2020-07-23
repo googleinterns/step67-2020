@@ -2,8 +2,12 @@ package com.google.sps.servlets;
 
 import com.google.cloud.spanner.Statement;
 
+
+import com.google.cloud.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -73,6 +77,9 @@ final class QueryFactory {
         boolean bool = Boolean.getBoolean(filterValue);
         builder.append(condString).bind(colName).to(bool);
         break;
+      case "TIMESTAMP":
+        Timestamp timestamp = Timestamp.parseTimestamp(filterValue);
+        builder.append(condString).bind(colName).to(timestamp);
     }
   } 
 
