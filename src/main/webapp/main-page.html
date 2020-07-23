@@ -19,7 +19,9 @@
       <div class = "button-box">
         <a href = "index.html"><button>Splash Page</button></a>
         <button id = "filter-button" onmouseover = "luckyFilter()" onclick = "showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
-        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
+        <!-- <form method="POST" action="/reason"> -->
+        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase(); audit()" onmouseout="unlucky()">Load Data </button>
+        <!-- </form> -->
         <button onclick = "showShare()" >Share Query</button>
       </div>
     </div>

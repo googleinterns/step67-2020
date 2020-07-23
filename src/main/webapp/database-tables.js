@@ -1,3 +1,64 @@
+function audit() {
+        // document.getElementById('redirect').innerHTML = '<form style="display:none;" method="POST" action="./reason"></form>';
+        // document.getElementById('btn').click();
+
+    // Create invisible form to send the data
+    var form = document.createElement("form"); 
+    form.setAttribute("method", "post"); 
+    form.setAttribute("action", "/reason"); 
+  
+    // Create an input element for account 
+    var account = document.createElement("input"); 
+    account.setAttribute("type", "text"); 
+    account.setAttribute("name", "account");
+    var userVal = document.getElementById("user").innerText;
+    account.setAttribute("value", userVal); 
+  
+
+    const search = window.location.search;
+    const queryString = '/data-from-db' + search;
+   
+    const params = new URLSearchParams(window.location.search);
+    var tableSelect = params.getAll('table-select');
+     // Create an input element for tables accessed 
+     var DOB = document.createElement("input"); 
+     DOB.setAttribute("type", "text"); 
+     DOB.setAttribute("name", "query"); 
+     DOB.setAttribute("value", tableSelect);
+
+     console.log(tableSelect);
+
+
+     // Create an input element for reason 
+     
+     var reason = params.get('reason');
+     
+
+
+     var reasonInput = document.createElement("input"); 
+     reasonInput.setAttribute("type", "text"); 
+     reasonInput.setAttribute("name", "reason"); 
+     reasonInput.setAttribute("value", reason);
+
+     // create a submit button 
+                var s = document.createElement("input"); 
+                s.setAttribute("type", "submit"); 
+                s.setAttribute("value", "Submit"); 
+                  
+                // Append the account input to the form 
+                form.appendChild(account);  
+                  
+                // Append the DOB to the form 
+                form.appendChild(DOB);  
+
+                form.appendChild(reasonInput);
+                  
+                // Append the submit button to the form 
+                form.appendChild(s);  
+  
+                document.body.appendChild(form); 
+}
+
 //Boolean to ensure data only shows after first click
 var showing = Boolean(false)
 
