@@ -62,6 +62,7 @@ final class QueryFactory {
     String condString = colName + " = @" + colName;
     switch (colType) {
       case "STRING": 
+      case "DATE":
         builder.append(condString).bind(colName).to(filterValue);
         break;
       case "INT64":
@@ -71,6 +72,7 @@ final class QueryFactory {
       case "BOOL":
         boolean bool = Boolean.getBoolean(filterValue);
         builder.append(condString).bind(colName).to(bool);
+        break;
     }
   } 
 
