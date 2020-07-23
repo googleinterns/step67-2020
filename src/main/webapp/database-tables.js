@@ -30,9 +30,17 @@ function audit() {
     reasonInput.setAttribute("name", "reason"); 
     reasonInput.setAttribute("value", reason);
         
+    // Create queryString element
+    var queryString = window.location.search;
+    var queryStringInput = document.createElement("input"); 
+    queryStringInput.setAttribute("type", "hidden");
+    queryStringInput.setAttribute("name", "queryString"); 
+    queryStringInput.setAttribute("value", queryString);
+
     // Append everything to form then page
     form.appendChild(account);  
     form.appendChild(queryInput);  
+    form.appendChild(queryStringInput);
     form.appendChild(reasonInput);
     document.body.appendChild(form); 
     document.getElementById("form").submit();

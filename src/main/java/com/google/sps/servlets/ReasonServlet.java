@@ -12,7 +12,6 @@ import com.google.cloud.spanner.Statement;
 import com.google.cloud.spanner.TransactionContext;
 import com.google.gson.Gson;
 import java.io.IOException;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +22,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that sends reason for use to /reason. (will change to write to database)*/
+/** Servlet that writes Audit to database*/
 @WebServlet("/reason")
 public final class ReasonServlet extends HttpServlet {
 
   DatabaseClient dbClient;
+  String queryString;
   String selectedDatabase;
   private Constants constants = new Constants();
 
@@ -37,14 +37,12 @@ public final class ReasonServlet extends HttpServlet {
     String reason = request.getParameter("reason");
     String account = request.getParameter("account");
     String query = request.getParameter("query");
+    queryString = request.getParameter("queryString");
     selectedDatabase = "example-db";
     this.dbClient = DatabaseConnector.getInstance().getDbClient(selectedDatabase);
     insertUsingDml(this.dbClient,reason,account,query,response);
   }
 
-  // TODO: Ask what to do with users repeating access 
-  // Should I update or create a new row 
-  // if new row how do I modify account?
   private void insertUsingDml(DatabaseClient dbClient, String reason, String account, String query, HttpServletResponse response) {
     Instant timestamp = Instant.now();
     String timeString = timestamp.toString();
@@ -58,7 +56,7 @@ public final class ReasonServlet extends HttpServlet {
                   "INSERT INTO AuditLog (Account, Query, Reason, Timestamp) "
                       + " VALUES ('" + account + "', '" + query + "', '" + reason + "', '" + timeString + "')";
               long rowCount = transaction.executeUpdate(Statement.of(sql));
-              response.sendRedirect("/main-page.html");
+              response.sendRedirect("/main-page.html" + queryString);
               return null;
             }
         });
@@ -71,4 +69,4 @@ public final class ReasonServlet extends HttpServlet {
     }
     return value;
   } 
-} 
+}
