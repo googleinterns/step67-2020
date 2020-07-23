@@ -1,3 +1,4 @@
+/* Class representing Table, used for sorting and rendering.*/
 class Table {
   constructor(dataTable, name, colSchemas, id) {
     this.name = name;
