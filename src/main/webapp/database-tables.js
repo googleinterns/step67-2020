@@ -1,7 +1,7 @@
 let tablesList = [];
 
 //Boolean to ensure data only shows after first click
-var showing = Boolean(false)
+var showing = Boolean(false);
 
 function showDatabase() {
   if (!showing) {
@@ -18,25 +18,25 @@ function showDatabase() {
       document.getElementById("tables").innerText = '';
       document.getElementById("sql").innerText = '';
       
-      let count = 0;
+      let id = 0;
       for (tableIndex in data) {
         const tableData = data[tableIndex];
         const name = tableData.name;
         const colSchemas = tableData.columnSchemas;
-        updateSQLString(tableData.sql);
+        updateSqlOnPage(tableData.sql);
 
         const dataTable = tableData.dataTable;
-        let tableObj = new Table(dataTable, name, colSchemas, count);
+        let tableObj = new Table(dataTable, name, colSchemas, id);
 
         tableObj.fetchTable();
         tablesList.push(tableObj);
-        count++;
+        id++;
       }
     });
   }
 }
 
-function updateSQLString(sql) {
+function updateSqlOnPage(sql) {
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
   newSql.innerText = sql;

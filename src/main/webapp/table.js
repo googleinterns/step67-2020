@@ -114,6 +114,7 @@ class Table {
     tablesDiv.appendChild(table);
   }
 
+  // Add header with table name
   addHeader(tablesDiv) {
     const header = document.createElement("h2");
     header.setAttribute("id", "header_" + this.name);
