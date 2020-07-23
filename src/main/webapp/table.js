@@ -1,4 +1,5 @@
 /* Class representing Table, used for sorting and rendering.*/
+//TODO: Check which additional functions need to be bound in constructor
 class Table {
   constructor(dataTable, name, colSchemas, id) {
     this.name = name;
@@ -7,6 +8,7 @@ class Table {
     this.dataTable = new Array(dataTable.length); // Number rows
     this.sortDirections = new Array(colSchemas.length); // Number cols
     this.makeTableWithTypes(dataTable);
+
     this.setTable = this.setTable.bind(this);
   }
 
