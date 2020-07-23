@@ -15,21 +15,19 @@
 
     <div id="data"></div>
 
-    <div id = "header">
-      <div class = "button-box">
-        <a href = "index.html"><button>Splash Page</button></a>
-        <button id = "filter-button" onmouseover = "luckyFilter()" onclick = "showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
-        <!-- <form method="POST" action="/reason"> -->
-        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase(); audit()" onmouseout="unlucky()">Load Data </button>
-        <!-- </form> -->
-        <button onclick = "showShare()" >Share Query</button>
+    <div id="header">
+      <div class="button-box">
+        <a href="index.html"><button>Splash Page</button></a>
+        <button id="filter-button" onmouseover="luckyFilter()" onclick="showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
+        <button id="data-button" onmouseover="luckyData()" onclick="showDatabase(); audit()" onmouseout="unlucky()">Load Data </button>
+        <button onclick="showShare()" >Share Query</button>
       </div>
     </div>
 
-    <div id = "share-form" class = "invisible">
+    <div id="share-form" class="invisible">
       <h4>Share Query</h4>
-      <input type="text" id = "share-text" placeholder="Share with a fellow Googler.">
-      <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
+      <input type="text" id="share-text" placeholder="Share with a fellow Googler.">
+      <button onmouseover="changeText()" onclick="copyLink()" > Copy Link </button>
     </div>
     
     <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>

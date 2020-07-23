@@ -37,51 +37,32 @@ public final class ReasonServlet extends HttpServlet {
     String reason = request.getParameter("reason");
     String account = request.getParameter("account");
     String query = request.getParameter("query");
-
-    //I can make an invisible form that will submit when the data is loaded and calls this post to write to the database
-
     selectedDatabase = "example-db";
- 
     this.dbClient = DatabaseConnector.getInstance().getDbClient(selectedDatabase);
-    insertUsingDml(this.dbClient,reason,account,query);
+    insertUsingDml(this.dbClient,reason,account,query,response);
   }
 
-// TODO: Ask what to do with users repeating access 
-// Should I update or create a new row 
-// if new row how do I modify account?
-private void insertUsingDml(DatabaseClient dbClient, String reason, String account, String query) {
-  Instant timestamp = Instant.now();
-  String timeString = timestamp.toString();
-  dbClient
-      .readWriteTransaction()
-      .run(
-          new TransactionCallable<Void>() {
+  // TODO: Ask what to do with users repeating access 
+  // Should I update or create a new row 
+  // if new row how do I modify account?
+  private void insertUsingDml(DatabaseClient dbClient, String reason, String account, String query, HttpServletResponse response) {
+    Instant timestamp = Instant.now();
+    String timeString = timestamp.toString();
+    dbClient
+    .readWriteTransaction()
+    .run(
+        new TransactionCallable<Void>() {
             @Override
             public Void run(TransactionContext transaction) throws Exception {
               String sql =
                   "INSERT INTO AuditLog (Account, Query, Reason, Timestamp) "
                       + " VALUES ('" + account + "', '" + query + "', '" + reason + "', '" + timeString + "')";
               long rowCount = transaction.executeUpdate(Statement.of(sql));
-              System.out.printf("%d record inserted.\n", rowCount);
+              response.sendRedirect("/main-page.html");
               return null;
             }
-          });
-}
-
-private void deleteUsingDml(DatabaseClient dbClient) {
-  dbClient
-      .readWriteTransaction()
-      .run(
-          new TransactionCallable<Void>() {
-            @Override
-            public Void run(TransactionContext transaction) throws Exception {
-              String sql = "DELETE FROM AuditLog WHERE Account = 'Test'";
-              long rowCount = transaction.executeUpdate(Statement.of(sql));
-              System.out.printf("%d record deleted.\n", rowCount);
-              return null;
-            }
-          });
-}
+        });
+  }
 
   private String getParameter(HttpServletRequest request, String name, String defaultValue) {
     String value = request.getParameter(name);
