@@ -49,16 +49,25 @@ final class QueryFactory {
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
       String filterValue = request.getParameter(table + "-" + colName);
-      if (filterValue != null && !filterValue.equals("")) {
-        if (loopCount == 0) {
-          builder.append(" WHERE ");
-        } else {
-          builder.append(" AND ");
-        }
-        appendCondition(filterValue, builder, colSchema.schemaType(), colName);
-        loopCount++;
-      }
+      loopCount = addWhere(filterValue, loopCount, builder, colName, colSchema);
+
+      // Deal with primary keys
+      String primaryKey = request.getParameter(colName);
+      loopCount = addWhere(primaryKey, loopCount, builder, colName, colSchema);
     }
+  }
+
+  private static int addWhere(String value, int loopCount, Statement.Builder builder, String colName, ColumnSchema colSchema) {
+    if (value != null && !value.equals("")) {
+      if (loopCount == 0) {
+        builder.append(" WHERE ");
+      } else {
+        builder.append(" AND ");
+      }
+      appendCondition(value, builder, colSchema.schemaType(), colName);
+      loopCount++;
+    }
+    return loopCount;
   }
 
   //TODO add types other than primitives
