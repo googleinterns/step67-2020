@@ -59,8 +59,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
-        Statement queryStatement = queryFactory.constructQueryStatement(builder, columnSchemas, table, request);
 
+        Statement queryStatement = queryFactory.constructQueryStatement(builder, columnSchemas, table, request);
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
@@ -140,11 +140,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
             rowBuilder.add("NULL");
             continue;
           }
-
           String dataType = columnSchema.schemaType();
           addDataToRow(dataType, rowBuilder, columnName, resultSet);
         }
-
         ImmutableList<String> immutableRow = rowBuilder.build();
         tableBuilder.addRow(immutableRow);
       }

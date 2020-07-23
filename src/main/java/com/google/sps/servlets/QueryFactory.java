@@ -1,7 +1,9 @@
 package com.google.sps.servlets; 
 
 import com.google.cloud.spanner.Statement;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -27,21 +29,15 @@ final class QueryFactory {
 
   // Construct SQL statement of form SELECT <columns list> FROM <table> WHERE <conditions>
   static Statement constructQueryStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
-    builder.append("SELECT ");
-
-    int loopCount = 0;
-    for (ColumnSchema columnSchema : columnSchemas) {
-      if (loopCount != 0) {
-        builder.append(", ");
-      }
-      builder.append(columnSchema.columnName());
-      loopCount++;
-    }
-
-    builder.append(String.format(" FROM %s ", table));
+    List<String> columnsList = columnSchemas.stream()
+        .map(ColumnSchema::columnName)
+        .collect(Collectors.toList());
+    String columns = String.join(", ", columnsList);
+    String query = String.format("SELECT %s FROM %s", columns, table);
+    builder.append(query);
     getWhereStatement(builder, columnSchemas, table, request);
-    Statement statement = builder.build();
-    return statement;
+
+    return builder.build();
   }
 
   static void getWhereStatement(Statement.Builder builder, List<ColumnSchema> columnSchemas, String table, HttpServletRequest request) {
@@ -51,7 +47,7 @@ final class QueryFactory {
       String filterValue = request.getParameter(table + "-" + colName);
       if (filterValue != null && !filterValue.equals("")) {
         if (loopCount == 0) {
-          builder.append("WHERE ");
+          builder.append(" WHERE ");
         } else {
           builder.append(" AND ");
         }
@@ -80,17 +76,14 @@ final class QueryFactory {
 
   static Statement buildColumnsQuery(String[] listOfTables) {
     String getColumnsSql = "SELECT table_name, ARRAY_AGG(column_name) ";
-    getColumnsSql += "FROM information_schema.columns WHERE table_name in(";
-    StringBuilder queryBuilder = new StringBuilder(getColumnsSql);
-
-    for (int i = 0; i < listOfTables.length; i++) {
-      String selectedTables = "'" + listOfTables[i] + "'";
-      queryBuilder.append(selectedTables);
-      if (i != listOfTables.length-1) {
-        queryBuilder.append(", ");
-      } 
-    }
-    queryBuilder.append(") group by table_name");   
-    return Statement.newBuilder(queryBuilder.toString()).build();
+    getColumnsSql += "FROM information_schema.columns WHERE table_name in(%s) group by table_name";
+    
+    List<String> tablesList = 
+        Arrays.stream(listOfTables)
+            .map(table -> String.format("'%s'", table))
+            .collect(Collectors.toList());
+    String tables = String.join(", ", tablesList);
+  
+    return Statement.newBuilder(String.format(getColumnsSql, tables)).build();
   }
 }
