@@ -68,7 +68,7 @@ function getDatabaseAndTable(){
 // Get and create list of tables in the selected database
 function getTablesList(dbName) {
   const tablesUrl = '/tables-from-db';
-  const search = "?list-databases=" +dbName;
+  const search = "?list-databases=" + dbName;
 
   const tableListSpace = document.getElementById('table-list');
   tableListSpace.innerText = "Loading...";
