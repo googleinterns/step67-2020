@@ -1,0 +1,120 @@
+#header {
+  width: 100%;
+  height: 60px;
+  top: 0;
+  position: fixed;
+  background-color: rgb(10,10,10);
+  margin-bottom: 10px;
+}
+
+.button-box {
+  right: 0;
+  position:fixed;
+  padding-top: 20px;
+  padding-right: 10px;
+}
+
+#share-form {
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background-color: rgb(20,170,100);
+  padding-left: 100px;
+  padding-right: 100px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  font-size: 24px;
+}
+
+.invisible {
+  display: none;
+}
+
+#filter-box{
+    border-style: solid;
+    border-width: 1px;
+    background-color:#fafdf9;
+    display: block;
+    width: 300px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#filter-header:hover {
+    background-color: #ddf0d8;
+}
+
+input{
+    margin-left: 4px;
+}
+  
+#user {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  font-size: 18px;
+}
+
+#justification {
+  position: absolute;
+  bottom: 24px;
+  right: 16px;
+  font-size: 18px; 
+}
+
+h2 {
+    padding-left: 10px;
+    margin: 0;
+    color:  #130311;
+    font-size: 15px;
+    
+}
+
+* {
+    font-family: 'Nunito', sans-serif;
+}
+
+#submit {
+    background-color:  darkseagreen;
+    border-color: cadetblue;
+    border-style: solid;
+    margin-left: 10px;
+    font-size: 20px;
+    font-style: bold;
+    color: white;
+
+}
+
+#submit:hover{
+    background-color: #2da4d2;
+}
+
+#submit:focus {
+    outline: none;
+}
+
+#toggle-button {
+    border: none;
+    background-color: #f7f1d0;
+    color: orange;
+    font-style: bold;
+    font-size: 15px;
+    border-color: orange;
+    border-style: solid;
+}
+
+#toggle-button:hover {
+    background-color: #f0d309;
+}
+
+#toggle-button:focus {
+    outline: none;
+}
+
+#instructions {
+    text-align: center;
+    background-color: gray;
+    color: blue;
+}
+
+

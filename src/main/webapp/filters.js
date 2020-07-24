@@ -1,33 +1,20 @@
 
-//Checks whether the user has left both of the user_id/device_id input box empty. If true, the user cannot submit the filter
-// query,if false submit
-function isFilterInputEmpty(){
-  var userID = document.getElementById("user_id").value;
-  var deviceID = document.getElementById("device_id").value;
-
-  //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
-  if(userID == "" && deviceID == ""){
-    alert("Applying filters failed: Please input either user_id, device_id or both.");
-    return false;
-  }
-  return true;
-}
-
 function submitFilters() {
   return isFilterInputEmpty();
 }
 
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
-  var filterButton = document.getElementById("filter-button");
+
   if (filterBox.style.display === "none") {
     filterBox.style.display = "block";
-    filterButton.textContent = "Hide Filters"
+    filterButton.textContent = "Hide Filters";
   } else {
     filterBox.style.display = "none";
-    filterButton.textContent = "Show Filters"
+    filterButton.textContent = "Show Filters";
   }
 }
+
 
 function addDatabaseToForm(database, filterForm) {
   const chosenDatabase = document.createElement('input');
@@ -54,7 +41,7 @@ function addSelectedTableToForm(keys, filterForm) {
 }
 
 //Returns checkbox dropdowns of the selected table's columns which can then be filtered
-function filterColumns() {
+function createFilters() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
 
@@ -66,67 +53,179 @@ function filterColumns() {
   addReasonToForm(reasonForUse, filterForm);
   
   fetch(url + queryString).then(response => response.json()).then((tables) => {
-    const tableFilters = document.getElementById('table-filters');
-    tableFilters.style.position = 'relative';
-    
-    //Create a select dropdown based on the table name as keys
-    for(var keys in tables){
-      addSelectedTableToForm(keys, filterForm);
-      
-      var select = document.createElement('select');
-      select.style.width = '200px';
-      select.options.remove(0);
-      select.id = "table-select";
+    console.log(tables);
+    const columnDiv = document.getElementById('column-select');
+    const primaryKeyDiv = document.getElementById('primarykey-select');
 
-      let defaultOption = document.createElement('option');
-      defaultOption.text = keys;
-      defaultOption.style.display = 'none'; //Hiding table name as a valid option to select
+    makeQuickStartFilters(tables, primaryKeyDiv, filterForm);
+    makeFullFilters(tables,columnDiv, filterForm);
 
-      select.add(defaultOption);
-      select.selectedIndex = 0;
+ });
+}
 
-      let checkboxes = document.createElement('div');
-      
-      //Create checkboxes for each column of the table
+//Helper method that creates the quickstart filters
+function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
+  //Creating primary key dropdown 
+  var primarykey_select = document.createElement('select');
+  primarykey_select.style.width = '200px';
+  primarykey_select.options.remove(0);
+  primarykey_select.name = 'Primary Keys';
+  primarykey_select.id = 'primary_key';
+
+  let primkeyDefaultOption = document.createElement('option');
+  primkeyDefaultOption.text = 'Primary Keys';
+  primkeyDefaultOption.style.display = 'none'; //Hiding table name as a valid option to select
+
+  primarykey_select.add(primkeyDefaultOption);
+  primarykey_select.selectedIndex = 0;
+
+  let primarykey_column_inputs = document.createElement('div');
+  primarykey_column_inputs.style.backgroundColor = 'white';
+ 
+  for(var keys in tables){
+    if(keys === 'PrimaryKeys'){
       for(var col in tables[keys][0]){
-        var checkbox = document.createElement('input');
-        checkbox.type= 'checkbox';
-        checkbox.value = tables[keys][0][col];
-        checkbox.id = "column-select" + col;
-        checkbox.name = keys;
+        //Skip making input boxes for UserId and DeviceId for Quickstart
+        if(tables[keys][0][col] === 'UserId' || tables[keys][0][col] === 'DeviceId'){
+          //If userId or deviceId exists in the primary key list, display the input boxes
+          if(tables[keys][0].includes('UserId')){
+            var userIdBox = document.getElementById('user_id_box');
+            var userId = document.getElementById('user_id');
+            userIdBox.style.display = 'block';
+            userId.required = true;
+          }
+          if(tables[keys][0].includes('DeviceId')){
+            var deviceIdBox = document.getElementById('device_id_box');
+            var deviceId = document.getElementById('device_id');
+            deviceIdBox.style.display = 'block';
+            deviceId.required = true;
+          }
+          
+          continue;
+        }else{
+            //Creating text inputs
+            var primkey_input = document.createElement('input');
+            primkey_input.type= 'text';
+            primkey_input.id = tables[keys][0][col];
+            primkey_input.name = keys;
+            //Creating the label placeholders for the inputs
+            primkey_input.placeholder = tables[keys][0][col];
 
-        var label = document.createElement('label');
-        label.innerHTML = tables[keys][0][col];
-        label.htmlFor =  tables[keys][0][col];
-        checkbox.innerHTML = label.outerHTML;
-                
-        checkbox.appendChild(label);
-        checkboxes.appendChild(checkbox);
-        checkboxes.appendChild(label);
+            //Appending input boxes to the primary_column_inputs div
+            primarykey_column_inputs.appendChild(primkey_input);
 
-        checkboxes.style.border = "1px solid";
-        checkboxes.style.display = "none";
-        checkboxes.style.width = '200px';
+            //Styling DOM elements
+            primarykey_column_inputs.style.border = '1px solid';
+            primarykey_column_inputs.style.display = 'none';
+            primarykey_column_inputs.style.width = '200px';
+            var div = document.createElement('div');
+            div.style.padding = '10px';
+            primarykey_column_inputs.appendChild(div);
 
-        var boxDiv = document.createElement('div');
-        boxDiv.style.padding ='4px';
-        checkboxes.appendChild(boxDiv);
-      }
-
-      //onclick event that will hide/show column filters
-      select.onclick = function() {
-        if (checkboxes.style.display === "none") {
-          checkboxes.style.display = "block";
-        } else {
-          checkboxes.style.display = "none";
         }
-     };
+      }
+      //onclick event that will hide/show primary key text boxes
+      primarykey_select.onclick = function() {
+      if (primarykey_column_inputs.style.display === 'none') {
+        primarykey_column_inputs.style.display = 'block';
+      } else {
+          primarykey_column_inputs.style.display = 'none';
+      }};
 
-      tableFilters.appendChild(select);
-      tableFilters.appendChild(checkboxes);
+      //After all primary key filter options have been created, append to primaryKeyDiv 
+      primaryKeyDiv.appendChild(primarykey_select);
+      primaryKeyDiv.appendChild(primarykey_column_inputs);
       var div = document.createElement('div');
       div.style.padding ='10px';
-      tableFilters.appendChild(div);
-    }   
-  });
+      primaryKeyDiv.appendChild(div);
+    }
+
+  }
+}
+
+//Helper method that created the Full filters including column selection
+function makeFullFilters(tables, columnDiv, filterForm){
+  columnDiv.style.position = 'relative';
+    
+  //Create a select dropdown based on the table name as keys
+  for(var keys in tables){
+    if(keys === 'PrimaryKeys'){
+      continue;
+    }
+
+    var column_select = document.createElement('select');
+    column_select.style.width = '200px';
+    column_select.options.remove(0);
+    column_select.name = keys;
+    column_select.id = keys;
+
+    addSelectedTableToForm(keys, filterForm);
+        
+    let colDefaultOption = document.createElement('option');
+    colDefaultOption.text = keys;
+    colDefaultOption.style.display = 'none'; //Hiding table name as a valid option to select
+
+    column_select.add(colDefaultOption);
+    column_select.selectedIndex = 0;
+            
+    let colFilters = document.createElement('div'); //div for columns filter
+    colFilters.style.backgroundColor = 'white';
+    
+    //Create checkboxes for each column of the table
+    for(var col in tables[keys][0]){
+      var col_checkbox = document.createElement('input');
+      col_checkbox.type= 'checkbox';
+      col_checkbox.value = tables[keys][0][col];
+      col_checkbox.id = tables[keys][0][col];
+      col_checkbox.name = keys;
+      col_checkbox.checked = true; //by default checkbox is checked
+
+      var label = document.createElement('label');
+      label.innerHTML = tables[keys][0][col];
+      label.htmlFor =  tables[keys][0][col];
+      col_checkbox.innerHTML = label.outerHTML;
+                
+      col_checkbox.appendChild(label);
+      colFilters.appendChild(col_checkbox);
+      colFilters.appendChild(label);
+
+      colFilters.style.border = '1px solid';
+      colFilters.style.display = 'none';
+      colFilters.style.width = '200px';
+
+      var colBoxDiv = document.createElement('div');
+      colBoxDiv.style.padding ='4px';
+      colFilters.appendChild(colBoxDiv);
+    } 
+
+    //onclick event that will hide/show column list filters
+    column_select.onclick = function() {
+    if (colFilters.style.display === 'none') {
+      colFilters.style.display = 'block';
+    } else {
+        colFilters.style.display = 'none';
+    }};
+
+    //appending colum filter dropdown
+    columnDiv.appendChild(column_select);
+    columnDiv.appendChild(colFilters);
+    var div = document.createElement('div');
+    div.style.padding ='10px';
+    columnDiv.appendChild(div);
+  }
+}
+
+//Function that toggles between QuickStart mode or Full Mode for filtering
+function toggleFilters() {
+  var toggle = document.getElementById('toggle');
+  if (toggle.innerHTML === 'QUICK START') {
+    toggle.innerHTML = 'FULL';
+    document.getElementById('primarykey-select').style.display = 'none';
+    document.getElementById('column-select').style.display = 'block';
+
+  } else {
+    toggle.innerHTML = 'QUICK START';
+    document.getElementById('primarykey-select').style.display = 'block';
+    document.getElementById('column-select').style.display = 'none';
+  }
 }
