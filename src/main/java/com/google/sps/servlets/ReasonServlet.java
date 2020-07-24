@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 import static com.google.cloud.spanner.TransactionRunner.TransactionCallable;
+import static com.google.sps.servlets.Constants.TEXT_TYPE;
 
 import com.google.cloud.spanner.DatabaseClient;
 import com.google.cloud.spanner.DatabaseId;
@@ -28,18 +29,15 @@ public final class ReasonServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   String queryString;
-  String selectedDatabase;
-  private Constants constants = new Constants();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType(constants.TEXT_TYPE);
+    response.setContentType(TEXT_TYPE);
     String reason = request.getParameter("reason");
     String account = request.getParameter("account");
     String query = request.getParameter("query");
     queryString = request.getParameter("queryString");
-    selectedDatabase = "example-db";
-    this.dbClient = DatabaseConnector.getInstance().getDbClient(selectedDatabase);
+    this.dbClient = DatabaseConnector.getInstance().getDbClient("example-db");
     insertUsingDml(reason,account,query,response);
   }
 
@@ -55,7 +53,7 @@ public final class ReasonServlet extends HttpServlet {
               String sql =
                   "INSERT INTO AuditLog (Account, Query, Reason, Timestamp) "
                       + String.format(" VALUES ('%s', '%s', '%s', '%s')",account,query,reason,timeString);
-              long rowCount = transaction.executeUpdate(Statement.of(sql));
+              transaction.executeUpdate(Statement.of(sql));
               response.sendRedirect("/main-page.html" + queryString);
               return null;
             }
