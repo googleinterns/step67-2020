@@ -18,11 +18,11 @@ function isFilterInputEmpty(){
 
 function hideUserDeviceId() {
     if (document.getElementById("user_id").style.display == "none") {
-         document.getElementById("user_id").style.display = "block";
-         document.getElementById("device_id").style.display = "block";
+      document.getElementById("user_id").style.display = "block";
+      document.getElementById("device_id").style.display = "block";
     } else {
-    document.getElementById("user_id").style.display = "none";
-    document.getElementById("device_id").style.display = "none";
+      document.getElementById("user_id").style.display = "none";
+      document.getElementById("device_id").style.display = "none";
     }
 }
 

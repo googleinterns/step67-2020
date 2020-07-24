@@ -34,14 +34,17 @@ public class LoginServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("text/html");
-
+    System.out.println("Check login");
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = "";
 
     if (!userService.isUserLoggedIn()) {
-      String loginUrl = userService.createLoginURL("/login");
-      response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+      System.out.println("NOT LOGGED IN");
+      String loginUrl = userService.createLoginURL("/splash.html");
       userEmail = "Stranger";
+      String mail = convertToJsonUsingGson(userEmail);
+      response.getWriter().println(mail);
+      return;
     } else {
         String currentUserEmail = userService.getCurrentUser().getEmail();
         userEmail = currentUserEmail;
