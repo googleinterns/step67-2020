@@ -2,28 +2,32 @@
 //Checks whether the user has left both of the user_id/device_id input box empty. If true, the user cannot submit the filter
 // query,if false submit
 function isFilterInputEmpty(){
-    var userID = document.getElementById("user_id").value;
-    var deviceID = document.getElementById("device_id").value;
+  var userID = document.getElementById("user_id").value;
+  var deviceID = document.getElementById("device_id").value;
 
-    //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
-    if(userID == "" && deviceID == ""){
-        alert("Applying filters failed: Please input either user_id, device_id or both.");
-        return false;
-    }
-    document.getElementById("instruction").style.display = "none";
-    showDatabase();
-    hideUserDeviceId();
-    return true;
+  //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
+  if(userID == "" && deviceID == ""){
+      alert("Applying filters failed: Please input either user_id, device_id or both.");
+      return false;
+  }
+  document.getElementById("instruction").style.display = "none";
+  showDatabase();
+  hideUserDeviceId();
+  return true;
+}
+
+function submitFilters() {
+  return isFilterInputEmpty();
 }
 
 function hideUserDeviceId() {
-    if (document.getElementById("user_id").style.display == "none") {
-      document.getElementById("user_id").style.display = "block";
-      document.getElementById("device_id").style.display = "block";
-    } else {
-      document.getElementById("user_id").style.display = "none";
-      document.getElementById("device_id").style.display = "none";
-    }
+  if (document.getElementById("user_id").style.display == "none") {
+    document.getElementById("user_id").style.display = "block";
+    document.getElementById("device_id").style.display = "block";
+  } else {
+    document.getElementById("user_id").style.display = "none";
+    document.getElementById("device_id").style.display = "none";
+  }
 }
 
 function showFiltersPanel() {
@@ -38,68 +42,100 @@ function showFiltersPanel() {
   }
 }
 
-//Returns checkbox dropdowns of the selected table's columns which can then be filtered
+function addDatabaseToForm(database, filterForm) {
+  const chosenDatabase = document.createElement('input');
+  chosenDatabase.type = "hidden";
+  chosenDatabase.name = "list-databases";
+  chosenDatabase.value = database;
+  filterForm.appendChild(chosenDatabase);
+}
+
+function addReasonToForm(reasonForUse,filterForm) {
+  const reason = document.createElement('input');
+  reason.type = "hidden";
+  reason.name = "reason";
+  reason.value = reasonForUse;
+  filterForm.appendChild(reason);
+}
+
+function addSelectedTableToForm(tableName, filterForm) {
+  const tableSelect = document.createElement('input');
+  tableSelect.type = "hidden";
+  tableSelect.name = "table-select";
+  tableSelect.value = tableName;
+  filterForm.appendChild(tableSelect);
+}
+
+//TODO: try to split this into more separate functions once Sanna + Millennia code merged together
+//Returns textInput dropdowns of the selected table's columns which can then be filtered
 function filterColumns() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
+
+  var searchParams = new URLSearchParams(window.location.search);
+  const filterForm = document.getElementById('filter-form'); 
+  const reasonForUse = searchParams.get('reason');
+  const database = searchParams.get('list-databases');
+  addDatabaseToForm(database, filterForm);
+  addReasonToForm(reasonForUse, filterForm);
+
   fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
     
-    //Create a select dropdown based on the table name as keys
-    for(var keys in tables){
+    //Create a select dropdown based on the table name as tableName
+    for(var tableName in tables){
+      addSelectedTableToForm(tableName, filterForm);
+      
       var select = document.createElement('select');
       select.style.width = '200px';
       select.options.remove(0);
-      select.name = keys;
-      select.id = keys;
+      select.id = "table-select";
 
       let defaultOption = document.createElement('option');
-      defaultOption.text = keys;
+      defaultOption.text = tableName;
       defaultOption.style.display = 'none'; //Hiding table name as a valid option to select
 
       select.add(defaultOption);
       select.selectedIndex = 0;
 
-            
-      let checkboxes = document.createElement('div');
+      let textInputs = document.createElement('div');
       
-      //Create checkboxes for each column of the table
-      for(var col in tables[keys][0]){
-        var checkbox = document.createElement('input');
-        checkbox.type= 'checkbox';
-        checkbox.value = tables[keys][0][col];
-        checkbox.id = tables[keys][0][col];
+      //Create textInputs for each column of the table
+      for(var col in tables[tableName][0]){
+        var textInput = document.createElement('input');
+        textInput.type= 'text';
+        textInput.placeholder = tables[tableName][0][col];
+        textInput.id = "column-select";
+        textInput.name = tableName + "-" + tables[tableName][0][col];
 
         var label = document.createElement('label');
-        label.innerHTML = tables[keys][0][col];
-        label.htmlFor =  tables[keys][0][col];
-        checkbox.innerHTML = label.outerHTML;
+        label.innerHTML = tables[tableName][0][col];
+        label.htmlFor =  tables[tableName][0][col];
+        textInput.innerHTML = label.outerHTML;
                 
-        checkbox.appendChild(label);
-        checkboxes.appendChild(checkbox);
-        checkboxes.appendChild(label);
+        textInputs.appendChild(textInput);
 
-        checkboxes.style.border = "1px solid";
-        checkboxes.style.display = "none";
-        checkboxes.style.width = '200px';
+        textInputs.style.border = "1px solid";
+        textInputs.style.display = "none";
+        textInputs.style.width = '200px';
 
         var boxDiv = document.createElement('div');
         boxDiv.style.padding ='4px';
-        checkboxes.appendChild(boxDiv);
+        textInputs.appendChild(boxDiv);
       }
 
       //onclick event that will hide/show column filters
       select.onclick = function() {
-        if (checkboxes.style.display === "none") {
-            checkboxes.style.display = "block";
+        if (textInputs.style.display === "none") {
+          textInputs.style.display = "block";
         } else {
-            checkboxes.style.display = "none";
+          textInputs.style.display = "none";
         }
      };
 
       tableFilters.appendChild(select);
-      tableFilters.appendChild(checkboxes);
+      tableFilters.appendChild(textInputs);
       var div = document.createElement('div');
       div.style.padding ='10px';
       tableFilters.appendChild(div);

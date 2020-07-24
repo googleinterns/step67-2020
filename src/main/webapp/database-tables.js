@@ -22,6 +22,13 @@ function showDatabase() {
       for (tableIndex in data) {
         const tableData = data[tableIndex];
         const name = tableData.name;
+
+        const isEmpty = tableData.isEmpty;
+        if (isEmpty) {
+          createIsEmptyElement(dataArea);
+          continue;
+        }
+
         const colSchemas = tableData.columnSchemas;
         updateSqlOnPage(tableData.sql);
 
@@ -34,6 +41,12 @@ function showDatabase() {
       }
     });
   }
+}
+
+function createIsEmptyElement(dataArea) {
+  const element = document.createElement("p");
+  element.innerText = "No rows in table with applied filters.";
+  dataArea.appendChild(element);
 }
 
 function updateSqlOnPage(sql) {

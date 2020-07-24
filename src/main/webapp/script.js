@@ -30,39 +30,39 @@ function submitDatabaseForm() {
 
 //Get database and selected tables from query string and /tables-from-db
 function getDatabaseAndTable(){
-    const tablesUrl = '/tables-from-db';
-    const search = window.location.search;
-    const queryString = tablesUrl + search;
-    var startIndex = 0;
-    var databaseString= "";
-    
-    for (var i = 0; i<search.length; i++){
-        if (search.charAt(i) == '='){
-            startIndex = i;
-        } else if (search.charAt(i) == '&'){
-            break;
-        } else{
-            databaseString += search.charAt(i);
-        }
-    }
+  const tablesUrl = '/tables-from-db';
+  const search = window.location.search;
+  const queryString = tablesUrl + search;
+  var startIndex = 0;
+  var databaseString= "";
+  
+  for (var i = 0; i<search.length; i++){
+      if (search.charAt(i) == '='){
+          startIndex = i;
+      } else if (search.charAt(i) == '&'){
+          break;
+      } else{
+          databaseString += search.charAt(i);
+      }
+  }
 
-    databaseString = databaseString.substring(startIndex);
-    fetch(queryString)
-    .then(response => response.json())
-    .then((list) => { 
-        const dbText = document.createElement('p');
-        dbText.innerText = "Database: " + databaseString;
-        const tableText = document.createElement('p');
-        tableText.innerText = "List of selected tables:  ";
-        const databaseTable = document.getElementById('DB-T');
-        databaseTable.appendChild(dbText);
-        databaseTable.appendChild(tableText);
+  databaseString = databaseString.substring(startIndex);
+  fetch(queryString)
+  .then(response => response.json())
+  .then((list) => { 
+      const dbText = document.createElement('p');
+      dbText.innerText = "Database: " + databaseString;
+      const tableText = document.createElement('p');
+      tableText.innerText = "List of selected tables:  ";
+      const databaseTable = document.getElementById('DB-T');
+      databaseTable.appendChild(dbText);
+      databaseTable.appendChild(tableText);
 
-        for (let index = 0; index < list.length; index++) {
-            databaseTable.appendChild(
-            createListElement(list[index]));
-        }
-    });
+      for (let index = 0; index < list.length; index++) {
+          databaseTable.appendChild(
+          createListElement(list[index]));
+      }
+  });
 }
  
 // Get and create list of tables in the selected database
@@ -174,8 +174,8 @@ function addTableOption(text) {
 }
  
 function onLoad() {
-  getDatabases();
   login();
+  getDatabases();
 }
 
 function createListElement(text) {
@@ -185,14 +185,14 @@ function createListElement(text) {
 }
 
 function copyLink() {
-    // Create temporary input to copy text and then remove input
-    var tempInput = document.createElement("input");
-    tempInput.value = window.location.href;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand("copy");
-    document.body.removeChild(tempInput);
-    document.getElementById("alert").classList.remove("invisible");
+  // Create temporary input to copy text and then remove input
+  var tempInput = document.createElement("input");
+  tempInput.value = window.location.href;
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  document.execCommand("copy");
+  document.body.removeChild(tempInput);
+  document.getElementById("alert").classList.remove("invisible");
 }
 
 function closeAlert() {
@@ -204,17 +204,27 @@ var previousText = "placeholder";
 var previousId = "id";
 
 function luckyFilter() {
-    previousId="filter-button";
-    previousText = document.getElementById("filter-button").textContent;
-    document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
+  previousId="filter-button";
+  previousText = document.getElementById("filter-button").textContent;
+  document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
 }
 
 function luckyData() {
-    previousId="data-button";
-    previousText = document.getElementById("data-button").textContent;
-    document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
+  previousId="data-button";
+  previousText = document.getElementById("data-button").textContent;
+  document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
 }
 
 function unlucky() {
-    document.getElementById(previousId).textContent = previousText;
+  document.getElementById(previousId).textContent = previousText;
+}
+
+function changeText() {
+  document.getElementById("share-text").value = window.location.href;
+}
+
+function login(){
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
 }

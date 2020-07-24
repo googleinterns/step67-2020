@@ -37,9 +37,12 @@
         <input type="text" id="user_id" class="id" placeholder="Enter the user_id">
         <input type="text" id="device_id" class="id" placeholder="Enter the device_id">
     </div>
+    
+    <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>
+    <button onclick="showDatabase()">Show Data</button>
 
     <div id="filter-box" style="display: none;">
-      <form action="/main-page.html" method="GET">
+      <form id="filter-form" action="/main-page.html" method="GET">
         <h1> Filters</h1>
         <div id="table-filters"></div>
 
@@ -50,5 +53,6 @@
     <div id="justification"></div>
     <div id="tables"></div>
     <div id="sql"></div>
+
   </body>
 </html>

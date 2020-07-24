@@ -40,20 +40,33 @@ public class DataFromDatabaseServlet extends HttpServlet {
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(DATABASE_PARAM);
     initDatabaseClient(databaseName);
+    QueryFactory queryFactory = QueryFactory.getInstance();
 
     List<Table> tables = new ArrayList<>();
     QueryFactory queryFactory = QueryFactory.getInstance();
 
     for (String table : selectedTables) {
+      //Prevent people trying to see AuditLog
+      if (table.toLowerCase().equals("auditlog")) {
+        continue;
+      }
+
+      String[] selectedColsInTable = null;
+      if (request.getParameterValues(table) != null) {
+        selectedColsInTable = request.getParameterValues(table);
+      } 
+      
       Statement columnQuery = queryFactory.buildSchemaQuery(table);
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(columnQuery)) {
-        ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
-        
+        ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
+        Statement.Builder builder = Statement.newBuilder("");
+
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
-        Statement queryStatement = queryFactory.constructQueryStatement(columnSchemas, table);
+
+        Statement queryStatement = queryFactory.constructQueryStatement(builder, columnSchemas, table, request);
         tableBuilder.setSql(queryStatement.toString());
 
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
@@ -75,10 +88,17 @@ public class DataFromDatabaseServlet extends HttpServlet {
     }
   } 
 
-  private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet) {
+  private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet, String[] selectedColsInTable) {
     ImmutableList.Builder<ColumnSchema> colSchemaBuilder = new ImmutableList.Builder<>();
+    
+    List<String> selectedCols = new ArrayList<>();
+    if (selectedColsInTable != null) 
+      selectedCols = Arrays.asList(selectedColsInTable);
     while (resultSet.next()) {
-      colSchemaBuilder.add(createColumnSchema(resultSet));
+      String colName = resultSet.getString(0);
+      if (selectedCols.size() == 0 || selectedCols.contains(colName)) {
+        colSchemaBuilder.add(createColumnSchema(resultSet));
+      }
     }
     ImmutableList<ColumnSchema> columnSchemas = colSchemaBuilder.build();
     checkTableHasColumns(columnSchemas);
@@ -95,13 +115,17 @@ public class DataFromDatabaseServlet extends HttpServlet {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
 
-    // Convert YES/NO String to true/false boolean
-    String isNullableColumn = resultSet.getString(2);
+    boolean isNullable = stringToBoolean(resultSet.getString(2));
+    return ColumnSchema.create(columnName, schemaType, isNullable);
+  }
+
+  // Convert YES/NO String to true/false boolean
+  private boolean stringToBoolean(String isNullableColumn) {
     boolean isNullable = false;
     if (isNullableColumn.toLowerCase().equals("YES")) {
       isNullable = true;
     }
-    return ColumnSchema.create(columnName, schemaType, isNullable);
+    return isNullable;
   }
 
   private void initDatabaseClient(String databaseName) {
@@ -114,7 +138,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
       .singleUse() 
       .executeQuery(query)) {
         
+      int resultCount = 0;
       while (resultSet.next()) {
+        resultCount++;
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (ColumnSchema columnSchema : columnSchemas) {
           String columnName = columnSchema.columnName();
@@ -124,13 +150,17 @@ public class DataFromDatabaseServlet extends HttpServlet {
             rowBuilder.add("NULL");
             continue;
           }
-
           String dataType = columnSchema.schemaType();
           addDataToRow(dataType, rowBuilder, columnName, resultSet);
         }
-
         ImmutableList<String> immutableRow = rowBuilder.build();
         tableBuilder.addRow(immutableRow);
+      }
+
+      if (resultCount == 0) {  
+        tableBuilder.setIsEmpty(true);
+      } else {
+        tableBuilder.setIsEmpty(false);
       }
     }
   }
