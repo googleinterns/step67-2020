@@ -10,15 +10,31 @@ function isFilterInputEmpty(){
         alert("Applying filters failed: Please input either user_id, device_id or both.");
         return false;
     }
+    document.getElementById("instruction").style.display = "none";
+    showDatabase();
+    hideUserDeviceId();
     return true;
 }
 
-function showFiltersPanel(){
+function hideUserDeviceId() {
+    if (document.getElementById("user_id").style.display == "none") {
+      document.getElementById("user_id").style.display = "block";
+      document.getElementById("device_id").style.display = "block";
+    } else {
+      document.getElementById("user_id").style.display = "none";
+      document.getElementById("device_id").style.display = "none";
+    }
+}
+
+function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
   if (filterBox.style.display === "none") {
     filterBox.style.display = "block";
+    filterButton.textContent = "Hide Filters"
   } else {
     filterBox.style.display = "none";
+    filterButton.textContent = "Show Filters"
   }
 }
 
@@ -26,7 +42,6 @@ function showFiltersPanel(){
 function filterColumns() {
   var queryString = window.location.search;
   var url = "/columns-from-tables";
-  console.log(url + queryString);
   fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';

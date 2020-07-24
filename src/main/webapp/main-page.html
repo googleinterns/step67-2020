@@ -16,39 +16,38 @@
 
     <div id="data"></div>
 
-    <div id = "header">
-      <div class = "button-box">
-        <a href = "index.html"><button>Splash Page</button></a>
-        <button id = "filter-button" onmouseover = "luckyFilter()" onclick = "showFilterPanel()" onmouseout="unlucky()">Show Filters </button>
-        <button id = "data-button" onmouseover = "luckyData()" onclick = "showDatabase()" onmouseout="unlucky()">Load Data </button>
-        <button onclick = "showShare()" >Share Query</button>
+    <div id="header">
+      <div class="button-box">
+        <input type="search" placeholder="Search...">
+        <a href="splash.html"><button>Previous Page</button></a>
+        <button id="filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id="data-button" onmouseover="luckyData()" onclick="login(); isFilterInputEmpty()" onmouseout="unlucky()"> Load Data </button>
+        <button id="share-button" onclick="copyLink()"> Share Query </button>
+        <button onclick="clearFilters()"> Clear Filters </button>
       </div>
     </div>
 
-    <div id = "share-form" class = "invisible">
-      <h4>Share Query</h4>
-      <input type="text" id = "share-text" placeholder="Share with a fellow Googler.">
-      <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
+    <div id="alert" class="invisible">
+        <span class="closebtn" onclick="closeAlert()" >&times;</span> 
+        <strong>Link Copied!</strong>
     </div>
-    
-    <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>
-      <div id="filter-box" style="display: none;">
-        <form action="/main-page.html" method="GET">
-          <h1> Filters</h1>
+   
+    <div>
+        <p id="instruction">Enter userID or deviceID, then select filters.<p>
+        <input type="text" id="user_id" class="id" placeholder="Enter the user_id">
+        <input type="text" id="device_id" class="id" placeholder="Enter the device_id">
+    </div>
 
-          <input type="text" id="user_id" placeholder="Enter the user_id">
-          <div style="padding: 10px"></div> 
-          <input type="text" id="device_id" placeholder="Enter the device_id">
-          <div style="padding: 10px"></div>
-          <input type="search" placeholder="Search...">
-          <div style="padding: 10px"></div>
+    <div id="filter-box" style="display: none;">
+      <form action="/main-page.html" method="GET">
+        <h1> Filters</h1>
+        <div id="table-filters"></div>
 
-          <div id="table-filters"></div>
-
-          <input type="submit" id="submit" value="submit" onClick="return isFilterInputEmpty()">
+        <input type="submit" id="submit" value="Apply Filters" onClick=" return isFilterInputEmpty()">
         </form>  
       </div>
     <div id="user"></div>
+    <div id="justification"></div>
     <div id="tables"></div>
     <div id="sql"></div>
   </body>

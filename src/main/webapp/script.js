@@ -184,16 +184,19 @@ function createListElement(text) {
   return liElement;
 }
 
-function showShare() {
-  document.getElementById("share-form").classList.remove("invisible");
+function copyLink() {
+    // Create temporary input to copy text and then remove input
+    var tempInput = document.createElement("input");
+    tempInput.value = window.location.href;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand("copy");
+    document.body.removeChild(tempInput);
+    document.getElementById("alert").classList.remove("invisible");
 }
 
-function copyLink() {
-    var copyText = document.getElementById("share-text");
-    copyText.select();
-    copyText.setSelectionRange(0, 99999)
-    document.execCommand("copy");
-    alert("Copied the text: " + copyText.value);
+function closeAlert() {
+   document.getElementById("alert").classList.add("invisible");
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
@@ -214,14 +217,4 @@ function luckyData() {
 
 function unlucky() {
     document.getElementById(previousId).textContent = previousText;
-}
-
-function changeText() {
-    document.getElementById("share-text").value = window.location.href;
-}
-
-function login(){
-  fetch("/login").then(response => response.json()).then((user) => {
-    document.getElementById("user").innerText = user;
-  });
 }
