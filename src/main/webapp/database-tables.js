@@ -2,7 +2,7 @@
 var showing = Boolean(false)
 
 function showDatabase() {
-  if (!showing) { 
+  if (!showing){
     showing = true;
     const search = window.location.search;
     const queryString = '/data-from-db' + search;
@@ -80,12 +80,28 @@ function createTable(name) {
 }
 
 function mainLoad(){
-  showDatabase();
   login();
+  showReason();
+  showFiltersPanel();
 }
 
 function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
+    var currentUser = user;
+    var first = currentUser.split(" ");
+    if (currentUser == "deny"){
+        window.location.assign("/denied.html");
+    }
+    else if (currentUser == "Stranger") {
+        //This link first takes you to Google sign in and then continues back to splash page when signed in
+        window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
+    }
   });
+}
+
+function showReason() {
+  const params = new URLSearchParams(window.location.search);
+  var reason = params.get('reason');
+  document.getElementById("justification").innerText = "Justification: " + reason;
 }
