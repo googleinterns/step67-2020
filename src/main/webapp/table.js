@@ -50,7 +50,12 @@ class Table {
   }
 
   fetchTable() {
-    this.renderTable();
+    this.remove();
+    if (document.getElementById("table_" + this.name) != null) {
+      this.rerender();
+    } else {
+      this.renderTable();
+    }
   }
 
   // 0 is ascending, 1 is descending -- start everything ascending
@@ -85,7 +90,9 @@ class Table {
   }
 
   remove() {
-    document.getElementById("table_" + this.name).innerText = "";
+    if (document.getElementById("table_" + this.name) != null) {
+      document.getElementById("table_" + this.name).innerText = "";
+    }
   }
 
   rerender() {

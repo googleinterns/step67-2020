@@ -9,9 +9,10 @@
     <script src="table.js"></script>
     <script src="filters.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,300&display=swap" rel="stylesheet">
   </head>
     
-  <body onload="mainLoad()">
+  <body onload="mainLoad(); createFilters()">
     <h1>Main Page</h1>
 
     <div id="data"></div>
@@ -21,34 +22,50 @@
         <input type="search" placeholder="Search...">
         <a href="splash.html"><button>Previous Page</button></a>
         <button id="filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
-        <button id="data-button" onmouseover="luckyData()" onclick="login(); isFilterInputEmpty()" onmouseout="unlucky()"> Load Data </button>
+        <button id="data-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
         <button id="share-button" onclick="copyLink()"> Share Query </button>
         <button onclick="clearFilters()"> Clear Filters </button>
       </div>
     </div>
 
     <div id="alert" class="invisible">
-        <span class="closebtn" onclick="closeAlert()" >&times;</span> 
-        <strong>Link Copied!</strong>
-    </div>
-   
-    <div>
-        <p id="instruction">Enter userID or deviceID, then select filters.<p>
-        <input type="text" id="user_id" class="id" placeholder="Enter the user_id">
-        <input type="text" id="device_id" class="id" placeholder="Enter the device_id">
+      <span class="closebtn" onclick="closeAlert()" >&times;</span> 
+      <strong>Link Copied!</strong>
     </div>
     
-    <button id="filter-button " onClick="showFiltersPanel(); filterColumns()"> Filters</button>
-    <button onclick="showDatabase()">Show Data</button>
-
-    <div id="filter-box" style="display: none;">
+    <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
+    <div id="toggle">QUICK START</div>
+    
+    <div id="filter-box" style="display: none;"> 
       <form id="filter-form" action="/main-page.html" method="GET">
-        <h1> Filters</h1>
-        <div id="table-filters"></div>
+        <p id="instruction">Enter userID or deviceID, then select filters.<p>
+        <div id="user_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
+          <h2>User Id</h2>
+          <input type="text"  id="user_id" placeholder="Enter the userId">
+          <div style="padding:5px;"></div>
+        </div>
+        <div id="device_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
+          <h2>Device Id</h2>
+          <input type="text" id="device_id" placeholder="Enter the deviceId">
+          <div style="padding:5px;"></div>
+        </div>
 
-        <input type="submit" id="submit" value="Apply Filters" onClick=" return isFilterInputEmpty()">
-        </form>  
-      </div>
+        <div id="primarykey-select" style="padding:10px;" >
+          <h2 style="padding:0;">Primary Keys</h2>
+        </div>
+        <div id="table-filtering" style="padding: 10px; display:none;">
+          <h2 style="padding:0;">Per-Table Filtering</h2>
+        </div>
+        
+        <div id="column-select" style="padding: 10px; display:none;">
+          <h2 style="padding:0;">Column Selection</h2>
+        </div>
+        
+        <input type="submit" id="submit" value="Apply Filters" >
+        <div style="padding:5px;"></div>
+      </form>  
+    </div>
+
     <div id="user"></div>
     <div id="justification"></div>
     <div id="tables"></div>

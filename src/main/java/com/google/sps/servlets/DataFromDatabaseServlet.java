@@ -40,7 +40,6 @@ public class DataFromDatabaseServlet extends HttpServlet {
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(DATABASE_PARAM);
     initDatabaseClient(databaseName);
-    QueryFactory queryFactory = QueryFactory.getInstance();
 
     List<Table> tables = new ArrayList<>();
     QueryFactory queryFactory = QueryFactory.getInstance();

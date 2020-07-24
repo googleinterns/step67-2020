@@ -162,7 +162,8 @@ function addReasonInput() {
  
 function createSubmit() {
   const submit = document.createElement("input");
-  submit.setAttribute("type", "submit");
+  submit.type = "submit";
+  submit.value = "Continue";
   document.getElementById("table-form").appendChild(submit);
 }
  
