@@ -42,9 +42,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
     initDatabaseClient(databaseName);
 
     List<Table> tables = new ArrayList<>();
+    QueryFactory queryFactory = QueryFactory.getInstance();
 
     for (String table : selectedTables) {
-      Statement columnQuery = QueryFactory.getInstance().buildSchemaQuery(table);
+      Statement columnQuery = queryFactory.buildSchemaQuery(table);
  
       try (ResultSet resultSet =
         dbClient.singleUse().executeQuery(columnQuery)) {
@@ -52,12 +53,15 @@ public class DataFromDatabaseServlet extends HttpServlet {
         
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
-        Statement queryStatement = QueryFactory.getInstance().constructQueryStatement(columnSchemas, table);
-        
+        Statement queryStatement = queryFactory.constructQueryStatement(columnSchemas, table);
+        tableBuilder.setSql(queryStatement.toString());
+
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
+      } catch (RuntimeException e) {
+        // Do nothing - ignore (table has no columns or table DNE)
       }
     }
     String json = new Gson().toJson(tables);
