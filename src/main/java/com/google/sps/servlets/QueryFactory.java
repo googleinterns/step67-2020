@@ -1,13 +1,11 @@
 package com.google.sps.servlets; 
 
+import com.google.cloud.Date;
 import com.google.cloud.spanner.Statement;
-
-
 import com.google.cloud.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -70,27 +68,51 @@ final class QueryFactory {
     return loopCount;
   }
 
-  //TODO add types other than primitives
+  //TODO: add/fix: array, bytes, struct
   private static void appendCondition(String filterValue, Statement.Builder builder, String colType, String colName) {
     String condString = colName + " = @" + colName;
     switch (colType) {
       case "STRING": 
-      case "DATE":
         builder.append(condString).bind(colName).to(filterValue);
         break;
       case "INT64":
         int value = Integer.parseInt(filterValue);
         builder.append(condString).bind(colName).to(value);
         break;
+      case "FLOAT64":
+        double floatVal = Double.parseDouble(filterValue);
+        builder.append(condString).bind(colName).to(floatVal);
+        break;
       case "BOOL":
         boolean bool = Boolean.getBoolean(filterValue);
         builder.append(condString).bind(colName).to(bool);
         break;
+      case "DATE":
+        Date date = Date.parseDate(filterValue);
+        builder.append(condString).bind(colName).to(date);
+        break;
       case "TIMESTAMP":
         Timestamp timestamp = Timestamp.parseTimestamp(filterValue);
         builder.append(condString).bind(colName).to(timestamp);
+        break;
+      case "ARRAY<INT64>":
+        long[] longArray = stringToLongArray(filterValue);
+        builder.append(condString).bind(colName).toInt64Array(longArray);
+        break;
     }
   } 
+
+  private static long[] stringToLongArray(String value) {
+    String[] valueArray = value.split(",");
+    long[] longArray = new long[valueArray.length];
+
+    for (int index = 0; index < valueArray.length; index++) {
+      long number = Long.parseLong(valueArray[index]);
+      longArray[index] = number;
+    }
+
+    return longArray;
+  }
 
   static Statement buildColumnsQuery(String[] listOfTables) {
     String getColumnsSql = "SELECT table_name, ARRAY_AGG(column_name) ";
