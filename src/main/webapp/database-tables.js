@@ -23,11 +23,12 @@ function showDatabase() {
         const tableData = data[tableIndex];
         const name = tableData.name;
 
-        const isEmpty = tableData.isEmpty;
-        if (isEmpty) {
-          createIsEmptyElement(dataArea);
-          continue;
-        }
+        //TODO fix this
+        // const isEmpty = tableData.isEmpty;
+        // if (isEmpty) {
+        //   createIsEmptyElement(dataArea);
+        //   continue;
+        // }
 
         const colSchemas = tableData.columnSchemas;
         updateSqlOnPage(tableData.sql);
