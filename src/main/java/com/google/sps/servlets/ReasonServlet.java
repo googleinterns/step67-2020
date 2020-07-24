@@ -40,10 +40,10 @@ public final class ReasonServlet extends HttpServlet {
     queryString = request.getParameter("queryString");
     selectedDatabase = "example-db";
     this.dbClient = DatabaseConnector.getInstance().getDbClient(selectedDatabase);
-    insertUsingDml(this.dbClient,reason,account,query,response);
+    insertUsingDml(reason,account,query,response);
   }
 
-  private void insertUsingDml(DatabaseClient dbClient, String reason, String account, String query, HttpServletResponse response) {
+  private void insertUsingDml(String reason, String account, String query, HttpServletResponse response) {
     Instant timestamp = Instant.now();
     String timeString = timestamp.toString();
     dbClient
@@ -54,7 +54,7 @@ public final class ReasonServlet extends HttpServlet {
             public Void run(TransactionContext transaction) throws Exception {
               String sql =
                   "INSERT INTO AuditLog (Account, Query, Reason, Timestamp) "
-                      + " VALUES ('" + account + "', '" + query + "', '" + reason + "', '" + timeString + "')";
+                      + String.format(" VALUES ('%s', '%s', '%s', '%s')",account,query,reason,timeString);
               long rowCount = transaction.executeUpdate(Statement.of(sql));
               response.sendRedirect("/main-page.html" + queryString);
               return null;
