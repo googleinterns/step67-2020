@@ -85,15 +85,16 @@ class Table {
   }
 
   remove() {
-    document.getElementById("table_" + this.name).remove();
-    document.getElementById("header_" + this.name).remove();
+    document.getElementById("table_" + this.name).innerText = "";
   }
 
-  renderTable() {
-    const table = document.createElement("table");
-    table.setAttribute("id", "table_" + this.name);
+  rerender() {
+    const table = document.getElementById("table_" + this.name);
     table.appendChild(this.makeTableHeaders());
+    this.createTableRows(table);
+  }
 
+  createTableRows(table) {
     let index;
     for (index in this.dataTable) {
       const row = this.dataTable[index];
@@ -108,6 +109,14 @@ class Table {
       }
       table.appendChild(rowElement);
     }
+  }
+
+  renderTable() {
+    const table = document.createElement("table");
+    table.setAttribute("id", "table_" + this.name);
+    table.appendChild(this.makeTableHeaders());
+
+    this.createTableRows(table);
 
     let tablesDiv = document.getElementById("tables");
     this.addHeader(tablesDiv);
