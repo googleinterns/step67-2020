@@ -43,6 +43,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     QueryFactory queryFactory = QueryFactory.getInstance();
 
     List<Table> tables = new ArrayList<>();
+    QueryFactory queryFactory = QueryFactory.getInstance();
 
     for (String table : selectedTables) {
       //Prevent people trying to see AuditLog
@@ -54,7 +55,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
       if (request.getParameterValues(table) != null) {
         selectedColsInTable = request.getParameterValues(table);
       } 
- 
+      
       Statement columnQuery = queryFactory.buildSchemaQuery(table);
  
       try (ResultSet resultSet =
@@ -66,10 +67,14 @@ public class DataFromDatabaseServlet extends HttpServlet {
         tableBuilder.setColumnSchemas(columnSchemas);
 
         Statement queryStatement = queryFactory.constructQueryStatement(builder, columnSchemas, table, request);
+        tableBuilder.setSql(queryStatement.toString());
+
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
+      } catch (RuntimeException e) {
+        // Do nothing - ignore (table has no columns or table DNE)
       }
     }
     String json = new Gson().toJson(tables);

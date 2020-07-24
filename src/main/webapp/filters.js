@@ -7,9 +7,12 @@ function isFilterInputEmpty(){
 
   //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
   if(userID == "" && deviceID == ""){
-    alert("Applying filters failed: Please input either user_id, device_id or both.");
-    return false;
+      alert("Applying filters failed: Please input either user_id, device_id or both.");
+      return false;
   }
+  document.getElementById("instruction").style.display = "none";
+  showDatabase();
+  hideUserDeviceId();
   return true;
 }
 
@@ -17,12 +20,25 @@ function submitFilters() {
   return isFilterInputEmpty();
 }
 
-function showFiltersPanel(){
+function hideUserDeviceId() {
+  if (document.getElementById("user_id").style.display == "none") {
+    document.getElementById("user_id").style.display = "block";
+    document.getElementById("device_id").style.display = "block";
+  } else {
+    document.getElementById("user_id").style.display = "none";
+    document.getElementById("device_id").style.display = "none";
+  }
+}
+
+function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
   if (filterBox.style.display === "none") {
     filterBox.style.display = "block";
+    filterButton.textContent = "Hide Filters"
   } else {
     filterBox.style.display = "none";
+    filterButton.textContent = "Show Filters"
   }
 }
 
@@ -62,7 +78,7 @@ function filterColumns() {
   const database = searchParams.get('list-databases');
   addDatabaseToForm(database, filterForm);
   addReasonToForm(reasonForUse, filterForm);
-  
+
   fetch(url + queryString).then(response => response.json()).then((tables) => {
     const tableFilters = document.getElementById('table-filters');
     tableFilters.style.position = 'relative';
