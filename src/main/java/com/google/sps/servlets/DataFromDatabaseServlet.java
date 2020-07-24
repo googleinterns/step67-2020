@@ -76,6 +76,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
         // Do nothing - ignore (table has no columns or table DNE)
       }
     }
+
+    // update the audit table
+    // need to send reason
+
     String json = new Gson().toJson(tables);
     response.getWriter().println(json);
   }

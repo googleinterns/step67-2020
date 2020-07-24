@@ -9,15 +9,17 @@
     <script src="table.js"></script>
     <script src="filters.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="table-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   </head>
     
   <body onload="mainLoad(); createFilters()">
-    <h1>Main Page</h1>
-
     <div id="data"></div>
+    <h1 style="padding-bottom:30px;"></h1>
 
     <div id="header">
+      <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
         <input type="search" placeholder="Search...">
         <a href="splash.html"><button>Previous Page</button></a>
@@ -51,14 +53,14 @@
         </div>
 
         <div id="primarykey-select" style="padding:10px;" >
-          <h2 style="padding:0;">Primary Keys</h2>
+          <h2 style="padding-bottom:10px;">Primary Keys</h2>
         </div>
         <div id="table-filtering" style="padding: 10px; display:none;">
-          <h2 style="padding:0;">Per-Table Filtering</h2>
+          <h2 style="padding-bottom:10px">Per-Table Filtering</h2>
         </div>
         
         <div id="column-select" style="padding: 10px; display:none;">
-          <h2 style="padding:0;">Column Selection</h2>
+          <h2 style="padding-bottom:10px">Column Selection</h2>
         </div>
         
         <input type="submit" id="submit" value="Apply Filters" >

@@ -1,0 +1,35 @@
+th {
+  padding: 10px;
+  text-align: left;
+  background-color: rgb(20,170,100);
+  color: white;
+}
+ 
+td, th {
+  padding: 4px;
+}
+ 
+tr:nth-child(even) {
+  background-color: rgb(230, 230, 230);
+}
+ 
+tr:hover {
+  background-color: lightgoldenrodyellow;
+}
+ 
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+ 
+h2 {
+  line-height: 10px;
+  line-break: 10px;
+}
+ 
+#tables {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
