@@ -78,6 +78,7 @@ function sort(index, id) {
   table.setTable(dataTable);
 
   //need to empty and rerender
+  //TODO: add rerender method that removes rows and headers of the table but keeps the div
   let tableIndex = 0;
   for (tableIndex in tablesList) {
     const tableObj = tablesList[tableIndex];

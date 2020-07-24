@@ -8,7 +8,6 @@ class Table {
     this.dataTable = new Array(dataTable.length); // Number rows
     this.sortDirections = new Array(colSchemas.length); // Number cols
     this.makeTableWithTypes(dataTable);
-
     this.setTable = this.setTable.bind(this);
   }
 
@@ -51,9 +50,7 @@ class Table {
   }
 
   fetchTable() {
-    setTimeout(function() {
-      this.renderTable();
-    }.bind(this), 0);
+    this.renderTable();
   }
 
   // 0 is ascending, 1 is descending -- start everything ascending
