@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Main Page</title>
+    <link rel="stylesheet" href="main-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,300&display=swap" rel="stylesheet">
+    <script src="./script.js"></script>
+    <script src="./database-tables.js"></script>
+    <script src="table.js"></script>
+    <script src="filters.js"></script>
+  </head>
+    
+  <body onload="mainLoad(); createFilters()">
+    <h1>Main Page</h1>
+
+    <div id="data"></div>
+
+    <div id = "header">
+      <div class = "button-box">
+        <a href = "splash.html"><button>Back to Splash Page</button></a>
+        <button id = "filter-button" onClick="showFiltersPanel();"> Show Filters </button>
+        <button id = "data-button" onmouseover = "luckyData()" onclick = "login(); showDatabase()" onmouseout="unlucky()">Load Data </button>
+        <button id = "share-button" onclick = "showShare()" >Share Query</button>
+        <button onclick = "clearFilters()"> Clear Filters </button>
+      </div>
+    </div>
+
+    <div id = "share-form" class = "invisible">
+      <h4>Share Query</h4>
+      <input type="text" id = "share-text" placeholder="Share with a fellow Googler.">
+      <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
+    </div>
+
+    <div id="instructions">Text box</div>
+
+
+    <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
+    <div id="toggle">QUICK START</div>
+    
+    <div id="filter-box" style="display: block"> 
+      <form id="filter-form" action="/main-page.html" method="GET">
+      <div id="user_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
+          <h2>User Id</h2>
+          <input type="text"  id="user_id" placeholder="Enter the userId">
+          <div style="padding:5px;"></div>
+      </div>
+      <div id="device_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
+          <h2>Device Id</h2>
+          <input type="text" id="device_id" placeholder="Enter the deviceId">
+          <div style="padding:5px;"></div>
+      </div>
+
+        <div id="primarykey-select" style="padding:10px;" ></div>
+        <div id="column-select" style="padding: 10px; display:none;">
+        <h2 style="padding:0;">Column Selection</h2>
+        </div>
+        
+        <input type="submit" id="submit" value="Apply Filters" onClick="return submitFilters()">
+        <div style="padding:5px;"></div>
+      </form>  
+    </div>
+
+    <div id="user"></div>
+    <div id="tables"></div>
+    <div id ="justification"></div>
+  </body>
+</html>
