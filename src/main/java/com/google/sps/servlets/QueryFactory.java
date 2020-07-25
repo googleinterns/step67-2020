@@ -134,4 +134,4 @@ final class QueryFactory {
   
     return Statement.newBuilder(String.format(getColumnsSql, tables)).build();
   }
-}
+} 

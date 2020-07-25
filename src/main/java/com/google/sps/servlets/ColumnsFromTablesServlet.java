@@ -60,10 +60,9 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       String query = "";
       String selectedTables = "";
 
-      //TODO: use StringBuilder rather than string concatenation
+      //TODO: (Sanna) move this into Queryfactory
       query = query + GET_PRIMARY_KEYS_FROM_TABLES;
       for (int i = 0; i < listOfTables.length; i++) {
-        //TODO: check if backslash is actually needed here
         selectedTables = "\'" + listOfTables[i] + "\'";
         query = query + selectedTables;
         if (i != listOfTables.length-1) {
@@ -71,7 +70,6 @@ public class ColumnsFromTablesServlet extends HttpServlet {
         } 
       }
       query = query + GROUP_BY_TABLE_NAMES + GROUP_BY_PRIMARY_KEYS;   // Queries list of columns and primary keys of the selected tables
-      //String query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
 
       try (ResultSet resultSet =
           dbClient
