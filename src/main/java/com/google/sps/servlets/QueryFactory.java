@@ -46,12 +46,20 @@ final class QueryFactory {
     int loopCount = 0;
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
-      String filterValue = request.getParameter(table + "-" + colName);
-      loopCount = addWhere(filterValue, loopCount, builder, colName, colSchema);
+      if (colName.equals("UserId")) {
+        String idString = request.getParameter("user_id");
+        loopCount = addWhere(idString, loopCount, builder, colName, colSchema);
+      } else if (colName.equals("DeviceId")) {
+        String idString = request.getParameter("device_id");
+        loopCount = addWhere(idString, loopCount, builder, colName, colSchema);
+      } else {
+        String filterValue = request.getParameter(table + "-" + colName);
+        loopCount = addWhere(filterValue, loopCount, builder, colName, colSchema);
 
-      // Deal with primary keys
-      String primaryKey = request.getParameter(colName);
-      loopCount = addWhere(primaryKey, loopCount, builder, colName, colSchema);
+        // Deal with primary keys
+        String primaryKey = request.getParameter(colName);
+        loopCount = addWhere(primaryKey, loopCount, builder, colName, colSchema);
+      }
     }
   }
 

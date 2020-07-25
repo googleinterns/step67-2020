@@ -8,10 +8,10 @@
 }
 
 .id {
-    left: 0;
+  left: 0;
 }
 #device_id {
-    left: 0;
+  left: 0;
 }
 
 .button-box {
@@ -44,6 +44,7 @@
   height: 10%;
   font-size: 12px;
   line-height: 50%;
+  padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
   float: left;
@@ -82,15 +83,14 @@ input{
 }
 
 h2 {
-    padding-left: 10px;
-    margin: 0;
-    color:  #130311;
-    font-size: 15px;
-    
+  padding-left: 10px;
+  margin: 0;
+  color:  #130311;
+  font-size: 15px;
 }
 
 * {
-    font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 #submit {
@@ -109,29 +109,29 @@ h2 {
 }
 
 #submit:focus {
-    outline: none;
+  outline: none;
 }
 
 #toggle-button {
-    border: none;
-    background-color: #f7f1d0;
-    color: orange;
-    font-style: bold;
-    font-size: 15px;
-    border-color: orange;
-    border-style: solid;
+  border: none;
+  background-color: #f7f1d0;
+  color: orange;
+  font-style: bold;
+  font-size: 15px;
+  border-color: orange;
+  border-style: solid;
 }
 
 #toggle-button:hover {
-    background-color: #f0d309;
+  background-color: #f0d309;
 }
 
 #toggle-button:focus {
-    outline: none;
+  outline: none;
 }
 
 #instructions {
-    text-align: center;
-    background-color: gray;
-    color: blue;
+  text-align: center;
+  background-color: gray;
+  color: blue;
 }

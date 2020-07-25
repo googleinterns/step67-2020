@@ -167,15 +167,18 @@ function makeFullFiltersText(tables, perTableDiv, filterForm) {
     
     //Create textInputs for each column of the table
     for(var col in tables[tableName][0]){
+      const columnName = tables[tableName][0][col];
+      if (columnName == "UserId" || columnName == "DeviceId") {
+        continue;
+      }
       var textInput = document.createElement('input');
       textInput.type= 'text';
-      textInput.placeholder = tables[tableName][0][col];
-      //textInput.id = "column-select";
-      textInput.name = tableName + "-" + tables[tableName][0][col];
+      textInput.placeholder = columnName;
+      textInput.name = tableName + "-" + columnName;
 
       var label = document.createElement('label');
-      label.innerHTML = tables[tableName][0][col];
-      label.htmlFor =  tables[tableName][0][col];
+      label.innerHTML = columnName;
+      label.htmlFor =  columnName;
       textInput.innerHTML = label.outerHTML;
               
       textInputs.appendChild(textInput);
@@ -293,80 +296,3 @@ function toggleFilters() {
     document.getElementById('table-filtering').style.display = 'none';
   }
 }
-
-// //TODO: try to split this into more separate functions once Sanna + Millennia code merged together
-// //Returns textInput dropdowns of the selected table's columns which can then be filtered
-// function filterColumns() {
-//   var queryString = window.location.search;
-//   var url = "/columns-from-tables";
-
-//   var searchParams = new URLSearchParams(window.location.search);
-//   const filterForm = document.getElementById('filter-form'); 
-//   const reasonForUse = searchParams.get('reason');
-//   const database = searchParams.get('list-databases');
-//   addDatabaseToForm(database, filterForm);
-//   addReasonToForm(reasonForUse, filterForm);
-
-//   fetch(url + queryString).then(response => response.json()).then((tables) => {
-//     const tableFilters = document.getElementById('table-filters');
-//     tableFilters.style.position = 'relative';
-    
-//     //Create a select dropdown based on the table name as tableName
-//     for(var tableName in tables){
-//       addSelectedTableToForm(tableName, filterForm);
-      
-//       var select = document.createElement('select');
-//       select.style.width = '200px';
-//       select.options.remove(0);
-//       select.id = "table-select";
-
-//       let defaultOption = document.createElement('option');
-//       defaultOption.text = tableName;
-//       defaultOption.style.display = 'none'; //Hiding table name as a valid option to select
-
-//       select.add(defaultOption);
-//       select.selectedIndex = 0;
-
-//       let textInputs = document.createElement('div');
-      
-//       //Create textInputs for each column of the table
-//       for(var col in tables[tableName][0]){
-//         var textInput = document.createElement('input');
-//         textInput.type= 'text';
-//         textInput.placeholder = tables[tableName][0][col];
-//         textInput.id = "column-select";
-//         textInput.name = tableName + "-" + tables[tableName][0][col];
-
-//         var label = document.createElement('label');
-//         label.innerHTML = tables[tableName][0][col];
-//         label.htmlFor =  tables[tableName][0][col];
-//         textInput.innerHTML = label.outerHTML;
-                
-//         textInputs.appendChild(textInput);
-
-//         textInputs.style.border = "1px solid";
-//         textInputs.style.display = "none";
-//         textInputs.style.width = '200px';
-
-//         var boxDiv = document.createElement('div');
-//         boxDiv.style.padding ='4px';
-//         textInputs.appendChild(boxDiv);
-//       }
-
-//       //onclick event that will hide/show column filters
-//       select.onclick = function() {
-//         if (textInputs.style.display === "none") {
-//           textInputs.style.display = "block";
-//         } else {
-//           textInputs.style.display = "none";
-//         }
-//      };
-
-//       tableFilters.appendChild(select);
-//       tableFilters.appendChild(textInputs);
-//       var div = document.createElement('div');
-//       div.style.padding ='10px';
-//       tableFilters.appendChild(div);
-//     }   
-//   });
-// }

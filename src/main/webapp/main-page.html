@@ -43,18 +43,19 @@
         <p id="instruction">Enter userID or deviceID, then select filters.<p>
         <div id="user_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
           <h2>User Id</h2>
-          <input type="text"  id="user_id" placeholder="Enter the userId">
+          <input type="text" id="user_id" name="user_id" placeholder="Enter the UserID">
           <div style="padding:5px;"></div>
         </div>
         <div id="device_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
           <h2>Device Id</h2>
-          <input type="text" id="device_id" placeholder="Enter the deviceId">
+          <input type="text" id="device_id" name="device_id" placeholder="Enter the DeviceID">
           <div style="padding:5px;"></div>
         </div>
 
         <div id="primarykey-select" style="padding:10px;" >
           <h2 style="padding-bottom:10px;">Primary Keys</h2>
         </div>
+
         <div id="table-filtering" style="padding: 10px; display:none;">
           <h2 style="padding-bottom:10px">Per-Table Filtering</h2>
         </div>
@@ -72,6 +73,5 @@
     <div id="justification"></div>
     <div id="tables"></div>
     <div id="sql"></div>
-
   </body>
 </html>

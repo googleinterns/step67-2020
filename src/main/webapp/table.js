@@ -1,10 +1,11 @@
 /* Class representing Table, used for sorting and rendering.*/
 //TODO: Check which additional functions need to be bound in constructor
 class Table {
-  constructor(dataTable, name, colSchemas, id) {
+  constructor(dataTable, name, colSchemas, id, isEmpty) {
     this.name = name;
     this.colSchemas = colSchemas;
     this.id = id;
+    this.isEmpty = isEmpty;
     this.dataTable = new Array(dataTable.length); // Number rows
     this.sortDirections = new Array(colSchemas.length); // Number cols
     this.makeTableWithTypes(dataTable);
@@ -97,6 +98,12 @@ class Table {
 
   rerender() {
     const table = document.getElementById("table_" + this.name);
+
+    if (this.isEmpty) {
+      const isEmptyMessage = document.createElement("p");
+      isEmptyMessage.innerText = "No rows in table with applied filters.";
+      table.appendChild(isEmptyMessage);
+    }
     table.appendChild(this.makeTableHeaders());
     this.createTableRows(table);
   }
@@ -134,6 +141,7 @@ class Table {
   addHeader(tablesDiv) {
     const header = document.createElement("h2");
     header.setAttribute("id", "header_" + this.name);
+    header.class = "tableHeader";
     header.innerText = this.name;
     tablesDiv.appendChild(header);
   }

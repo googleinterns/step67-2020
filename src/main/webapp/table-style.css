@@ -20,6 +20,12 @@ tr:hover {
 body {
   font-family: 'Open Sans', sans-serif;
 }
+
+.tableHeader {
+  font-size: 25px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
  
 h2 {
   line-height: 10px;
@@ -33,3 +39,6 @@ h2 {
   padding-left: 20px;
   padding-right: 20px;
 }
+
+
+
