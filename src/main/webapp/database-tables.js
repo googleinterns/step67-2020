@@ -32,6 +32,7 @@ function showDatabase() {
 
         const colSchemas = tableData.columnSchemas;
         updateSqlOnPage(tableData.sql);
+        //TODO: sql showing up x2 for some reason, figure this out
 
         const dataTable = tableData.dataTable;
         let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
