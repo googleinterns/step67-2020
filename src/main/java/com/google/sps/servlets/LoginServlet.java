@@ -22,7 +22,7 @@ public class LoginServlet extends HttpServlet {
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     response.setContentType("application/JSON");
-
+    //Make a global user to be accessed from any servlet (Data-from-database) or (Reason) (Probably Reason)
     UserService userService = UserServiceFactory.getUserService();
     List<String> userEmail = new ArrayList<String>();
 
@@ -30,11 +30,13 @@ public class LoginServlet extends HttpServlet {
       String urlToRedirectToAfterUserLogsIn = "/login";
       String loginUrl = userService.createLoginURL(urlToRedirectToAfterUserLogsIn);
       userEmail.add("Hello Stranger");
+      currentUser = "Stranger";
       response.sendRedirect("https://accounts.google.com/signin/v2/identifier?");
     } else{
         String urlToRedirectToAfterUserLogsOut = "https://accounts.google.com/signin/v2/identifier?flowName=GlifWebSignIn&flowEntry=ServiceLogin";
         String logoutUrl = userService.createLogoutURL(urlToRedirectToAfterUserLogsOut);
         String currentUserEmail = userService.getCurrentUser().getEmail();
+        currentUser = currentUserEmail;
         userEmail.add(currentUserEmail);
     }
     String email = convertToJsonUsingGson(userEmail);
@@ -45,5 +47,9 @@ public class LoginServlet extends HttpServlet {
     Gson gson = new Gson();
     String json = gson.toJson(email);
     return json;
+  }
+  
+  public static String getCurrentUser(){
+    return currentUser;
   }
 } 
