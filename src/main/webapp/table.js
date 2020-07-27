@@ -103,9 +103,10 @@ class Table {
       const isEmptyMessage = document.createElement("p");
       isEmptyMessage.innerText = "No rows in table with applied filters.";
       table.appendChild(isEmptyMessage);
+    } else {
+      table.appendChild(this.makeTableHeaders());
+      this.createTableRows(table);
     }
-    table.appendChild(this.makeTableHeaders());
-    this.createTableRows(table);
   }
 
   createTableRows(table) {
