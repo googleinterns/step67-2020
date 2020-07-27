@@ -224,8 +224,6 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     column_select.options.remove(0);
     column_select.name = keys;
     column_select.id = keys;
-
-    addSelectedTableToForm(keys, filterForm);
         
     let colDefaultOption = document.createElement('option');
     colDefaultOption.text = keys;

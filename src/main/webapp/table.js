@@ -10,6 +10,8 @@ class Table {
     this.sortDirections = new Array(colSchemas.length); // Number cols
     this.makeTableWithTypes(dataTable);
     this.setTable = this.setTable.bind(this);
+
+    this.page = 0;
   }
 
   getName() {
@@ -93,6 +95,8 @@ class Table {
   remove() {
     if (document.getElementById("table_" + this.name) != null) {
       document.getElementById("table_" + this.name).innerText = "";
+      document.getElementById("next-button-" + this.name).remove;
+      document.getElementById("prev-button-" + this.name).remove;
     }
   }
 
@@ -106,6 +110,8 @@ class Table {
     } else {
       table.appendChild(this.makeTableHeaders());
       this.createTableRows(table);
+      let tablesDiv = document.getElementById("tables");
+      this.addNextAndPreviousButtons(tablesDiv);
     }
   }
 
@@ -130,12 +136,12 @@ class Table {
     const table = document.createElement("table");
     table.setAttribute("id", "table_" + this.name);
     table.appendChild(this.makeTableHeaders());
-
     this.createTableRows(table);
 
     let tablesDiv = document.getElementById("tables");
     this.addHeader(tablesDiv);
     tablesDiv.appendChild(table);
+    this.addNextAndPreviousButtons(tablesDiv);
   }
 
   // Add header with table name
@@ -167,5 +173,37 @@ class Table {
       columnNamesRow.appendChild(columnTitle);
     }
     return columnNamesRow;
+  }
+
+  addNextAndPreviousButtons(tablesDiv) {
+    const nextButton = document.createElement("button");
+    const prevButton = document.createElement("button");
+
+    nextButton.innerHTML = "Next";
+    nextButton.id = "next-button-" + this.name;
+    const id = this.id;
+    nextButton.onclick = function() { nextPage(id); }
+  
+    prevButton.innerHTML = "Previous";
+    prevButton.id = "prev-button-" + this.name;
+    prevButton.onclick = function() { previousPage(id); }
+    tablesDiv.appendChild(prevButton);
+    tablesDiv.appendChild(nextButton);
+  }
+
+  nextPage() {
+    //check to make sure there is another page (enough rows)
+    const numRows = this.dataTable.length;
+    this.page = this.page + 1;
+    console.log('num rows ' + numRows); //number of rows
+    //re render
+  }
+
+  previousPage() {
+    if (this.page > 0) {
+      this.page = this.page - 1;
+    }
+    console.log(this.page);
+    //re render
   }
 }

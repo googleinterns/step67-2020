@@ -15,6 +15,7 @@ function showDatabase() {
     const queryString = '/data-from-db' + search;
     document.getElementById("tables").innerText = 'Loading...';
     document.getElementById("sql").innerText = 'Queries loading...';
+    console.log(search)
 
     tablesList = [];
   
@@ -25,9 +26,11 @@ function showDatabase() {
       document.getElementById("sql").innerText = '';
       
       let id = 0;
-      for (tableIndex in data) {
+      let tableIndex;
+      for (tableIndex = 0; tableIndex < data.length; tableIndex++) {
         const tableData = data[tableIndex];
         const name = tableData.name;
+        console.log(name)
         const isEmpty = tableData.isEmpty;
 
         const colSchemas = tableData.columnSchemas;
@@ -99,6 +102,17 @@ function sort(index, id) {
   //need to empty and rerender
   table.remove();
   table.rerender();
+}
+
+function nextPage(id) {
+  console.log('id' + id);
+  let table = tablesList[id];
+  table.nextPage();
+}
+
+function previousPage(id) {
+  let table = tablesList[id];
+  table.previousPage();
 }
 
 function showReason() {
