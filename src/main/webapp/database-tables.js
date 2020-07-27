@@ -105,7 +105,6 @@ function sort(index, id) {
 }
 
 function nextPage(id) {
-  console.log('id' + id);
   let table = tablesList[id];
   table.nextPage();
 }

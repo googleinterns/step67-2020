@@ -192,10 +192,13 @@ class Table {
   }
 
   nextPage() {
-    //check to make sure there is another page (enough rows)
+    //check to make sure enough rows for another page
+      //change to filtered rows, not dataTable
     const numRows = this.dataTable.length;
-    this.page = this.page + 1;
-    console.log('num rows ' + numRows); //number of rows
+    if (numRows > (this.page + 1) * 10) {
+      this.page = this.page + 1;
+    }
+    console.log(this.page);
     //re render
   }
 
