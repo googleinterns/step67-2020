@@ -46,7 +46,6 @@ function showDatabase() {
 }
 
 function updateSqlOnPage(sql) {
-  console.log('here');
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
   newSql.innerText = sql;

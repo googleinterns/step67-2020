@@ -71,7 +71,10 @@ function getTablesList(dbName) {
   const search = "?list-databases=" + dbName;
 
   const tableListSpace = document.getElementById('table-list');
-  tableListSpace.innerText = "Loading...";
+  const loadingElement = document.createElement('div');
+  loadingElement.id = 'loading';
+  loadingElement.innerText = 'Loading...';
+  tableListSpace.appendChild(loadingElement);
   
   const queryString = tablesUrl + search;
   fetch(queryString)
