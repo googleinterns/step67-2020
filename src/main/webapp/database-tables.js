@@ -31,22 +31,30 @@ function showDatabase() {
         const isEmpty = tableData.isEmpty;
 
         const colSchemas = tableData.columnSchemas;
+        var conversionTable = '';
+        for (var i =0; i<colSchemas.length; i++) {
+            if (colSchemas[i].columnName.endsWith('Millis')){
+                var conversionTable = dataConversionMillis(i,tableData);
+            }
+        }
         updateSqlOnPage(tableData.sql);
         //TODO: sql showing up x2 for some reason, figure this out
-
-        const dataTable = tableData.dataTable;
+        var dataTable = tableData.dataTable;
+        if (!conversionTable == '') {
+            dataTable = conversionTable.dataTable;
+        }
         let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
 
         tableObj.fetchTable();
         tablesList.push(tableObj);
         id++;
+
       }
     });
   }
 }
 
 function updateSqlOnPage(sql) {
-  console.log('here');
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
   newSql.innerText = sql;
@@ -71,6 +79,23 @@ function login() {
       window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
     }
   });
+}
+var conv = Boolean(false);
+function dataConversionMillis(column,tableData){
+    if(!conv){
+      conv = true;
+      var id =0;
+
+      tableData.columnSchemas[column].schemaType = "TIMESTAMP";
+
+      for (var i =0; i<tableData.dataTable.length; i++) {
+        var time = parseInt(tableData.dataTable[i][column]);
+        var date = new Date(time); 
+        tableData.dataTable[i][column] = date;
+        //TODO: Convert Timezone to PST
+      } 
+    }
+    return tableData;
 }
 
 function sort(index, id) {
