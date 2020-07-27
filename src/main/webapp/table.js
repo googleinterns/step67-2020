@@ -94,7 +94,9 @@ class Table {
   remove() {
     if (document.getElementById("table_" + this.name) != null) {
       document.getElementById("table_" + this.name).innerText = "";
-      document.getElementById("button-div-" + this.name).remove;
+    }
+    if (document.getElementById("button-div-" + this.name) != null) {
+      document.getElementById("button-div-" + this.name).remove();
     }
   }
 
