@@ -40,9 +40,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(DATABASE_PARAM);
     initDatabaseClient(databaseName);
-    QueryFactory queryFactory = QueryFactory.getInstance();
 
     List<Table> tables = new ArrayList<>();
+    List<String> queries = new ArrayList<>();
     QueryFactory queryFactory = QueryFactory.getInstance();
 
     for (String table : selectedTables) {
@@ -67,7 +67,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
         tableBuilder.setColumnSchemas(columnSchemas);
 
         Statement queryStatement = queryFactory.constructQueryStatement(builder, columnSchemas, table, request);
-        tableBuilder.setSql(queryStatement.toString());
+        String queryString = queryStatement.toString();
+        tableBuilder.setSql(queryString);
+        queries.add(queryString);
 
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
@@ -77,6 +79,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
         // Do nothing - ignore (table has no columns or table DNE)
       }
     }
+
+    //TODO (WILL): add auditing here (queries list has all the query strings)
+    
     String json = new Gson().toJson(tables);
     response.getWriter().println(json);
   }

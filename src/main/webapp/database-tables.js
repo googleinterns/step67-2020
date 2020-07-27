@@ -7,8 +7,16 @@ function showDatabase() {
   if (!showing){
     showing = true;
     const search = window.location.search;
+    var searchParams = new URLSearchParams(search);
+
+    //TODO: add this back in once millennia's code is merged
+    // if (!(searchParams.has("user_id") && searchParams.has("device_id"))) {
+    //   return;
+    // }
+
     const queryString = '/data-from-db' + search;
     document.getElementById("tables").innerText = 'Loading...';
+    document.getElementById("sql").innerText = 'Queries loading...';
 
     tablesList = [];
   
@@ -22,18 +30,13 @@ function showDatabase() {
       for (tableIndex in data) {
         const tableData = data[tableIndex];
         const name = tableData.name;
-
         const isEmpty = tableData.isEmpty;
-        if (isEmpty) {
-          createIsEmptyElement(dataArea);
-          continue;
-        }
 
         const colSchemas = tableData.columnSchemas;
         updateSqlOnPage(tableData.sql);
 
         const dataTable = tableData.dataTable;
-        let tableObj = new Table(dataTable, name, colSchemas, id);
+        let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
 
         tableObj.fetchTable();
         tablesList.push(tableObj);
@@ -68,11 +71,11 @@ function login() {
     var currentUser = user;
     var first = currentUser.split(" ");
     if (currentUser == "deny"){
-        window.location.assign("/denied.html");
+      window.location.assign("/denied.html");
     }
     else if (currentUser == "Stranger") {
-        //This link first takes you to Google sign in and then continues back to splash page when signed in
-        window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
+      //This link first takes you to Google sign in and then continues back to splash page when signed in
+      window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
     }
   });
 }

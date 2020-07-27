@@ -1,35 +1,3 @@
-
-//Checks whether the user has left both of the user_id/device_id input box empty. If true, the user cannot submit the filter
-// query,if false submit
-function isFilterInputEmpty(){
-  var userID = document.getElementById("user_id").value;
-  var deviceID = document.getElementById("device_id").value;
-
-  //Return a message saying that the filters cannot be applied unless at least one of the inputs is filled.
-  if(userID == "" && deviceID == ""){
-      alert("Applying filters failed: Please input either user_id, device_id or both.");
-      return false;
-  }
-  document.getElementById("instruction").style.display = "none";
-  showDatabase();
-  hideUserDeviceId();
-  return true;
-}
-
-function submitFilters() {
-  return isFilterInputEmpty();
-}
-
-function hideUserDeviceId() {
-  if (document.getElementById("user_id").style.display == "none") {
-    document.getElementById("user_id").style.display = "block";
-    document.getElementById("device_id").style.display = "block";
-  } else {
-    document.getElementById("user_id").style.display = "none";
-    document.getElementById("device_id").style.display = "none";
-  }
-}
-
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
   var filterButton = document.getElementById("filter-button");
