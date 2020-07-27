@@ -53,7 +53,6 @@ class Table {
   }
 
   fetchTable() {
-    this.remove();
     if (document.getElementById("table_" + this.name) != null) {
       this.rerender();
     } else {
@@ -95,12 +94,12 @@ class Table {
   remove() {
     if (document.getElementById("table_" + this.name) != null) {
       document.getElementById("table_" + this.name).innerText = "";
-      document.getElementById("next-button-" + this.name).remove;
-      document.getElementById("prev-button-" + this.name).remove;
+      document.getElementById("button-div-" + this.name).remove;
     }
   }
 
   rerender() {
+    this.remove();
     const table = document.getElementById("table_" + this.name);
 
     if (this.isEmpty) {
@@ -109,15 +108,18 @@ class Table {
       table.appendChild(isEmptyMessage);
     } else {
       table.appendChild(this.makeTableHeaders());
-      this.createTableRows(table);
+      const rowsString = this.createTableRows(table);
       let tablesDiv = document.getElementById("tables");
-      this.addNextAndPreviousButtons(tablesDiv);
+      this.addNextAndPreviousButtons(tablesDiv, rowsString);
     }
   }
 
   createTableRows(table) {
+    //TODO: change dataTable to millennia's filtered rows
     let index;
-    for (index in this.dataTable) {
+    const rowToStart = this.page * 10; 
+    const rowToEnd = Math.min(rowToStart + 10, this.dataTable.length);
+    for (index = rowToStart; index < rowToEnd; index++) {
       const row = this.dataTable[index];
       const rowElement = document.createElement("tr");
   
@@ -130,18 +132,20 @@ class Table {
       }
       table.appendChild(rowElement);
     }
+    const rowsString = "Displaying rows " + rowToStart + " to " + rowToEnd + " of " + this.dataTable.length;
+    return rowsString;
   }
 
   renderTable() {
     const table = document.createElement("table");
     table.setAttribute("id", "table_" + this.name);
     table.appendChild(this.makeTableHeaders());
-    this.createTableRows(table);
+    const rowString = this.createTableRows(table);
 
     let tablesDiv = document.getElementById("tables");
     this.addHeader(tablesDiv);
     tablesDiv.appendChild(table);
-    this.addNextAndPreviousButtons(tablesDiv);
+    this.addNextAndPreviousButtons(tablesDiv, rowString);
   }
 
   // Add header with table name
@@ -175,9 +179,13 @@ class Table {
     return columnNamesRow;
   }
 
-  addNextAndPreviousButtons(tablesDiv) {
+  addNextAndPreviousButtons(tablesDiv, rowString) {
+    const buttonDiv = document.createElement("div");
+    buttonDiv.id = "button-div-" + this.name;
     const nextButton = document.createElement("button");
     const prevButton = document.createElement("button");
+    const rowStringElement = document.createElement("p");
+    rowStringElement.innerHTML = rowString;
 
     nextButton.innerHTML = "Next";
     nextButton.id = "next-button-" + this.name;
@@ -187,8 +195,11 @@ class Table {
     prevButton.innerHTML = "Previous";
     prevButton.id = "prev-button-" + this.name;
     prevButton.onclick = function() { previousPage(id); }
-    tablesDiv.appendChild(prevButton);
-    tablesDiv.appendChild(nextButton);
+    buttonDiv.appendChild(prevButton);
+    buttonDiv.appendChild(nextButton);
+    buttonDiv.appendChild(rowStringElement);
+
+    tablesDiv.appendChild(buttonDiv);
   }
 
   nextPage() {
@@ -197,6 +208,7 @@ class Table {
     const numRows = this.dataTable.length;
     if (numRows > (this.page + 1) * 10) {
       this.page = this.page + 1;
+      this.rerender();
     }
     console.log(this.page);
     //re render
@@ -205,6 +217,7 @@ class Table {
   previousPage() {
     if (this.page > 0) {
       this.page = this.page - 1;
+      this.rerender();
     }
     console.log(this.page);
     //re render
