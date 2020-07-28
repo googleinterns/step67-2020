@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.StringBuilder;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +43,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     String databaseName = request.getParameter(constants.DATABASE_PARAM);
     String reason = request.getParameter("reason");
     String account = LoginServlet.getCurrentUser();
-    String queryAudit = "";
+    StringBuilder auditBuilder = new StringBuilder();
     initDatabaseClient(databaseName);
 
     List<Table> tables = new ArrayList<>();
@@ -59,7 +60,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         tableBuilder.setColumnSchemas(columnSchemas);
         Statement queryStatement = constructQueryStatement(columnSchemas, table);
 
-        queryAudit += queryStatement + "; ";
+        auditBuilder.append(queryStatement + "; ");
 
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
@@ -67,6 +68,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         tables.add(tableObject);
       }
     }
+    String queryAudit = auditBuilder.toString();
     String json = new Gson().toJson(tables);
     insertUsingDml(account,reason,queryAudit);
     response.getWriter().println(json);
