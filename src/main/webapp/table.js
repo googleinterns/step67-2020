@@ -18,6 +18,7 @@ class Table {
     this.nextPage = this.nextPage.bind(this);
     this.previousPage = this.previousPage.bind(this);
     this.goToPage = this.goToPage.bind(this);
+    this.updateCurrentPage = this.updateCurrentPage.bind(this);
   }
 
   getName() {
@@ -126,8 +127,8 @@ class Table {
   createTableRows(table) {
     //TODO: change dataTable to millennia's filtered rows
     let index;
-    const rowToStart = this.page * 10; 
-    const rowToEnd = Math.min(rowToStart + 10, this.dataTable.length);
+    const rowToStart = this.page * this.rowsPerPage; 
+    const rowToEnd = Math.min(rowToStart + this.rowsPerPage, this.dataTable.length);
     for (index = rowToStart; index < rowToEnd; index++) {
       const row = this.dataTable[index];
       const rowElement = document.createElement("tr");
@@ -145,11 +146,13 @@ class Table {
     return pageInfoString;
   }
 
+  //TODO: consider empty case
   renderTable() {
     const thisTableDiv = document.createElement("div");
     thisTableDiv.id = "table-div-" + this.name;
     const table = document.createElement("table");
     table.setAttribute("id", "table_" + this.name);
+    
     table.appendChild(this.makeTableHeaders());
     const pageInfoString = this.createTableRows(table);
 
@@ -212,6 +215,7 @@ class Table {
     buttonDiv.appendChild(prevButton);
     this.addPageNumberButtons(buttonDiv);
     buttonDiv.appendChild(nextButton);
+    buttonDiv.appendChild(this.makeSelectNumRowsElement());
     buttonDiv.appendChild(pageInfoStringElement);
 
     thisTableDiv.appendChild(buttonDiv);
@@ -220,7 +224,7 @@ class Table {
   //TODO - make sure to re-render buttons once search is applied
   addPageNumberButtons(buttonDiv) {
     const numRows = this.dataTable.length;
-    const maxPageNumber = Math.floor(numRows / 10);
+    const maxPageNumber = Math.floor(numRows / this.rowsPerPage);
     this.maxPageNumber = maxPageNumber;
     let count = 0;
     while (count <= maxPageNumber) {
@@ -233,10 +237,40 @@ class Table {
       buttonDiv.appendChild(pageNumButton);
       count++;
     }
+    this.updateCurrentPage();
   }
 
-  addSelectNumRowsElement() {
-    // implement this later
+  makeSelectNumRowsElement() {
+    const select = document.createElement("select");
+    select.id = "rowsperpage-" + this.id;
+    const id = this.id;
+    select.onchange = function() { changeNumRowsPerPage(id); }
+    const option1 = document.createElement("option");
+    option1.value = 5;
+    option1.innerHTML = "5";
+    const option2 = document.createElement("option");
+    option2.value = 10;
+    option2.innerHTML = "10";
+    option2.selected = "selected";
+    const option3 = document.createElement("option");
+    option3.value = 15;
+    option3.innerHTML = "15";
+    const option4 = document.createElement("option");
+    option4.value = 20;
+    option4.innerHTML = "20";
+
+    select.appendChild(option1);
+    select.appendChild(option2);
+    select.appendChild(option3);
+    select.appendChild(option4);
+    // let option;
+    // for (option = 5; option < 21; option += 5) {
+
+    // }
+
+    console.log(select.value);
+
+    return select;
   }
 
   updatePageInformation(pageInfoString) {
@@ -244,28 +278,46 @@ class Table {
     pageInfoStringElement.innerHTML = pageInfoString;
   }
 
+  updateCurrentPage() {
+    if (document.getElementById(this.page + "-" + this.name) != null) {
+      const currentPageButton = document.getElementById(this.page + "-" + this.name);
+      currentPageButton.style.backgroundColor = "lightyellow";
+    }
+  }
+
+  resetButtonColor() {
+    if (document.getElementById(this.page + "-" + this.name) != null) {
+      const currentPageButton = document.getElementById(this.page + "-" + this.name);
+      currentPageButton.style.backgroundColor = "";
+    }
+  }
+
   goToPage(pageNumber) {
-    console.log('here')
-    console.log(pageNumber)
     if (pageNumber <= this.maxPageNumber) {
+      this.resetButtonColor();
       this.page = pageNumber;
       this.rerender();
+      this.updateCurrentPage();
     }
   }
 
   nextPage() {
     //change to filtered rows, not dataTable
     const numRows = this.dataTable.length;
-    if (numRows > (this.page + 1) * 10) {
+    if (numRows > (this.page + 1) * this.rowsPerPage) {
+      this.resetButtonColor();
       this.page = this.page + 1;
       this.rerender();
+      this.updateCurrentPage();
     }
   }
 
   previousPage() {
     if (this.page > 0) {
+      this.resetButtonColor();
       this.page = this.page - 1;
       this.rerender();
+      this.updateCurrentPage();
     }
   }
 

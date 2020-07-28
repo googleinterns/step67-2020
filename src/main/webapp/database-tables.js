@@ -113,7 +113,6 @@ function previousPage(id) {
 
 function switchPages(id, pageNum) {
   let table = tablesList[id];
-  console.log('go to page')
   table.goToPage(pageNum);
 }
 
@@ -121,6 +120,13 @@ function showReason() {
   const params = new URLSearchParams(window.location.search);
   var reason = params.get('reason');
   document.getElementById("justification").innerText = "Justification: " + reason;
+}
+
+function changeNumRowsPerPage(id) {
+  let table = tablesList[id];
+  const selectElement = document.getElementById("rowsperpage-" + id);
+  table.changeRowsPerPage(selectElement.value);
+  console.log(selectElement.value);
 }
 
 function audit() {
