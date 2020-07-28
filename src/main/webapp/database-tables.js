@@ -30,10 +30,8 @@ function showDatabase() {
         const tableData = data[tableIndex];
         const name = tableData.name;
         const isEmpty = tableData.isEmpty;
-
         const colSchemas = tableData.columnSchemas;
         updateSqlOnPage(tableData.sql);
-        //TODO: sql showing up x2 for some reason, figure this out
 
         const dataTable = tableData.dataTable;
         let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
@@ -95,9 +93,6 @@ function sort(index, id) {
 
   table.flipSortDirection(index);
   table.setTable(dataTable);
-
-  //need to empty and rerender
-  table.remove();
   table.rerender();
 }
 
@@ -124,9 +119,8 @@ function showReason() {
 
 function changeNumRowsPerPage(id) {
   let table = tablesList[id];
-  const selectElement = document.getElementById("rowsperpage-" + id);
-  table.changeRowsPerPage(selectElement.value);
-  console.log(selectElement.value);
+  const selectElement = document.getElementById("rows-per-page-" + id);
+  table.changeRowsPerPage(Number(selectElement.value));
 }
 
 function audit() {

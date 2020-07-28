@@ -1,5 +1,4 @@
-/* Class representing Table, used for sorting and rendering.*/
-//TODO: Check which additional functions need to be bound in constructor
+
 class Table {
   constructor(dataTable, name, colSchemas, id, isEmpty) {
     this.name = name;
@@ -18,7 +17,7 @@ class Table {
     this.nextPage = this.nextPage.bind(this);
     this.previousPage = this.previousPage.bind(this);
     this.goToPage = this.goToPage.bind(this);
-    this.updateCurrentPage = this.updateCurrentPage.bind(this);
+    this.updateCurrentPageButton = this.updateCurrentPageButton.bind(this);
   }
 
   getName() {
@@ -98,6 +97,7 @@ class Table {
     this.dataTable = dataTable;
   }
 
+  //Clears out table and related buttons
   remove() {
     if (document.getElementById("table_" + this.name) != null) {
       document.getElementById("table_" + this.name).innerText = "";
@@ -146,7 +146,6 @@ class Table {
     return pageInfoString;
   }
 
-  //TODO: consider empty case
   renderTable() {
     const thisTableDiv = document.createElement("div");
     thisTableDiv.id = "table-div-" + this.name;
@@ -159,9 +158,13 @@ class Table {
     let tablesDiv = document.getElementById("tables");
     this.addHeader(thisTableDiv);
     thisTableDiv.appendChild(table);
-    this.addNextAndPreviousButtons(thisTableDiv, pageInfoString);
+    this.addPaginationButtons(thisTableDiv, pageInfoString);
 
     tablesDiv.appendChild(thisTableDiv);
+
+    if (this.isEmpty) {
+      this.rerender();
+    }
   }
 
   // Add header with table name
@@ -195,25 +198,31 @@ class Table {
     return columnNamesRow;
   }
 
-  addNextAndPreviousButtons(thisTableDiv, pageInfoString) {
+  addPaginationButtons(thisTableDiv, pageInfoString) {
     const buttonDiv = document.createElement("div");
     buttonDiv.id = "button-div-" + this.name;
-    const nextButton = document.createElement("button");
-    const prevButton = document.createElement("button");
-    const pageInfoStringElement = document.createElement("p");
-    pageInfoStringElement.id = "row-string-" + this.name;
-    pageInfoStringElement.innerHTML = pageInfoString;
 
+    const nextButton = document.createElement("button");
     nextButton.innerHTML = "Next";
     nextButton.id = "next-button-" + this.name;
     const id = this.id;
     nextButton.onclick = function() { nextPage(id); }
-  
+
+    const prevButton = document.createElement("button");
     prevButton.innerHTML = "Previous";
     prevButton.id = "prev-button-" + this.name;
     prevButton.onclick = function() { previousPage(id); }
+
+    const pageInfoStringElement = document.createElement("p");
+    pageInfoStringElement.id = "row-string-" + this.name;
+    pageInfoStringElement.innerHTML = pageInfoString;
+
+    const pageNumberSpan = document.createElement("span");
+    pageNumberSpan.id = "pagenumbers-" + this.name;
+    this.addPageNumberButtons(pageNumberSpan);
+
     buttonDiv.appendChild(prevButton);
-    this.addPageNumberButtons(buttonDiv);
+    buttonDiv.appendChild(pageNumberSpan);
     buttonDiv.appendChild(nextButton);
     buttonDiv.appendChild(this.makeSelectNumRowsElement());
     buttonDiv.appendChild(pageInfoStringElement);
@@ -222,10 +231,11 @@ class Table {
   }
 
   //TODO - make sure to re-render buttons once search is applied
-  addPageNumberButtons(buttonDiv) {
+  addPageNumberButtons(pageNumberSpan) {
     const numRows = this.dataTable.length;
     const maxPageNumber = Math.floor(numRows / this.rowsPerPage);
     this.maxPageNumber = maxPageNumber;
+
     let count = 0;
     while (count <= maxPageNumber) {
       const pageNumButton = document.createElement("button");
@@ -234,57 +244,52 @@ class Table {
       const id = this.id;
       const goToPage = count;
       pageNumButton.onclick = function() { switchPages(id, goToPage); }
-      buttonDiv.appendChild(pageNumButton);
+      pageNumberSpan.appendChild(pageNumButton);
       count++;
     }
-    this.updateCurrentPage();
+    this.updateCurrentPageButton();
   }
 
+  //Make select element, allowing user to choose number of rows per page
   makeSelectNumRowsElement() {
     const select = document.createElement("select");
-    select.id = "rowsperpage-" + this.id;
+    select.id = "rows-per-page-" + this.id;
     const id = this.id;
     select.onchange = function() { changeNumRowsPerPage(id); }
-    const option1 = document.createElement("option");
-    option1.value = 5;
-    option1.innerHTML = "5";
-    const option2 = document.createElement("option");
-    option2.value = 10;
-    option2.innerHTML = "10";
-    option2.selected = "selected";
-    const option3 = document.createElement("option");
-    option3.value = 15;
-    option3.innerHTML = "15";
-    const option4 = document.createElement("option");
-    option4.value = 20;
-    option4.innerHTML = "20";
-
-    select.appendChild(option1);
-    select.appendChild(option2);
-    select.appendChild(option3);
-    select.appendChild(option4);
-    // let option;
-    // for (option = 5; option < 21; option += 5) {
-
-    // }
-
-    console.log(select.value);
-
+    
+    let option;
+    for (option = 5; option < 21; option += 5) {
+      const optionElement = document.createElement("option");
+      optionElement.value = option;
+      optionElement.innerHTML = "" + option;
+      if (option == 10) {
+        optionElement.selected = "selected";
+      }
+      select.appendChild(optionElement);
+    }
     return select;
   }
 
+  /* Update button and page number information */ 
   updatePageInformation(pageInfoString) {
     const pageInfoStringElement = document.getElementById("row-string-" + this.name);
     pageInfoStringElement.innerHTML = pageInfoString;
+
+    //also update number buttons
+    const pageNumbersElement = document.getElementById("pagenumbers-" + this.name);
+    pageNumbersElement.innerText = "";
+    this.addPageNumberButtons(pageNumbersElement);
   }
 
-  updateCurrentPage() {
+  // Highlights page button currently on
+  updateCurrentPageButton() {
     if (document.getElementById(this.page + "-" + this.name) != null) {
       const currentPageButton = document.getElementById(this.page + "-" + this.name);
       currentPageButton.style.backgroundColor = "lightyellow";
     }
   }
 
+  // Reset page button to default color when user changes pages
   resetButtonColor() {
     if (document.getElementById(this.page + "-" + this.name) != null) {
       const currentPageButton = document.getElementById(this.page + "-" + this.name);
@@ -297,18 +302,18 @@ class Table {
       this.resetButtonColor();
       this.page = pageNumber;
       this.rerender();
-      this.updateCurrentPage();
+      this.updateCurrentPageButton();
     }
   }
 
   nextPage() {
-    //change to filtered rows, not dataTable
+    //TODO: change to filtered rows, not dataTable
     const numRows = this.dataTable.length;
     if (numRows > (this.page + 1) * this.rowsPerPage) {
       this.resetButtonColor();
       this.page = this.page + 1;
       this.rerender();
-      this.updateCurrentPage();
+      this.updateCurrentPageButton();
     }
   }
 
@@ -317,7 +322,7 @@ class Table {
       this.resetButtonColor();
       this.page = this.page - 1;
       this.rerender();
-      this.updateCurrentPage();
+      this.updateCurrentPageButton();
     }
   }
 

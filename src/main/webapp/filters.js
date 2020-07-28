@@ -94,7 +94,7 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
 
   let primarykey_column_inputs = document.createElement('div');
   primarykey_column_inputs.style.backgroundColor = 'white';
- 
+
   for(var keys in tables){
     const tableColumns = tables[keys][0];
     if(keys === 'PrimaryKeys'){
@@ -103,24 +103,23 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
         if(tableColumns[col] === 'UserId' || tableColumns[col] === 'DeviceId'){
           //If userId or deviceId exists in the primary key list, display the input boxes
 
-          //TODO FIX THIS, make else if's true (just for testing)
-          if(tableColumns.includes('UserId') && tableColumns.includes('DeviceId')){
-            showUserId(false);
-            showDeviceId(false);
-          } else if(tableColumns.includes('DeviceId')){
-            showDeviceId(false);
-          } else if (tableColumns.includes('UserId')) {
-            showUserId(false);
-          }
+          //TODO fix these conditions
+          if(tableColumns.includes('DeviceId')){
+            showDeviceId(true);
+          } 
+          if (tableColumns.includes('UserId')) {
+            showUserId(true);
+          } 
           continue;
         } else{
             //Creating text inputs
+            const columnName = tables[keys][0][col];
             var primkey_input = document.createElement('input');
             primkey_input.type= 'text';
-            primkey_input.id = tables[keys][0][col];
-            primkey_input.name = tables[keys][0][col];
+            primkey_input.id = columnName;
+            primkey_input.name = columnName;
             //Creating the label placeholders for the inputs
-            primkey_input.placeholder = tables[keys][0][col];
+            primkey_input.placeholder = columnName;
 
             //Appending input boxes to the primary_column_inputs div
             primarykey_column_inputs.appendChild(primkey_input);
@@ -253,16 +252,17 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     
     //Create checkboxes for each column of the table
     for(var col in tables[keys][0]){
+      const columnName = tables[keys][0][col];
       var col_checkbox = document.createElement('input');
       col_checkbox.type= 'checkbox';
-      col_checkbox.value = tables[keys][0][col];
-      col_checkbox.id = tables[keys][0][col];
+      col_checkbox.value = columnName;
+      col_checkbox.id = columnName;
       col_checkbox.name = keys;
       col_checkbox.checked = true; //by default checkbox is checked
 
       var label = document.createElement('label');
-      label.innerHTML = tables[keys][0][col];
-      label.htmlFor =  tables[keys][0][col];
+      label.innerHTML = columnName;
+      label.htmlFor =  columnName;
       col_checkbox.innerHTML = label.outerHTML;
                 
       col_checkbox.appendChild(label);
