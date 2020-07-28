@@ -17,7 +17,7 @@
 
       <div name="text_enter" class="text-enter">
         <div id="select-db">
-          <form action="/splash.html" method="GET" id="database-select-form" >
+          <form action="/splash.html" onsubmit="login()" method="GET" id="database-select-form" >
             <select id="list-databases" name="list-databases" class="select" onchange="submitDatabaseForm()">
               <option id="select-title">Loading...</option>
             </select>
@@ -25,7 +25,10 @@
         </div>
     
         <div id="table-list"></div>
+        
       </div>
+     
     </div>
   </body>
+  <div id="user"></div>
 </html>

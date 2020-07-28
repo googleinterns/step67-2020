@@ -1,92 +1,112 @@
+let tablesList = [];
 
 //Boolean to ensure data only shows after first click
-var showing = Boolean(false)
+var showing = Boolean(false);
 
 function showDatabase() {
-  if (!showing) { 
+  if (!showing){
     showing = true;
     const search = window.location.search;
     const queryString = '/data-from-db' + search;
+    document.getElementById("tables").innerText = 'Loading...';
 
+    tablesList = [];
+  
     fetch(queryString)
     .then(response => response.json())
     .then((data) => { 
-      const dataArea = document.getElementById("data");
-    
+      document.getElementById("tables").innerText = '';
+      document.getElementById("sql").innerText = '';
+      
+      let id = 0;
       for (tableIndex in data) {
         const tableData = data[tableIndex];
-
-        // Make header for table (show name)
         const name = tableData.name;
-        createTableName(name, dataArea);
 
-        // Make table itself, add headers for column names
-        const table = createTable(name);
+        const isEmpty = tableData.isEmpty;
+        if (isEmpty) {
+          createIsEmptyElement(dataArea);
+          continue;
+        }
+
         const colSchemas = tableData.columnSchemas;
-        table.appendChild(makeTableHeaders(colSchemas));
+        updateSqlOnPage(tableData.sql);
 
-        // add data
-        makeRows(tableData.dataTable, table);
-        dataArea.appendChild(table);
+        const dataTable = tableData.dataTable;
+        let tableObj = new Table(dataTable, name, colSchemas, id);
+
+        tableObj.fetchTable();
+        tablesList.push(tableObj);
+        id++;
       }
     });
   }
 }
- 
-// Create column name labels for table
-function makeTableHeaders(colSchemas) {
-  const columnNamesRow = document.createElement("tr");
- 
-  let index;
-  for (index in colSchemas) {
-    const colSchema = colSchemas[index];
-    const columnTitle = addColumnHeader(colSchema.columnName);
-    columnNamesRow.appendChild(columnTitle);
-  }
-  return columnNamesRow;
+
+function createIsEmptyElement(dataArea) {
+  const element = document.createElement("p");
+  element.innerText = "No rows in table with applied filters.";
+  dataArea.appendChild(element);
 }
- 
-function makeRows(rows, table) {
-  for (index in rows) {
-    const row = rows[index];
-    const rowElement = document.createElement("tr");
- 
-    for (rowIndex in row) {
-      const dataPoint = row[rowIndex];
-      const dataPointElement = document.createElement("td");
-      dataPointElement.innerText = dataPoint;
-      rowElement.appendChild(dataPointElement);
-    }
- 
-    table.appendChild(rowElement);
-  }
-}
- 
-function addColumnHeader(colName) {
-  const columnHeader = document.createElement("th");
-  columnHeader.innerText = colName;
-  return columnHeader;
-}
- 
-function createTableName(name, dataArea) {
-  const header = document.createElement("h2");
-  header.innerText = name;
-  dataArea.appendChild(header);
-}
- 
-function createTable(name) {
-  const table = document.createElement("table");
-  table.setAttribute("id", "table_" + name);
-  return table;
+
+function updateSqlOnPage(sql) {
+  const sqlDiv = document.getElementById("sql");
+  const newSql = document.createElement("p");
+  newSql.innerText = sql;
+  sqlDiv.appendChild(newSql);
 }
 
 function mainLoad(){
-  showDatabase();
   login();
+  showReason();
+  showFiltersPanel();
 }
 
 function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
+    var currentUser = user;
+    var first = currentUser.split(" ");
+    if (currentUser == "deny"){
+        window.location.assign("/denied.html");
+    }
+    else if (currentUser == "Stranger") {
+        //This link first takes you to Google sign in and then continues back to splash page when signed in
+        window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
+    }
   });
+}
+
+function sort(index, id) {
+  let table = tablesList[id];
+  let dataTable = table.getDataTable();
+  const dataType = table.getDataType(index);
+  let sortDirection = table.getSortDirection(index);
+
+  if (dataType == "INT64") {
+    if (sortDirection == 0) {
+      dataTable.sort(function(a,b){return a[index] - b[index];});
+    } else {
+      dataTable.sort(function(a,b){return b[index] - a[index];});
+    }
+  } else {
+    if (sortDirection == 0) {
+      dataTable.sort(function(a,b){return a[index].localeCompare(b[index]);});
+    } else {
+      dataTable.sort(function(a,b){return b[index].localeCompare(a[index]);});
+    }
+  }
+
+  table.flipSortDirection(index);
+  table.setTable(dataTable);
+
+  //need to empty and rerender
+  table.remove();
+  table.rerender();
+}
+
+function showReason() {
+  const params = new URLSearchParams(window.location.search);
+  var reason = params.get('reason');
+  document.getElementById("justification").innerText = "Justification: " + reason;
 }

@@ -26,46 +26,65 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import static com.google.sps.servlets.Constants.DATABASE_PARAM;
+import static com.google.sps.servlets.Constants.EMPTY_TABLE_ERROR;
+import static com.google.sps.servlets.Constants.ENCODING_ERROR;
+import static com.google.sps.servlets.Constants.ENCODING_TYPE;
+import static com.google.sps.servlets.Constants.TABLE_SELECT_PARAM;
+import static com.google.sps.servlets.Constants.TEXT_TYPE;
+import static com.google.sps.servlets.Constants.UNSUPPORT_ERROR;
 
 @WebServlet("/data-from-db")
 public class DataFromDatabaseServlet extends HttpServlet {
 
   DatabaseClient dbClient;
   private String[] selectedTables;
-  private Constants constants = new Constants();
-  //TODO: (issue 15) get rid of this instance, and instead import constants
-    // example: import static com.google.sps.servlets.Constants. GET_COLUMNS_FROM_TABLES;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType(constants.TEXT_TYPE);
-    selectedTables = request.getParameterValues(constants.TABLE_SELECT_PARAM);
-    String databaseName = request.getParameter(constants.DATABASE_PARAM);
+    response.setContentType(TEXT_TYPE);
+    selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
+    String databaseName = request.getParameter(DATABASE_PARAM);
     String reason = request.getParameter("reason");
     String account = LoginServlet.getCurrentUser();
     StringBuilder auditBuilder = new StringBuilder();
     initDatabaseClient(databaseName);
+    QueryFactory queryFactory = QueryFactory.getInstance();
 
     List<Table> tables = new ArrayList<>();
+    QueryFactory queryFactory = QueryFactory.getInstance();
 
     for (String table : selectedTables) {
-      String columnQuery = constants.SCHEMA_INFO_SQL + table + "'";
+      //Prevent people trying to see AuditLog
+      if (table.toLowerCase().equals("auditlog")) {
+        continue;
+      }
+
+      String[] selectedColsInTable = null;
+      if (request.getParameterValues(table) != null) {
+        selectedColsInTable = request.getParameterValues(table);
+      } 
+      
+      Statement columnQuery = queryFactory.buildSchemaQuery(table);
  
       try (ResultSet resultSet =
-        dbClient.singleUse().executeQuery(Statement.of(columnQuery))) {
-          
-        ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet);
-        
+        dbClient.singleUse().executeQuery(columnQuery)) {
+        ImmutableList<ColumnSchema> columnSchemas = initColumnSchemas(resultSet, selectedColsInTable);
+        Statement.Builder builder = Statement.newBuilder("");
+
         Table.Builder tableBuilder = Table.builder().setName(table);
         tableBuilder.setColumnSchemas(columnSchemas);
-        Statement queryStatement = constructQueryStatement(columnSchemas, table);
 
-        auditBuilder.append(queryStatement + "; ");
+        Statement queryStatement = queryFactory.constructQueryStatement(builder, columnSchemas, table, request);
+        tableBuilder.setSql(queryStatement.toString());
+        auditBuilder.append(queryStatement.toString() + "; ");
 
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
         tables.add(tableObject);
+      } catch (RuntimeException e) {
+        // Do nothing - ignore (table has no columns or table DNE)
       }
     }
     String queryAudit = auditBuilder.toString();
@@ -77,14 +96,21 @@ public class DataFromDatabaseServlet extends HttpServlet {
   private void checkTableHasColumns(List<ColumnSchema> columnSchemas) {
     // No columns -> throw error
     if (columnSchemas.size() == 0) {
-      throw new RuntimeException(constants.EMPTY_TABLE_ERROR);
+      throw new RuntimeException(EMPTY_TABLE_ERROR);
     }
   } 
 
-  private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet) {
+  private ImmutableList<ColumnSchema> initColumnSchemas(ResultSet resultSet, String[] selectedColsInTable) {
     ImmutableList.Builder<ColumnSchema> colSchemaBuilder = new ImmutableList.Builder<>();
+    
+    List<String> selectedCols = new ArrayList<>();
+    if (selectedColsInTable != null) 
+      selectedCols = Arrays.asList(selectedColsInTable);
     while (resultSet.next()) {
-      colSchemaBuilder.add(createColumnSchema(resultSet));
+      String colName = resultSet.getString(0);
+      if (selectedCols.size() == 0 || selectedCols.contains(colName)) {
+        colSchemaBuilder.add(createColumnSchema(resultSet));
+      }
     }
     ImmutableList<ColumnSchema> columnSchemas = colSchemaBuilder.build();
     checkTableHasColumns(columnSchemas);
@@ -101,26 +127,17 @@ public class DataFromDatabaseServlet extends HttpServlet {
       schemaType = schemaType.substring(0, indexOfOpeningParen);
     }
 
-    // Convert YES/NO String to true/false boolean
-    String isNullableColumn = resultSet.getString(2);
+    boolean isNullable = stringToBoolean(resultSet.getString(2));
+    return ColumnSchema.create(columnName, schemaType, isNullable);
+  }
+
+  // Convert YES/NO String to true/false boolean
+  private boolean stringToBoolean(String isNullableColumn) {
     boolean isNullable = false;
     if (isNullableColumn.toLowerCase().equals("YES")) {
       isNullable = true;
     }
-    return ColumnSchema.create(columnName, schemaType, isNullable);
-  }
-
-  // Construct SQL statement of form SELECT <columns list> FROM <table>
-  private Statement constructQueryStatement(List<ColumnSchema> columnSchemas, String table) {
-    StringBuilder query = new StringBuilder("SELECT ");
-
-    for (ColumnSchema columnSchema : columnSchemas) {
-      query.append(columnSchema.columnName() + ", ");
-    }
-    query.deleteCharAt(query.length() - 1); //Get rid of extra space
-    query.append(" FROM " + table); 
-    Statement statement = Statement.newBuilder(query.toString()).build();
-    return statement;
+    return isNullable;
   }
 
   private void initDatabaseClient(String databaseName) {
@@ -133,23 +150,29 @@ public class DataFromDatabaseServlet extends HttpServlet {
       .singleUse() 
       .executeQuery(query)) {
         
+      int resultCount = 0;
       while (resultSet.next()) {
+        resultCount++;
         ImmutableList.Builder<String> rowBuilder = new ImmutableList.Builder<String>();
         for (ColumnSchema columnSchema : columnSchemas) {
           String columnName = columnSchema.columnName();
- 
+
           // If there is a null in this col here, print out NULL for now.
           if (resultSet.isNull(columnName)) {
             rowBuilder.add("NULL");
             continue;
           }
-
           String dataType = columnSchema.schemaType();
           addDataToRow(dataType, rowBuilder, columnName, resultSet);
         }
-
         ImmutableList<String> immutableRow = rowBuilder.build();
         tableBuilder.addRow(immutableRow);
+      }
+
+      if (resultCount == 0) {  
+        tableBuilder.setIsEmpty(true);
+      } else {
+        tableBuilder.setIsEmpty(false);
       }
     }
   }
@@ -180,7 +203,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         rowBuilder.add(arrayToString);
         break;
       default:
-        rowBuilder.add(constants.UNSUPPORT_ERROR);
+        rowBuilder.add(UNSUPPORT_ERROR);
     }
   }
 
@@ -191,9 +214,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
   private String bytesToString(ByteArray bytes) {
     try {
       byte[] byteArray = bytes.toByteArray();
-      return new String(byteArray, constants.ENCODING_TYPE);
+      return new String(byteArray, ENCODING_TYPE);
     } catch (UnsupportedEncodingException e) {
-      return constants.ENCODING_ERROR;
+      return ENCODING_ERROR;
     }
   }
 
