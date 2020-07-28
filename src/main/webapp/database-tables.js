@@ -31,18 +31,20 @@ function showDatabase() {
         const isEmpty = tableData.isEmpty;
 
         const colSchemas = tableData.columnSchemas;
-        var conversionTable = '';
+        var finalDataTable = tableData;
+        //TODO: Make sure to check for convertedTable to keep updates if I need to convert multiple columns
+
+        //if statement to switch from 
         for (var i =0; i<colSchemas.length; i++) {
             if (colSchemas[i].columnName.endsWith('Millis')){
-                var conversionTable = dataConversionMillis(i,tableData);
+                var finalDataTable = dataConversionMillis(i,finalDataTable);
+            } else if (colSchemas[i].columnName == "Genre") {
+                var finalDataTable = dataConversionEnum(i,finalDataTable);
             }
         }
         updateSqlOnPage(tableData.sql);
         //TODO: sql showing up x2 for some reason, figure this out
-        var dataTable = tableData.dataTable;
-        if (!conversionTable == '') {
-            dataTable = conversionTable.dataTable;
-        }
+        var dataTable = finalDataTable.dataTable;
         let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
 
         tableObj.fetchTable();
@@ -80,20 +82,39 @@ function login() {
     }
   });
 }
-var conv = Boolean(false);
+
+//TODO: Pass another paramater to combine data conversion functions 
 function dataConversionMillis(column,tableData){
-    if(!conv){
-      conv = true;
-      var id =0;
+    tableData.columnSchemas[column].schemaType = "TIMESTAMP";
+    for (var i =0; i<tableData.dataTable.length; i++) {
+      var time = parseInt(tableData.dataTable[i][column]);
+      var date = new Date(time); 
+      date.setHours(date.getHours() - 2); //Convert from default Central Time to PST
+      tableData.dataTable[i][column] = date.toISOString();
+    } 
+    return tableData;
+}
 
-      tableData.columnSchemas[column].schemaType = "TIMESTAMP";
-
-      for (var i =0; i<tableData.dataTable.length; i++) {
-        var time = parseInt(tableData.dataTable[i][column]);
-        var date = new Date(time); 
-        tableData.dataTable[i][column] = date;
-        //TODO: Convert Timezone to PST
-      } 
+function dataConversionEnum(column,tableData){
+    tableData.columnSchemas[column].schemaType = "STRING";
+    for (var i =0; i<tableData.dataTable.length; i++) {
+      var number = parseInt(tableData.dataTable[i][column]);
+      switch(number) {
+        case 1:
+            tableData.dataTable[i][column] = "Rock";
+            break;
+        case 2:
+            tableData.dataTable[i][column] = "Jazz";
+            break;
+        case 3:
+            tableData.dataTable[i][column] = "Classical";
+            break;
+        case 4:
+            tableData.dataTable[i][column] = "Pop";
+            break;
+        default:
+           tableData.dataTable[i][column] = "Country";
+      }
     }
     return tableData;
 }
