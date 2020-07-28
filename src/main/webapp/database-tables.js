@@ -111,7 +111,7 @@ function previousPage(id) {
   table.previousPage();
 }
 
-function goToPage(id, pageNum) {
+function switchPages(id, pageNum) {
   let table = tablesList[id];
   console.log('go to page')
   table.goToPage(pageNum);

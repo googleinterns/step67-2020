@@ -13,10 +13,11 @@ class Table {
 
     this.page = 0;
     this.rowsPerPage = 10;
-    this.numPages = 0;
+    this.maxPageNumber = 0;
     this.changeRowsPerPage = this.changeRowsPerPage.bind(this);
     this.nextPage = this.nextPage.bind(this);
     this.previousPage = this.previousPage.bind(this);
+    this.goToPage = this.goToPage.bind(this);
   }
 
   getName() {
@@ -216,17 +217,19 @@ class Table {
     thisTableDiv.appendChild(buttonDiv);
   }
 
+  //TODO - make sure to re-render buttons once search is applied
   addPageNumberButtons(buttonDiv) {
     const numRows = this.dataTable.length;
-    const numPages = Math.floor(numRows / 10);
-    this.numPages = numPages;
+    const maxPageNumber = Math.floor(numRows / 10);
+    this.maxPageNumber = maxPageNumber;
     let count = 0;
-    while (count <= numPages) {
+    while (count <= maxPageNumber) {
       const pageNumButton = document.createElement("button");
       pageNumButton.innerHTML = count;
+      pageNumButton.id = count + "-" + this.name;
       const id = this.id;
       const goToPage = count;
-      pageNumButton.onclick = function() { goToPage(id, goToPage); }
+      pageNumButton.onclick = function() { switchPages(id, goToPage); }
       buttonDiv.appendChild(pageNumButton);
       count++;
     }
@@ -242,8 +245,11 @@ class Table {
   }
 
   goToPage(pageNumber) {
-    if (pageNumber < this.numPages) {
+    console.log('here')
+    console.log(pageNumber)
+    if (pageNumber <= this.maxPageNumber) {
       this.page = pageNumber;
+      this.rerender();
     }
   }
 
