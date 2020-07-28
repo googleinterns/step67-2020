@@ -229,3 +229,7 @@ function login(){
     document.getElementById("user").innerText = user;
   });
 }
+
+function hoverOpen() {
+  document.getElementById("search-bar").style.width = '300px';
+}

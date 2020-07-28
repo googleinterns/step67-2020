@@ -21,7 +21,7 @@
     <div id="header">
       <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
-        <input type="search" placeholder="Search...">
+        <input onmouseover = "hoverOpen()" id="search-bar" type="text" placeholder="Search..."></input>
         <a href="splash.html"><button>Previous Page</button></a>
         <button id="filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button id="data-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
@@ -64,7 +64,7 @@
           <h2 style="padding-bottom:10px">Column Selection</h2>
         </div>
         
-        <button id="submit" value="Apply Filters" onclick="return getFilterValues();"></button>
+        <input type="submit" id="submit" value="Apply Filters">
         <div style="padding:5px;"></div>
       </form>  
     </div>

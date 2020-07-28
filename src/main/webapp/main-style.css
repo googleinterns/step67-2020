@@ -101,8 +101,6 @@ h2 {
   font-size: 20px;
   font-style: bold;
   color: white;
-  width: 20px;
-  height: 20px;
 }
 
 #submit:hover{
@@ -135,4 +133,31 @@ h2 {
   text-align: center;
   background-color: gray;
   color: blue;
+}
+
+#search-bar {
+  background-image: url(search.svg);
+  padding: 10px;
+  background-color: #f7f1d0;
+  background-repeat: no-repeat;
+  background-size: 35px;
+  border-color: #ff7c5a;
+  border-style: solid;
+  border-radius: 10px;
+  padding-left: 40px;
+  box-shadow: 1px 3px 1.5px #ffd952;
+  width: 0;
+  height: 10px;
+  transition: 0.5s;
+  overflow-x: hidden;
+  right: 0;
+}
+
+#search-bar:focus {
+  outline:none;
+}
+
+#search-bar:hover {
+  background-color: #ffc45a;
+  width: 300px; 
 }
