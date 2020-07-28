@@ -32,8 +32,7 @@ function showDatabase() {
 
         const colSchemas = tableData.columnSchemas;
         var finalDataTable = tableData;
-        //TODO: Make sure to check for convertedTable to keep updates if I need to convert multiple columns
-
+    
         for (var i =0; i<colSchemas.length; i++) {
             if (colSchemas[i].columnName.endsWith('Millis')){
                 var finalDataTable = dataConversionMillis(i,finalDataTable);
@@ -121,19 +120,25 @@ function dataConversionEnum(column,tableData){
 }
 
 function dataConversionProto(column,tableData) {
-    //For clicking the { to open and close I should look at the sort for inspiration
-    //TODO: Indent second object or array
+    //TODO: work on clicking the { to open and close
     for (var i = 0; i<tableData.dataTable.length; i++) {
       var json = tableData.dataTable[i][column];
       var newString = "";
+      var tab = Boolean(false);
+
       for (var j = 0; j<json.length; j++) {
-          if (json[j] == ',' || (j !=0 && json[j] == '{')) {
-              newString += json[j] + "\n";
+          if (json[j] == ',' ) {
+              newString += (Boolean(tab) ? (json[j] + "\n"+"\t") : (json[j] + "\n"));
+          } else if (j !=0 && (json[j] == '{' || json[j] =='[')) {
+                newString += json[j] + "\n\t";
+                tab = true;
+          } else if (json[j] == '}' || json[j] == ']'){
+            tab = false;
+            newString += json[j];
           } else {
               newString += json[j];
           }
       }
-    console.log(newString);
     tableData.dataTable[i][column] = newString;
     } 
     return tableData;
