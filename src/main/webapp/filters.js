@@ -296,3 +296,20 @@ function toggleFilters() {
     document.getElementById('table-filtering').style.display = 'none';
   }
 }
+
+function getFilterValues() {
+  var elements = document.getElementById("filter-form").elements;
+  console.log(elements);
+  
+  ///loop through elements
+  //var element id = elements[index].getelementbyid('idname')
+  //var elementvalue = elemnts[index].getelementbyid('idname').value
+  var params = new URLSearchParams(window.location.search);
+  params.append("some", "data");
+
+  var newRelativePathQuery = window.location.pathname + '?' + params.toString();
+    history.pushState(null, '', newRelativePathQuery);
+
+  return false;
+
+}

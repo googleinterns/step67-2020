@@ -39,7 +39,7 @@
     <div id="toggle">QUICK START</div>
     
     <div id="filter-box" style="display: none;"> 
-      <form id="filter-form" action="/main-page.html" method="GET">
+      <form id="filter-form" action="/main-page.html" method="GET" ">
         <p id="instruction">Enter userID or deviceID, then select filters.<p>
         <div id="user_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
           <h2>User Id</h2>
@@ -64,7 +64,7 @@
           <h2 style="padding-bottom:10px">Column Selection</h2>
         </div>
         
-        <input type="submit" id="submit" value="Apply Filters" >
+        <button id="submit" value="Apply Filters" onclick="return getFilterValues();"></button>
         <div style="padding:5px;"></div>
       </form>  
     </div>
