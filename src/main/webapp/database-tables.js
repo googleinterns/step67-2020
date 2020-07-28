@@ -34,12 +34,13 @@ function showDatabase() {
         var finalDataTable = tableData;
         //TODO: Make sure to check for convertedTable to keep updates if I need to convert multiple columns
 
-        //if statement to switch from 
         for (var i =0; i<colSchemas.length; i++) {
             if (colSchemas[i].columnName.endsWith('Millis')){
                 var finalDataTable = dataConversionMillis(i,finalDataTable);
             } else if (colSchemas[i].columnName == "Genre") {
                 var finalDataTable = dataConversionEnum(i,finalDataTable);
+            } else if (colSchemas[i].columnName.endsWith('Proto')) {
+                var finalDataTable = dataConversionProto(i,finalDataTable);
             }
         }
         updateSqlOnPage(tableData.sql);
@@ -113,9 +114,28 @@ function dataConversionEnum(column,tableData){
             tableData.dataTable[i][column] = "Pop";
             break;
         default:
-           tableData.dataTable[i][column] = "Country";
+           tableData.dataTable[i][column] = "Unspecified";
       }
     }
+    return tableData;
+}
+
+function dataConversionProto(column,tableData) {
+    //For clicking the { to open and close I should look at the sort for inspiration
+    //TODO: Indent second object or array
+    for (var i = 0; i<tableData.dataTable.length; i++) {
+      var json = tableData.dataTable[i][column];
+      var newString = "";
+      for (var j = 0; j<json.length; j++) {
+          if (json[j] == ',' || (j !=0 && json[j] == '{')) {
+              newString += json[j] + "\n";
+          } else {
+              newString += json[j];
+          }
+      }
+    console.log(newString);
+    tableData.dataTable[i][column] = newString;
+    } 
     return tableData;
 }
 

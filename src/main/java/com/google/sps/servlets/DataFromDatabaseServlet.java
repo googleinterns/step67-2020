@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +42,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(DATABASE_PARAM);
     initDatabaseClient(databaseName);
-
-    Set<Table> tableSet = new HashSet<>();
+    
     List<Table> tables = new ArrayList<>();
     List<String> queries = new ArrayList<>();
     QueryFactory queryFactory = QueryFactory.getInstance();
@@ -79,13 +76,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
-        if (tableSet.contains(tableObject)){
-            System.out.println("IN ALREADY");
-        } else{
-          tableSet.add(tableObject);
-          tables.add(tableObject);
-        }
-        System.out.println(tableObject);
+
+        tables.add(tableObject);
       } catch (RuntimeException e) {
         // Do nothing - ignore (table has no columns or table DNE)
       }

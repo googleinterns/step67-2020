@@ -87,7 +87,7 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
             var userIdBox = document.getElementById('user_id_box');
             var userId = document.getElementById('user_id');
             userIdBox.style.display = 'block';
-            userId.required = true;
+            // userId.required = true;
           }
           if(tables[keys][0].includes('DeviceId')){
             var deviceIdBox = document.getElementById('device_id_box');
