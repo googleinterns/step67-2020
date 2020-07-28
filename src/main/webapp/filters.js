@@ -300,7 +300,8 @@ function toggleFilters() {
 function getFilterValues() {
   var elements = document.getElementById("filter-form").elements;
   console.log(elements);
-  
+  //make button bigger
+  //padding left to instruction
   ///loop through elements
   //var element id = elements[index].getelementbyid('idname')
   //var elementvalue = elemnts[index].getelementbyid('idname').value
