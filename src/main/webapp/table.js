@@ -1,8 +1,11 @@
+/* Class representing Table, used for sorting and rendering.*/
+//TODO: Check which additional functions need to be bound in constructor
 class Table {
-  constructor(dataTable, name, colSchemas, id) {
+  constructor(dataTable, name, colSchemas, id, isEmpty) {
     this.name = name;
     this.colSchemas = colSchemas;
     this.id = id;
+    this.isEmpty = isEmpty;
     this.dataTable = new Array(dataTable.length); // Number rows
     this.sortDirections = new Array(colSchemas.length); // Number cols
     this.makeTableWithTypes(dataTable);
@@ -48,9 +51,12 @@ class Table {
   }
 
   fetchTable() {
-    setTimeout(function() {
+    this.remove();
+    if (document.getElementById("table_" + this.name) != null) {
+      this.rerender();
+    } else {
       this.renderTable();
-    }.bind(this), 0);
+    }
   }
 
   // 0 is ascending, 1 is descending -- start everything ascending
@@ -85,16 +91,25 @@ class Table {
   }
 
   remove() {
-    document.getElementById("table_" + this.name).remove();
-    document.getElementById("header_" + this.name).remove();
+    if (document.getElementById("table_" + this.name) != null) {
+      document.getElementById("table_" + this.name).innerText = "";
+    }
   }
 
-  renderTable() {
-    const table = document.createElement("table");
-    table.setAttribute("id", "table_" + this.name);
+  rerender() {
+    const table = document.getElementById("table_" + this.name);
 
-    table.appendChild(this.makeTableHeaders());
+    if (this.isEmpty) {
+      const isEmptyMessage = document.createElement("p");
+      isEmptyMessage.innerText = "No rows in table with applied filters.";
+      table.appendChild(isEmptyMessage);
+    } else {
+      table.appendChild(this.makeTableHeaders());
+      this.createTableRows(table);
+    }
+  }
 
+  createTableRows(table) {
     let index;
     for (index in this.dataTable) {
       const row = this.dataTable[index];
@@ -107,18 +122,27 @@ class Table {
         dataPointElement.innerText = dataPoint;
         rowElement.appendChild(dataPointElement);
       }
-  
       table.appendChild(rowElement);
     }
+  }
+
+  renderTable() {
+    const table = document.createElement("table");
+    table.setAttribute("id", "table_" + this.name);
+    table.appendChild(this.makeTableHeaders());
+
+    this.createTableRows(table);
 
     let tablesDiv = document.getElementById("tables");
     this.addHeader(tablesDiv);
     tablesDiv.appendChild(table);
   }
 
+  // Add header with table name
   addHeader(tablesDiv) {
     const header = document.createElement("h2");
     header.setAttribute("id", "header_" + this.name);
+    header.class = "tableHeader";
     header.innerText = this.name;
     tablesDiv.appendChild(header);
   }

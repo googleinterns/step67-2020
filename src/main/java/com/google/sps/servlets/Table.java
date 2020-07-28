@@ -8,8 +8,10 @@ import java.util.List;
 @AutoValue
 abstract class Table {
   abstract String name();
+  abstract String sql();
   abstract ImmutableList<ColumnSchema> columnSchemas();
   abstract ImmutableList<ImmutableList<String>> dataTable();
+  abstract boolean isEmpty();
 
   static Builder builder() {
     return new AutoValue_Table.Builder();
@@ -17,8 +19,10 @@ abstract class Table {
 
   @AutoValue.Builder
   abstract static class Builder {
+    abstract Builder setSql(String sql);
     abstract Builder setName(String name);
     abstract Builder setColumnSchemas(ImmutableList<ColumnSchema> columnSchemas);
+    abstract Builder setIsEmpty(boolean isEmpty);
     abstract ImmutableList.Builder<ImmutableList<String>> dataTableBuilder();
 
     public Builder addRow(ImmutableList<String> row) {

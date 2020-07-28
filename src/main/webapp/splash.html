@@ -11,13 +11,13 @@
   <body onload="onLoad()">
     <div class="centered">
       <div name="logoImage">
-        <img src="beetleLogo.png" alt="logo here">
+        <img src="beetle_logo3.png" style="width: 100px" alt="logo here">
         <h2>Beetle</h2>
       </div>
 
       <div name="text_enter" class="text-enter">
         <div id="select-db">
-          <form action="/splash.html" method="GET; login()" id="database-select-form" >
+          <form action="/splash.html" onsubmit="login()" method="GET" id="database-select-form" >
             <select id="list-databases" name="list-databases" class="select" onchange="submitDatabaseForm()">
               <option id="select-title">Loading...</option>
             </select>
@@ -25,10 +25,8 @@
         </div>
     
         <div id="table-list"></div>
-        
       </div>
-     
     </div>
   </body>
-  <div id ="user"></div>
+  <div id="user"></div>
 </html>

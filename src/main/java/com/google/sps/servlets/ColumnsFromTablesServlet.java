@@ -26,7 +26,9 @@ import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.*; 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +58,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
 
       DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
 
+<<<<<<< HEAD
       String query = "";
       String selectedTables = "";
 
@@ -73,11 +76,14 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       }
       query = query + GROUP_BY_TABLE_NAMES + GROUP_BY_PRIMARY_KEYS;   // Queries list of columns and primary keys of the selected tables
       //String query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
+=======
+      Statement query = QueryFactory.getInstance().buildFiltersQuery(listOfTables);
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
 
       try (ResultSet resultSet =
           dbClient
           .singleUse() 
-          .executeQuery(Statement.of(query))) {
+          .executeQuery(query)) {
         while (resultSet.next()) {
           for(int i = 0; i < resultSet.getStringList(1).size(); i++){
               primaryKeyColumns.add(resultSet.getStringList(1).get(i));

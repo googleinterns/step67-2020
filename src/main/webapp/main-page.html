@@ -9,13 +9,25 @@
     <script src="./database-tables.js"></script>
     <script src="table.js"></script>
     <script src="filters.js"></script>
+<<<<<<< HEAD
   </head>
     
   <body onload="mainLoad(); createFilters()">
     <h1>Main Page</h1>
 
+=======
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="table-style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+  </head>
+    
+  <body onload="mainLoad(); createFilters()">
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
     <div id="data"></div>
+    <h1 style="padding-bottom:30px;"></h1>
 
+<<<<<<< HEAD
     <div id = "header">
       <div class = "button-box">
         <a href = "splash.html"><button>Back to Splash Page</button></a>
@@ -23,18 +35,29 @@
         <button id = "data-button" onmouseover = "luckyData()" onclick = "login(); showDatabase()" onmouseout="unlucky()">Load Data </button>
         <button id = "share-button" onclick = "showShare()" >Share Query</button>
         <button onclick = "clearFilters()"> Clear Filters </button>
+=======
+    <div id="header">
+      <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
+      <div class="button-box">
+        <input type="search" placeholder="Search...">
+        <a href="splash.html"><button>Previous Page</button></a>
+        <button id="filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id="data-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
+        <button id="share-button" onclick="copyLink()"> Share Query </button>
+        <button onclick="clearFilters()"> Clear Filters </button>
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
       </div>
     </div>
 
-    <div id = "share-form" class = "invisible">
-      <h4>Share Query</h4>
-      <input type="text" id = "share-text" placeholder="Share with a fellow Googler.">
-      <button onmouseover="changeText()" onclick = "copyLink()" > Copy Link </button>
+    <div id="alert" class="invisible">
+      <span class="closebtn" onclick="closeAlert()" >&times;</span> 
+      <strong>Link Copied!</strong>
     </div>
 
     <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
     <div id="toggle">QUICK START</div>
     
+<<<<<<< HEAD
     <div id="filter-box" style="display: block"> 
       <form id="filter-form" action="/main-page.html" method="GET">
       <div id="user_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
@@ -54,12 +77,50 @@
         </div>
         
         <input type="submit" id="submit" value="Apply Filters" onClick="return submitFilters()">
+=======
+    <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
+    <div id="toggle">QUICK START</div>
+    
+    <div id="filter-box" style="display: none;"> 
+      <form id="filter-form" action="/main-page.html" method="GET">
+        <p id="instruction">Enter userID or deviceID, then select filters.<p>
+        <div id="user_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
+          <h2>User Id</h2>
+          <input type="text" id="user_id" name="user_id" placeholder="Enter the UserID">
+          <div style="padding:5px;"></div>
+        </div>
+        <div id="device_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
+          <h2>Device Id</h2>
+          <input type="text" id="device_id" name="device_id" placeholder="Enter the DeviceID">
+          <div style="padding:5px;"></div>
+        </div>
+
+        <div id="primarykey-select" style="padding:10px;" >
+          <h2 style="padding-bottom:10px;">Primary Keys</h2>
+        </div>
+
+        <div id="table-filtering" style="padding: 10px; display:none;">
+          <h2 style="padding-bottom:10px">Per-Table Filtering</h2>
+        </div>
+        
+        <div id="column-select" style="padding: 10px; display:none;">
+          <h2 style="padding-bottom:10px">Column Selection</h2>
+        </div>
+        
+        <input type="submit" id="submit" value="Apply Filters" >
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
         <div style="padding:5px;"></div>
       </form>  
     </div>
 
     <div id="user"></div>
+<<<<<<< HEAD
     <div id="tables"></div>
     <div id ="justification"></div>
+=======
+    <div id="justification"></div>
+    <div id="tables"></div>
+    <div id="sql"></div>
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
   </body>
 </html>

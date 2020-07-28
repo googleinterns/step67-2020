@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 function submitFilters() {
   return isFilterInputEmpty();
@@ -5,6 +6,11 @@ function submitFilters() {
 
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
+=======
+function showFiltersPanel() {
+  var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
 
   if (filterBox.style.display === "none") {
     filterBox.style.display = "block";
@@ -32,11 +38,11 @@ function addReasonToForm(reasonForUse,filterForm) {
   filterForm.appendChild(reason);
 }
 
-function addSelectedTableToForm(keys, filterForm) {
+function addSelectedTableToForm(tableName, filterForm) {
   const tableSelect = document.createElement('input');
   tableSelect.type = "hidden";
   tableSelect.name = "table-select";
-  tableSelect.value = keys;
+  tableSelect.value = tableName;
   filterForm.appendChild(tableSelect);
 }
 
@@ -53,6 +59,7 @@ function createFilters() {
   addReasonToForm(reasonForUse, filterForm);
   
   fetch(url + queryString).then(response => response.json()).then((tables) => {
+<<<<<<< HEAD
     console.log(tables);
     const columnDiv = document.getElementById('column-select');
     const primaryKeyDiv = document.getElementById('primarykey-select');
@@ -132,6 +139,87 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
           primarykey_column_inputs.style.display = 'none';
       }};
 
+=======
+    const columnDiv = document.getElementById('column-select');
+    const primaryKeyDiv = document.getElementById('primarykey-select');
+    const perTableDiv = document.getElementById('table-filtering');
+
+    makeQuickStartFilters(tables, primaryKeyDiv, filterForm);
+    makeFullFiltersCheckboxes(tables, columnDiv, filterForm);
+    makeFullFiltersText(tables, perTableDiv, filterForm);
+ });
+}
+
+//Helper method that creates the quickstart filters
+function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
+  //Creating primary key dropdown 
+  var primarykey_select = document.createElement('select');
+  primarykey_select.style.width = '200px';
+  primarykey_select.options.remove(0);
+  primarykey_select.name = 'Primary Keys';
+  primarykey_select.id = 'primary_key';
+
+  let primkeyDefaultOption = document.createElement('option');
+  primkeyDefaultOption.text = 'Primary Keys';
+  primkeyDefaultOption.style.display = 'none'; //Hiding table name as a valid option to select
+
+  primarykey_select.add(primkeyDefaultOption);
+  primarykey_select.selectedIndex = 0;
+
+  let primarykey_column_inputs = document.createElement('div');
+  primarykey_column_inputs.style.backgroundColor = 'white';
+ 
+  for(var keys in tables){
+    if(keys === 'PrimaryKeys'){
+      for(var col in tables[keys][0]){
+        //Skip making input boxes for UserId and DeviceId for Quickstart
+        if(tables[keys][0][col] === 'UserId' || tables[keys][0][col] === 'DeviceId'){
+          //If userId or deviceId exists in the primary key list, display the input boxes
+          if(tables[keys][0].includes('UserId')){
+            var userIdBox = document.getElementById('user_id_box');
+            var userId = document.getElementById('user_id');
+            userIdBox.style.display = 'block';
+            userId.required = true;
+          }
+          if(tables[keys][0].includes('DeviceId')){
+            var deviceIdBox = document.getElementById('device_id_box');
+            var deviceId = document.getElementById('device_id');
+            deviceIdBox.style.display = 'block';
+            deviceId.required = true;
+          }
+          
+          continue;
+        } else{
+            //Creating text inputs
+            var primkey_input = document.createElement('input');
+            primkey_input.type= 'text';
+            primkey_input.id = tables[keys][0][col];
+            primkey_input.name = tables[keys][0][col];
+            //Creating the label placeholders for the inputs
+            primkey_input.placeholder = tables[keys][0][col];
+
+            //Appending input boxes to the primary_column_inputs div
+            primarykey_column_inputs.appendChild(primkey_input);
+
+            //Styling DOM elements
+            primarykey_column_inputs.style.border = '1px solid';
+            primarykey_column_inputs.style.display = 'none';
+            primarykey_column_inputs.style.width = '200px';
+            var div = document.createElement('div');
+            div.style.padding = '10px';
+            primarykey_column_inputs.appendChild(div);
+
+        }
+      }
+      //onclick event that will hide/show primary key text boxes
+      primarykey_select.onclick = function() {
+      if (primarykey_column_inputs.style.display === 'none') {
+        primarykey_column_inputs.style.display = 'block';
+      } else {
+          primarykey_column_inputs.style.display = 'none';
+      }};
+
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
       //After all primary key filter options have been created, append to primaryKeyDiv 
       primaryKeyDiv.appendChild(primarykey_select);
       primaryKeyDiv.appendChild(primarykey_column_inputs);
@@ -139,12 +227,92 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
       div.style.padding ='10px';
       primaryKeyDiv.appendChild(div);
     }
+<<<<<<< HEAD
 
   }
 }
 
 //Helper method that created the Full filters including column selection
 function makeFullFilters(tables, columnDiv, filterForm){
+=======
+  }
+}
+
+function makeFullFiltersText(tables, perTableDiv, filterForm) {
+  var searchParams = new URLSearchParams(window.location.search);
+  const reasonForUse = searchParams.get('reason');
+  const database = searchParams.get('list-databases');
+  addDatabaseToForm(database, filterForm);
+  addReasonToForm(reasonForUse, filterForm);
+  
+  //Create a select dropdown based on the table name as tableName
+  for(var tableName in tables){
+    if(tableName === 'PrimaryKeys'){
+      continue;
+    }
+    addSelectedTableToForm(tableName, filterForm);
+    
+    var select = document.createElement('select');
+    select.style.width = '200px';
+    select.options.remove(0);
+    select.id = "table-select";
+
+    let defaultOption = document.createElement('option');
+    defaultOption.text = tableName;
+    defaultOption.style.display = 'none'; //Hiding table name as a valid option to select
+
+    select.add(defaultOption);
+    select.selectedIndex = 0;
+
+    let textInputs = document.createElement('div');
+    
+    //Create textInputs for each column of the table
+    for(var col in tables[tableName][0]){
+      const columnName = tables[tableName][0][col];
+      if (columnName == "UserId" || columnName == "DeviceId") {
+        continue;
+      }
+      var textInput = document.createElement('input');
+      textInput.type= 'text';
+      textInput.placeholder = columnName;
+      textInput.name = tableName + "-" + columnName;
+
+      var label = document.createElement('label');
+      label.innerHTML = columnName;
+      label.htmlFor =  columnName;
+      textInput.innerHTML = label.outerHTML;
+              
+      textInputs.appendChild(textInput);
+
+      textInputs.style.border = "1px solid";
+      textInputs.style.display = "none";
+      textInputs.style.width = '200px';
+
+      var boxDiv = document.createElement('div');
+      boxDiv.style.padding ='4px';
+      textInputs.appendChild(boxDiv);
+    }
+
+    //onclick event that will hide/show column filters
+    select.onclick = function() {
+      if (textInputs.style.display === "none") {
+        textInputs.style.display = "block";
+      } else {
+        textInputs.style.display = "none";
+      }
+    };
+
+    perTableDiv.appendChild(select);
+    perTableDiv.appendChild(textInputs);
+    var div = document.createElement('div');
+    div.style.padding ='10px';
+    perTableDiv.appendChild(div);
+  }  
+}
+
+//Helper method that created the Full filters including column selection
+function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
   columnDiv.style.position = 'relative';
     
   //Create a select dropdown based on the table name as keys
@@ -222,10 +390,20 @@ function toggleFilters() {
     toggle.innerHTML = 'FULL';
     document.getElementById('primarykey-select').style.display = 'none';
     document.getElementById('column-select').style.display = 'block';
+<<<<<<< HEAD
 
+=======
+    document.getElementById('table-filtering').style.display = 'block';
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
   } else {
     toggle.innerHTML = 'QUICK START';
     document.getElementById('primarykey-select').style.display = 'block';
     document.getElementById('column-select').style.display = 'none';
+<<<<<<< HEAD
   }
 }
+=======
+    document.getElementById('table-filtering').style.display = 'none';
+  }
+}
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2

@@ -7,6 +7,13 @@
   margin-bottom: 10px;
 }
 
+.id {
+  left: 0;
+}
+#device_id {
+  left: 0;
+}
+
 .button-box {
   right: 0;
   position:fixed;
@@ -31,6 +38,7 @@
   display: none;
 }
 
+<<<<<<< HEAD
 #filter-box{
     border-style: solid;
     border-width: 1px;
@@ -46,6 +54,36 @@
 
 input{
     margin-left: 4px;
+=======
+#sql {
+  bottom: 0;
+  width: 50%;
+  height: 10%;
+  font-size: 12px;
+  line-height: 50%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  float: left;
+  overflow: scroll;
+}
+
+#filter-box{
+  border-style: solid;
+  border-width: 1px;
+  background-color:#fafdf9;
+  display: block;
+  width: 300px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+#filter-header:hover {
+  background-color: #ddf0d8;
+}
+
+input{
+  margin-left: 4px;
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
 }
   
 #user {
@@ -63,6 +101,7 @@ input{
 }
 
 h2 {
+<<<<<<< HEAD
     padding-left: 10px;
     margin: 0;
     color:  #130311;
@@ -82,10 +121,31 @@ h2 {
     font-size: 20px;
     font-style: bold;
     color: white;
+=======
+  padding-left: 10px;
+  margin: 0;
+  color:  #130311;
+  font-size: 15px;
+}
+
+* {
+  font-family: 'Open Sans', sans-serif;
+}
+
+#submit {
+  background-color:  darkseagreen;
+  border-color: cadetblue;
+  border-style: solid;
+  margin-left: 10px;
+  font-size: 20px;
+  font-style: bold;
+  color: white;
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
 
 }
 
 #submit:hover{
+<<<<<<< HEAD
     background-color: #2da4d2;
 }
 
@@ -118,3 +178,35 @@ h2 {
 }
 
 
+=======
+  background-color: #2da4d2;
+}
+
+#submit:focus {
+  outline: none;
+}
+
+#toggle-button {
+  border: none;
+  background-color: #f7f1d0;
+  color: orange;
+  font-style: bold;
+  font-size: 15px;
+  border-color: orange;
+  border-style: solid;
+}
+
+#toggle-button:hover {
+  background-color: #f0d309;
+}
+
+#toggle-button:focus {
+  outline: none;
+}
+
+#instructions {
+  text-align: center;
+  background-color: gray;
+  color: blue;
+}
+>>>>>>> 4ae5deda0bc0ce3c7e659368173abccb0cf98ca2
