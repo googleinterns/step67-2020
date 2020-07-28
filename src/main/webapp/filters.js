@@ -58,6 +58,24 @@ function createFilters() {
  });
 }
 
+function showUserId(required) {
+  var userIdBox = document.getElementById('user_id_box');
+  var userId = document.getElementById('user_id');
+  userIdBox.style.display = 'block';
+  if (required) {
+    userId.required = true;
+  }
+}
+
+function showDeviceId(required) {
+  var deviceIdBox = document.getElementById('device_id_box');
+  var deviceId = document.getElementById('device_id');
+  deviceIdBox.style.display = 'block';
+  if (required) {
+    deviceId.required = true;
+  }
+}
+
 //Helper method that creates the quickstart filters
 function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   //Creating primary key dropdown 
@@ -78,24 +96,22 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   primarykey_column_inputs.style.backgroundColor = 'white';
  
   for(var keys in tables){
+    const tableColumns = tables[keys][0];
     if(keys === 'PrimaryKeys'){
-      for(var col in tables[keys][0]){
+      for(var col in tableColumns){
         //Skip making input boxes for UserId and DeviceId for Quickstart
-        if(tables[keys][0][col] === 'UserId' || tables[keys][0][col] === 'DeviceId'){
+        if(tableColumns[col] === 'UserId' || tableColumns[col] === 'DeviceId'){
           //If userId or deviceId exists in the primary key list, display the input boxes
-          if(tables[keys][0].includes('UserId')){
-            var userIdBox = document.getElementById('user_id_box');
-            var userId = document.getElementById('user_id');
-            userIdBox.style.display = 'block';
-            userId.required = true;
+
+          //TODO FIX THIS, make else if's true (just for testing)
+          if(tableColumns.includes('UserId') && tableColumns.includes('DeviceId')){
+            showUserId(false);
+            showDeviceId(false);
+          } else if(tableColumns.includes('DeviceId')){
+            showDeviceId(false);
+          } else if (tableColumns.includes('UserId')) {
+            showUserId(false);
           }
-          if(tables[keys][0].includes('DeviceId')){
-            var deviceIdBox = document.getElementById('device_id_box');
-            var deviceId = document.getElementById('device_id');
-            deviceIdBox.style.display = 'block';
-            deviceId.required = true;
-          }
-          
           continue;
         } else{
             //Creating text inputs

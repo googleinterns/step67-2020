@@ -12,6 +12,11 @@ class Table {
     this.setTable = this.setTable.bind(this);
 
     this.page = 0;
+    this.rowsPerPage = 10;
+    this.numPages = 0;
+    this.changeRowsPerPage = this.changeRowsPerPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
+    this.previousPage = this.previousPage.bind(this);
   }
 
   getName() {
@@ -96,23 +101,24 @@ class Table {
       document.getElementById("table_" + this.name).innerText = "";
     }
     if (document.getElementById("button-div-" + this.name) != null) {
-      document.getElementById("button-div-" + this.name).remove();
+      document.getElementById("button-div-" + this.name).display = "none";
     }
   }
 
   rerender() {
     this.remove();
     const table = document.getElementById("table_" + this.name);
+    const thisTableDiv = document.getElementById("table-div-" + this.name);
 
     if (this.isEmpty) {
       const isEmptyMessage = document.createElement("p");
       isEmptyMessage.innerText = "No rows in table with applied filters.";
-      table.appendChild(isEmptyMessage);
+      thisTableDiv.appendChild(isEmptyMessage);
     } else {
       table.appendChild(this.makeTableHeaders());
-      const rowsString = this.createTableRows(table);
-      let tablesDiv = document.getElementById("tables");
-      this.addNextAndPreviousButtons(tablesDiv, rowsString);
+      document.getElementById("button-div-" + this.name).display = "";
+      const pageInfoString = this.createTableRows(table);
+      this.updatePageInformation(pageInfoString);
     }
   }
 
@@ -134,29 +140,33 @@ class Table {
       }
       table.appendChild(rowElement);
     }
-    const rowsString = "Displaying rows " + rowToStart + " to " + rowToEnd + " of " + this.dataTable.length;
-    return rowsString;
+    const pageInfoString = "Displaying rows " + rowToStart + " to " + rowToEnd + " of " + this.dataTable.length;
+    return pageInfoString;
   }
 
   renderTable() {
+    const thisTableDiv = document.createElement("div");
+    thisTableDiv.id = "table-div-" + this.name;
     const table = document.createElement("table");
     table.setAttribute("id", "table_" + this.name);
     table.appendChild(this.makeTableHeaders());
-    const rowString = this.createTableRows(table);
+    const pageInfoString = this.createTableRows(table);
 
     let tablesDiv = document.getElementById("tables");
-    this.addHeader(tablesDiv);
-    tablesDiv.appendChild(table);
-    this.addNextAndPreviousButtons(tablesDiv, rowString);
+    this.addHeader(thisTableDiv);
+    thisTableDiv.appendChild(table);
+    this.addNextAndPreviousButtons(thisTableDiv, pageInfoString);
+
+    tablesDiv.appendChild(thisTableDiv);
   }
 
   // Add header with table name
-  addHeader(tablesDiv) {
+  addHeader(thisTableDiv) {
     const header = document.createElement("h2");
     header.setAttribute("id", "header_" + this.name);
     header.class = "tableHeader";
     header.innerText = this.name;
-    tablesDiv.appendChild(header);
+    thisTableDiv.appendChild(header);
   }
 
   addColumnHeader(colName, index) {
@@ -181,13 +191,14 @@ class Table {
     return columnNamesRow;
   }
 
-  addNextAndPreviousButtons(tablesDiv, rowString) {
+  addNextAndPreviousButtons(thisTableDiv, pageInfoString) {
     const buttonDiv = document.createElement("div");
     buttonDiv.id = "button-div-" + this.name;
     const nextButton = document.createElement("button");
     const prevButton = document.createElement("button");
-    const rowStringElement = document.createElement("p");
-    rowStringElement.innerHTML = rowString;
+    const pageInfoStringElement = document.createElement("p");
+    pageInfoStringElement.id = "row-string-" + this.name;
+    pageInfoStringElement.innerHTML = pageInfoString;
 
     nextButton.innerHTML = "Next";
     nextButton.id = "next-button-" + this.name;
@@ -198,22 +209,51 @@ class Table {
     prevButton.id = "prev-button-" + this.name;
     prevButton.onclick = function() { previousPage(id); }
     buttonDiv.appendChild(prevButton);
+    this.addPageNumberButtons(buttonDiv);
     buttonDiv.appendChild(nextButton);
-    buttonDiv.appendChild(rowStringElement);
+    buttonDiv.appendChild(pageInfoStringElement);
 
-    tablesDiv.appendChild(buttonDiv);
+    thisTableDiv.appendChild(buttonDiv);
+  }
+
+  addPageNumberButtons(buttonDiv) {
+    const numRows = this.dataTable.length;
+    const numPages = Math.floor(numRows / 10);
+    this.numPages = numPages;
+    let count = 0;
+    while (count <= numPages) {
+      const pageNumButton = document.createElement("button");
+      pageNumButton.innerHTML = count;
+      const id = this.id;
+      const goToPage = count;
+      pageNumButton.onclick = function() { goToPage(id, goToPage); }
+      buttonDiv.appendChild(pageNumButton);
+      count++;
+    }
+  }
+
+  addSelectNumRowsElement() {
+    // implement this later
+  }
+
+  updatePageInformation(pageInfoString) {
+    const pageInfoStringElement = document.getElementById("row-string-" + this.name);
+    pageInfoStringElement.innerHTML = pageInfoString;
+  }
+
+  goToPage(pageNumber) {
+    if (pageNumber < this.numPages) {
+      this.page = pageNumber;
+    }
   }
 
   nextPage() {
-    //check to make sure enough rows for another page
-      //change to filtered rows, not dataTable
+    //change to filtered rows, not dataTable
     const numRows = this.dataTable.length;
     if (numRows > (this.page + 1) * 10) {
       this.page = this.page + 1;
       this.rerender();
     }
-    console.log(this.page);
-    //re render
   }
 
   previousPage() {
@@ -221,7 +261,10 @@ class Table {
       this.page = this.page - 1;
       this.rerender();
     }
-    console.log(this.page);
-    //re render
+  }
+
+  changeRowsPerPage(newValue) {
+    this.rowsPerPage = newValue;
+    this.rerender();
   }
 }

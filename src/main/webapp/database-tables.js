@@ -15,7 +15,6 @@ function showDatabase() {
     const queryString = '/data-from-db' + search;
     document.getElementById("tables").innerText = 'Loading...';
     document.getElementById("sql").innerText = 'Queries loading...';
-    console.log(search)
 
     tablesList = [];
   
@@ -30,7 +29,6 @@ function showDatabase() {
       for (tableIndex = 0; tableIndex < data.length; tableIndex++) {
         const tableData = data[tableIndex];
         const name = tableData.name;
-        console.log(name)
         const isEmpty = tableData.isEmpty;
 
         const colSchemas = tableData.columnSchemas;
@@ -49,7 +47,6 @@ function showDatabase() {
 }
 
 function updateSqlOnPage(sql) {
-  console.log('here');
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
   newSql.innerText = sql;
@@ -112,6 +109,12 @@ function nextPage(id) {
 function previousPage(id) {
   let table = tablesList[id];
   table.previousPage();
+}
+
+function goToPage(id, pageNum) {
+  let table = tablesList[id];
+  console.log('go to page')
+  table.goToPage(pageNum);
 }
 
 function showReason() {
