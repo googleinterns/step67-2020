@@ -307,6 +307,14 @@ function getFilterValues() {
   //var elementvalue = elemnts[index].getelementbyid('idname').value
   var params = new URLSearchParams(window.location.search);
   params.append("some", "data");
+  for (var i =0; i < elements.length; i++) {
+      if (elements[i].name){
+        params.append(elements[i].name,elements[i].value);
+      }   
+    console.log(elements[i]);
+    console.log(elements[i].name ? elements[i].name : 'EMPTY');
+    console.log(elements[i].value);
+  }
 
   var newRelativePathQuery = window.location.pathname + '?' + params.toString();
     history.pushState(null, '', newRelativePathQuery);
