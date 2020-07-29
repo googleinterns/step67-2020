@@ -1,17 +1,23 @@
 package com.google.sps.servlets;
 
+import static com.google.cloud.spanner.TransactionRunner.TransactionCallable;
+
 import com.google.auto.value.AutoValue;
 import com.google.cloud.ByteArray;
 import com.google.cloud.spanner.DatabaseClient;
 import com.google.cloud.spanner.DatabaseId;
+import com.google.cloud.spanner.ReadOnlyTransaction;
 import com.google.cloud.spanner.ResultSet;
 import com.google.cloud.spanner.Spanner;
 import com.google.cloud.spanner.SpannerOptions;
 import com.google.cloud.spanner.Statement;
+import com.google.cloud.spanner.TransactionContext;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.StringBuilder;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +47,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
     response.setContentType(TEXT_TYPE);
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(DATABASE_PARAM);
+    String reason = request.getParameter("reason");
+    String account = LoginServlet.getCurrentUser();
+    StringBuilder auditBuilder = new StringBuilder();
     initDatabaseClient(databaseName);
     
     List<Table> tables = new ArrayList<>();
@@ -72,6 +81,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         String queryString = queryStatement.toString();
         tableBuilder.setSql(queryString);
         queries.add(queryString);
+        auditBuilder.append(queryString + "; ");
 
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
@@ -83,9 +93,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
       }
     }
 
-    //TODO(Will): Add auditing here (the list called queries has all the query strings)
-
+    String queryAudit = auditBuilder.toString();
     String json = new Gson().toJson(tables);
+    insertUsingDml(account,reason,queryAudit);
     response.getWriter().println(json);
   }
 
@@ -214,5 +224,24 @@ public class DataFromDatabaseServlet extends HttpServlet {
     } catch (UnsupportedEncodingException e) {
       return ENCODING_ERROR;
     }
+  }
+
+  private void insertUsingDml(String account, String reason, String query) {
+    this.dbClient = DatabaseConnector.getInstance().getDbClient("example-db");
+    Instant timestamp = Instant.now();
+    String timeString = timestamp.toString();
+    dbClient
+    .readWriteTransaction()
+    .run(
+        new TransactionCallable<Void>() {
+            @Override
+            public Void run(TransactionContext transaction) throws Exception {
+              String sql =
+                  "INSERT INTO AuditLog (Account, Query, Reason, Timestamp) "
+                      + String.format(" VALUES ('%s', '%s', '%s', '%s')",account,query,reason,timeString);
+              transaction.executeUpdate(Statement.of(sql));
+              return null;
+            }
+        });
   }
 }

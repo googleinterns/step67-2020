@@ -46,16 +46,35 @@ function createFilters() {
   const database = searchParams.get('list-databases');
   addDatabaseToForm(database, filterForm);
   addReasonToForm(reasonForUse, filterForm);
+
+  const columnDiv = document.getElementById('column-select');
+  const primaryKeyDiv = document.getElementById('primarykey-select');
+  const perTableDiv = document.getElementById('table-filtering');
+
+  primaryKeyDiv.innerText = "Primary key filters loading...";
+  perTableDiv.innerText = "Per-table filters loading...";
   
   fetch(url + queryString).then(response => response.json()).then((tables) => {
-    const columnDiv = document.getElementById('column-select');
-    const primaryKeyDiv = document.getElementById('primarykey-select');
-    const perTableDiv = document.getElementById('table-filtering');
-
+    primaryKeyDiv.innerText = "";
+    perTableDiv.innerText = "";
     makeQuickStartFilters(tables, primaryKeyDiv, filterForm);
     makeFullFiltersCheckboxes(tables, columnDiv, filterForm);
     makeFullFiltersText(tables, perTableDiv, filterForm);
  });
+}
+
+function showUserID() {
+  var userIdBox = document.getElementById('user_id_box');
+  var userId = document.getElementById('user_id');
+  userIdBox.style.display = 'block';
+  userId.required = true;
+}
+
+function showDeviceID() {
+  var deviceIdBox = document.getElementById('device_id_box');
+  var deviceId = document.getElementById('device_id');
+  deviceIdBox.style.display = 'block';
+  deviceId.required = true;
 }
 
 //Helper method that creates the quickstart filters
@@ -78,33 +97,28 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   primarykey_column_inputs.style.backgroundColor = 'white';
  
   for(var keys in tables){
+    const columnNames = tables[keys][0];
     if(keys === 'PrimaryKeys'){
-      for(var col in tables[keys][0]){
+      for(var col in columnNames){
         //Skip making input boxes for UserId and DeviceId for Quickstart
-        if(tables[keys][0][col] === 'UserId' || tables[keys][0][col] === 'DeviceId'){
+        const columnName = columnNames[col];
+        if(columnName === 'UserId' || columnName === 'DeviceId'){
           //If userId or deviceId exists in the primary key list, display the input boxes
-          if(tables[keys][0].includes('UserId')){
-            var userIdBox = document.getElementById('user_id_box');
-            var userId = document.getElementById('user_id');
-            userIdBox.style.display = 'block';
-            // userId.required = true;
+          if(columnNames.includes('UserId')){
+            showUserID();
           }
-          if(tables[keys][0].includes('DeviceId')){
-            var deviceIdBox = document.getElementById('device_id_box');
-            var deviceId = document.getElementById('device_id');
-            deviceIdBox.style.display = 'block';
-            deviceId.required = true;
+          if(columnNames.includes('DeviceId')){
+            showDeviceID();
           }
-          
           continue;
         } else{
             //Creating text inputs
             var primkey_input = document.createElement('input');
             primkey_input.type= 'text';
-            primkey_input.id = tables[keys][0][col];
-            primkey_input.name = tables[keys][0][col];
+            primkey_input.id = columnName;
+            primkey_input.name = columnName;
             //Creating the label placeholders for the inputs
-            primkey_input.placeholder = tables[keys][0][col];
+            primkey_input.placeholder = columnName;
 
             //Appending input boxes to the primary_column_inputs div
             primarykey_column_inputs.appendChild(primkey_input);
@@ -237,18 +251,20 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     let colFilters = document.createElement('div'); //div for columns filter
     colFilters.style.backgroundColor = 'white';
     
+    const columnNames = tables[keys][0];
     //Create checkboxes for each column of the table
-    for(var col in tables[keys][0]){
+    for(var col in columnNames){
+      const columnName = columnNames[col];
       var col_checkbox = document.createElement('input');
       col_checkbox.type= 'checkbox';
-      col_checkbox.value = tables[keys][0][col];
-      col_checkbox.id = tables[keys][0][col];
+      col_checkbox.value = columnName;
+      col_checkbox.id = columnName;
       col_checkbox.name = keys;
       col_checkbox.checked = true; //by default checkbox is checked
 
       var label = document.createElement('label');
-      label.innerHTML = tables[keys][0][col];
-      label.htmlFor =  tables[keys][0][col];
+      label.innerHTML = columnName;
+      label.htmlFor = columnName;
       col_checkbox.innerHTML = label.outerHTML;
                 
       col_checkbox.appendChild(label);
@@ -269,7 +285,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     if (colFilters.style.display === 'none') {
       colFilters.style.display = 'block';
     } else {
-        colFilters.style.display = 'none';
+      colFilters.style.display = 'none';
     }};
 
     //appending colum filter dropdown
