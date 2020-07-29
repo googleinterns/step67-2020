@@ -252,20 +252,22 @@ function switchColorMode() {
   newStyle.rel = "stylesheet";
   newStyle.type = "text/css";
 
-  const oldStyle2 = document.getElementsByTagName("link").item(2);
-  const newStyle2 = document.createElement("link");
-  newStyle2.rel = "stylesheet";
-  newStyle2.type = "text/css";
+  const tableStyleOld = document.getElementsByTagName("link").item(2);
+  const tableStyleNew = document.createElement("link");
+  tableStyleNew.rel = "stylesheet";
+  tableStyleNew.type = "text/css";
 
   if (darkMode) {
     newStyle.href = "/table-style.css";
-    newStyle2.href = "/main-style.css";
+    tableStyleNew.href = "/main-style.css";
     darkMode = false;
+    document.getElementById("mode-button").innerText = "Light Mode";
   } else {
     newStyle.href = "/table-dark.css";
-    newStyle2.href = "/main-dark.css";
+    tableStyleNew.href = "/main-dark.css";
     darkMode = true;
+    document.getElementById("mode-button").innerText = "Dark Mode";
   }
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
-  document.getElementsByTagName("head").item(0).replaceChild(newStyle2, oldStyle2);
+  document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
 }
