@@ -8,7 +8,9 @@ function showDatabase() {
     showing = true;
     const search = window.location.search;
     var searchParams = new URLSearchParams(search);
-    if (!(searchParams.has("user_id") && searchParams.has("device_id"))) {
+    if (!searchParams.has("user_id") && !searchParams.has("device_id")) {
+      document.getElementById("idAlert").classList.remove("invisible");
+      showing = false;
       return;
     }
 
@@ -46,17 +48,10 @@ function showDatabase() {
 }
 
 function updateSqlOnPage(sql) {
-  console.log('here');
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
   newSql.innerText = sql;
   sqlDiv.appendChild(newSql);
-}
-
-function mainLoad(){
-  login();
-  showReason();
-  showFiltersPanel();
 }
 
 function login() {

@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   </head>
     
-  <body onload="mainLoad(); createFilters()">
+  <body onload="mainLoad()">
     <div id="data"></div>
     <h1 style="padding-bottom:30px;"></h1>
 
@@ -33,6 +33,11 @@
     <div id="alert" class="invisible">
       <span class="closebtn" onclick="closeAlert()" >&times;</span> 
       <strong>Link Copied!</strong>
+    </div>
+
+    <div id="idAlert" class="invisible">
+      <span class="closebtn" onclick="closeIDAlert()">&times;</span> 
+      <strong>UserID and/or DeviceID are required.</strong>
     </div>
     
     <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>

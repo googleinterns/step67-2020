@@ -50,9 +50,7 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       String[] listOfTables = request.getParameterValues(TABLE_SELECT_PARAM);
       
       String database = request.getParameter(DATABASE_PARAM);
-
       DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
-
       Statement query = QueryFactory.getInstance().buildFiltersQuery(listOfTables);
 
       try (ResultSet resultSet =
