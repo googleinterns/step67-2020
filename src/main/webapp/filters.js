@@ -46,34 +46,35 @@ function createFilters() {
   const database = searchParams.get('list-databases');
   addDatabaseToForm(database, filterForm);
   addReasonToForm(reasonForUse, filterForm);
+
+  const columnDiv = document.getElementById('column-select');
+  const primaryKeyDiv = document.getElementById('primarykey-select');
+  const perTableDiv = document.getElementById('table-filtering');
+
+  primaryKeyDiv.innerText = "Primary key filters loading...";
+  perTableDiv.innerText = "Per-table filters loading...";
   
   fetch(url + queryString).then(response => response.json()).then((tables) => {
-    const columnDiv = document.getElementById('column-select');
-    const primaryKeyDiv = document.getElementById('primarykey-select');
-    const perTableDiv = document.getElementById('table-filtering');
-
+    primaryKeyDiv.innerText = "";
+    perTableDiv.innerText = "";
     makeQuickStartFilters(tables, primaryKeyDiv, filterForm);
     makeFullFiltersCheckboxes(tables, columnDiv, filterForm);
     makeFullFiltersText(tables, perTableDiv, filterForm);
  });
 }
 
-function showUserId(required) {
+function showUserID() {
   var userIdBox = document.getElementById('user_id_box');
   var userId = document.getElementById('user_id');
   userIdBox.style.display = 'block';
-  if (required) {
-    userId.required = true;
-  }
+  userId.required = true;
 }
 
-function showDeviceId(required) {
+function showDeviceID() {
   var deviceIdBox = document.getElementById('device_id_box');
   var deviceId = document.getElementById('device_id');
   deviceIdBox.style.display = 'block';
-  if (required) {
-    deviceId.required = true;
-  }
+  deviceId.required = true;
 }
 
 //Helper method that creates the quickstart filters
@@ -96,20 +97,19 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   primarykey_column_inputs.style.backgroundColor = 'white';
 
   for(var keys in tables){
-    const tableColumns = tables[keys][0];
+    const columnNames = tables[keys][0];
     if(keys === 'PrimaryKeys'){
-      for(var col in tableColumns){
+      for(var col in columnNames){
         //Skip making input boxes for UserId and DeviceId for Quickstart
-        if(tableColumns[col] === 'UserId' || tableColumns[col] === 'DeviceId'){
+        const columnName = columnNames[col];
+        if(columnName === 'UserId' || columnName === 'DeviceId'){
           //If userId or deviceId exists in the primary key list, display the input boxes
-
-          //TODO fix these conditions
-          if(tableColumns.includes('DeviceId')){
-            showDeviceId(true);
-          } 
-          if (tableColumns.includes('UserId')) {
-            showUserId(true);
-          } 
+          if(columnNames.includes('UserId')){
+            showUserID();
+          }
+          if(columnNames.includes('DeviceId')){
+            showDeviceID();
+          }
           continue;
         } else{
             //Creating text inputs
@@ -250,9 +250,11 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     let colFilters = document.createElement('div'); //div for columns filter
     colFilters.style.backgroundColor = 'white';
     
+    const columnNames = tables[keys][0];
     //Create checkboxes for each column of the table
-    for(var col in tables[keys][0]){
-      const columnName = tables[keys][0][col];
+    for(var col in columnNames){
+      const columnName = columnNames[col];
+
       var col_checkbox = document.createElement('input');
       col_checkbox.type= 'checkbox';
       col_checkbox.value = columnName;
@@ -263,8 +265,8 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
       var label = document.createElement('label');
       label.innerHTML = columnName;
       label.htmlFor =  columnName;
+
       col_checkbox.innerHTML = label.outerHTML;
-                
       col_checkbox.appendChild(label);
       colFilters.appendChild(col_checkbox);
       colFilters.appendChild(label);
@@ -283,7 +285,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     if (colFilters.style.display === 'none') {
       colFilters.style.display = 'block';
     } else {
-        colFilters.style.display = 'none';
+      colFilters.style.display = 'none';
     }};
 
     //appending colum filter dropdown
