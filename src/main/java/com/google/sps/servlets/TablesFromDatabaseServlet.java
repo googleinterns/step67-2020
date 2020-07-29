@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import static com.google.sps.servlets.Constants.DATABASE_PARAM;
-import static com.google.sps.servlets.Constants.GET_TABLE_SQL;
 import static com.google.sps.servlets.Constants.NULL_REDIRECT;
 import static com.google.sps.servlets.Constants.TEXT_TYPE;
 
@@ -26,6 +25,7 @@ import static com.google.sps.servlets.Constants.TEXT_TYPE;
 @WebServlet("/tables-from-db")
 public class TablesFromDatabaseServlet extends HttpServlet {
 
+  private static final String GET_TABLE_SQL = "SELECT table_name FROM information_schema.tables WHERE table_catalog = '' and table_schema = ''";
   DatabaseClient dbClient;
   String selectedDatabase;
 

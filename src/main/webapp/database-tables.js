@@ -7,8 +7,16 @@ function showDatabase() {
   if (!showing){
     showing = true;
     const search = window.location.search;
+    var searchParams = new URLSearchParams(search);
+    if (!searchParams.has("user_id") && !searchParams.has("device_id")) {
+      document.getElementById("idAlert").classList.remove("invisible");
+      showing = false;
+      return;
+    }
+
     const queryString = '/data-from-db' + search;
     document.getElementById("tables").innerText = 'Loading...';
+    document.getElementById("sql").innerText = 'Queries loading...';
 
     tablesList = [];
   
@@ -22,18 +30,14 @@ function showDatabase() {
       for (tableIndex in data) {
         const tableData = data[tableIndex];
         const name = tableData.name;
-
         const isEmpty = tableData.isEmpty;
-        if (isEmpty) {
-          createIsEmptyElement(dataArea);
-          continue;
-        }
 
         const colSchemas = tableData.columnSchemas;
         updateSqlOnPage(tableData.sql);
+        //TODO: sql showing up x2 for some reason, figure this out
 
         const dataTable = tableData.dataTable;
-        let tableObj = new Table(dataTable, name, colSchemas, id);
+        let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
 
         tableObj.fetchTable();
         tablesList.push(tableObj);
@@ -43,12 +47,6 @@ function showDatabase() {
   }
 }
 
-function createIsEmptyElement(dataArea) {
-  const element = document.createElement("p");
-  element.innerText = "No rows in table with applied filters.";
-  dataArea.appendChild(element);
-}
-
 function updateSqlOnPage(sql) {
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
@@ -56,23 +54,16 @@ function updateSqlOnPage(sql) {
   sqlDiv.appendChild(newSql);
 }
 
-function mainLoad(){
-  login();
-  showReason();
-  showFiltersPanel();
-}
-
 function login() {
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
     var currentUser = user;
-    var first = currentUser.split(" ");
     if (currentUser == "deny"){
-        window.location.assign("/denied.html");
+      window.location.assign("/denied.html");
     }
     else if (currentUser == "Stranger") {
-        //This link first takes you to Google sign in and then continues back to splash page when signed in
-        window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
+      //This link first takes you to Google sign in and then continues back to splash page when signed in
+      window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
     }
   });
 }
@@ -109,4 +100,51 @@ function showReason() {
   const params = new URLSearchParams(window.location.search);
   var reason = params.get('reason');
   document.getElementById("justification").innerText = "Justification: " + reason;
+}
+
+function audit() {
+  // Create invisible form to send the data
+  var form = document.createElement("form"); 
+  form.setAttribute("type", "hidden");
+  form.setAttribute("id","form");
+  form.setAttribute("method", "post"); 
+  form.setAttribute("action", "/reason"); 
+
+  // Create account element
+  var account = document.createElement("input"); 
+  account.setAttribute("type", "hidden");
+  account.setAttribute("name", "account");
+  var userVal = document.getElementById("user").innerText;
+  account.setAttribute("value", userVal); 
+
+  const params = new URLSearchParams(window.location.search);
+  var tableSelect = params.getAll('table-select');
+
+  // Create tables accessed  element
+  var queryInput = document.createElement("input"); 
+  queryInput.setAttribute("type", "hidden");
+  queryInput.setAttribute("name", "query"); 
+  queryInput.setAttribute("value", tableSelect);
+
+  // Create reason element
+  var reason = params.get('reason');
+  var reasonInput = document.createElement("input"); 
+  reasonInput.setAttribute("type", "hidden");
+  reasonInput.setAttribute("name", "reason"); 
+  reasonInput.setAttribute("value", reason);
+      
+  // Create queryString element
+  var queryString = window.location.search;
+  var queryStringInput = document.createElement("input"); 
+  queryStringInput.setAttribute("type", "hidden");
+  queryStringInput.setAttribute("name", "queryString"); 
+  queryStringInput.setAttribute("value", queryString);
+
+  // Append everything to form then page
+  form.appendChild(account);  
+  form.appendChild(queryInput);  
+  form.appendChild(queryStringInput);
+  form.appendChild(reasonInput);
+  document.body.appendChild(form); 
+  document.getElementById("form").submit();
 }

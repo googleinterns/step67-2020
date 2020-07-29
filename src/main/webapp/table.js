@@ -1,10 +1,11 @@
 /* Class representing Table, used for sorting and rendering.*/
 //TODO: Check which additional functions need to be bound in constructor
 class Table {
-  constructor(dataTable, name, colSchemas, id) {
+  constructor(dataTable, name, colSchemas, id, isEmpty) {
     this.name = name;
     this.colSchemas = colSchemas;
     this.id = id;
+    this.isEmpty = isEmpty;
     this.dataTable = new Array(dataTable.length); // Number rows
     this.sortDirections = new Array(colSchemas.length); // Number cols
     this.makeTableWithTypes(dataTable);
@@ -50,7 +51,12 @@ class Table {
   }
 
   fetchTable() {
-    this.renderTable();
+    this.remove();
+    if (document.getElementById("table_" + this.name) != null) {
+      this.rerender();
+    } else {
+      this.renderTable();
+    }
   }
 
   // 0 is ascending, 1 is descending -- start everything ascending
@@ -85,13 +91,22 @@ class Table {
   }
 
   remove() {
-    document.getElementById("table_" + this.name).innerText = "";
+    if (document.getElementById("table_" + this.name) != null) {
+      document.getElementById("table_" + this.name).innerText = "";
+    }
   }
 
   rerender() {
     const table = document.getElementById("table_" + this.name);
-    table.appendChild(this.makeTableHeaders());
-    this.createTableRows(table);
+
+    if (this.isEmpty) {
+      const isEmptyMessage = document.createElement("p");
+      isEmptyMessage.innerText = "No rows in table with applied filters.";
+      table.appendChild(isEmptyMessage);
+    } else {
+      table.appendChild(this.makeTableHeaders());
+      this.createTableRows(table);
+    }
   }
 
   createTableRows(table) {
@@ -127,6 +142,7 @@ class Table {
   addHeader(tablesDiv) {
     const header = document.createElement("h2");
     header.setAttribute("id", "header_" + this.name);
+    header.class = "tableHeader";
     header.innerText = this.name;
     tablesDiv.appendChild(header);
   }
