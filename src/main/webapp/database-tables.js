@@ -39,7 +39,7 @@ function showDatabase() {
             if (colSchemas[i].columnName.endsWith('Millis')){
                 var finalDataTable = dataConversionMillis(i,finalDataTable);
             } else if (colSchemas[i].columnName == "Genre") {
-                var finalDataTable = dataConversionEnum(i,finalDataTable);
+                var finalDataTable = dataConversionGenreEnum(i,finalDataTable);
             } else if (colSchemas[i].columnName.endsWith('Proto')) {
                 var finalDataTable = dataConversionProto(i,finalDataTable);
             }
@@ -91,7 +91,7 @@ function dataConversionMillis(column,tableData){
     return tableData;
 }
 
-function dataConversionEnum(column,tableData){
+function dataConversionGenreEnum(column,tableData){
     tableData.columnSchemas[column].schemaType = "STRING";
     for (var i =0; i<tableData.dataTable.length; i++) {
       var number = parseInt(tableData.dataTable[i][column]);
