@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
-    <link rel="stylesheet" href="main-style.css">
     <script src="./script.js"></script>
     <script src="./database-tables.js"></script>
     <script src="table.js"></script>
     <script src="filters.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="table-style.css">
+    <link rel="stylesheet" href="main-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
   </head>
@@ -27,6 +27,7 @@
         <button id="data-button" class="header-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
         <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
         <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
+        <button class="header-button" onclick="switchColorMode()">Mode</button>
       </div>
     </div>
 
