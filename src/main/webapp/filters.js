@@ -95,7 +95,7 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
 
   let primarykey_column_inputs = document.createElement('div');
   primarykey_column_inputs.style.backgroundColor = 'white';
- 
+
   for(var keys in tables){
     const columnNames = tables[keys][0];
     if(keys === 'PrimaryKeys'){
@@ -113,6 +113,7 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
           continue;
         } else{
             //Creating text inputs
+            const columnName = tables[keys][0][col];
             var primkey_input = document.createElement('input');
             primkey_input.type= 'text';
             primkey_input.id = columnName;
@@ -238,8 +239,6 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     column_select.options.remove(0);
     column_select.name = keys;
     column_select.id = keys;
-
-    addSelectedTableToForm(keys, filterForm);
         
     let colDefaultOption = document.createElement('option');
     colDefaultOption.text = keys;
@@ -255,6 +254,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     //Create checkboxes for each column of the table
     for(var col in columnNames){
       const columnName = columnNames[col];
+
       var col_checkbox = document.createElement('input');
       col_checkbox.type= 'checkbox';
       col_checkbox.value = columnName;
@@ -264,9 +264,9 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
 
       var label = document.createElement('label');
       label.innerHTML = columnName;
-      label.htmlFor = columnName;
+      label.htmlFor =  columnName;
+
       col_checkbox.innerHTML = label.outerHTML;
-                
       col_checkbox.appendChild(label);
       colFilters.appendChild(col_checkbox);
       colFilters.appendChild(label);
