@@ -112,8 +112,9 @@ h2 {
   color: black;
   font-style: bold;
   font-size: 15px;
-  border: 1px solid orange;
+  border: 2px solid orange;
   border-radius: 3px;
+  margin-bottom: 5px;
 }
 
 #toggle-button:hover {
@@ -131,6 +132,12 @@ h2 {
 .header-button {
   background-color: white;
   color: rgba(10, 10, 10, 0.877);
+  border: 1px solid black;
+  border-radius: 3px;
+}
+
+.header-button:hover {
+  background-color: rgb(240,240,240);
 }
 
 .id-box {
