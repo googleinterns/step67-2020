@@ -42,6 +42,8 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    //TODO: check to make sure there is userid or deviceid in request
+    
     response.setContentType(TEXT_TYPE);
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
     String databaseName = request.getParameter(DATABASE_PARAM);
@@ -49,9 +51,9 @@ public class DataFromDatabaseServlet extends HttpServlet {
     String account = LoginServlet.getCurrentUser();
     StringBuilder auditBuilder = new StringBuilder();
     initDatabaseClient(databaseName);
-    QueryFactory queryFactory = QueryFactory.getInstance();
 
     List<Table> tables = new ArrayList<>();
+    List<String> queries = new ArrayList<>();
     QueryFactory queryFactory = QueryFactory.getInstance();
 
     for (String table : selectedTables) {
@@ -76,8 +78,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
         tableBuilder.setColumnSchemas(columnSchemas);
 
         Statement queryStatement = queryFactory.constructQueryStatement(builder, columnSchemas, table, request);
-        tableBuilder.setSql(queryStatement.toString());
-        auditBuilder.append(queryStatement.toString() + "; ");
+        String queryString = queryStatement.toString();
+        tableBuilder.setSql(queryString);
+        queries.add(queryString);
+        auditBuilder.append(queryString + "; ");
 
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
@@ -87,6 +91,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         // Do nothing - ignore (table has no columns or table DNE)
       }
     }
+
     String queryAudit = auditBuilder.toString();
     String json = new Gson().toJson(tables);
     insertUsingDml(account,reason,queryAudit);

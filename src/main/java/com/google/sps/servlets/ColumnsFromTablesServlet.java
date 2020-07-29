@@ -25,7 +25,9 @@ import com.google.cloud.spanner.Statement;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,24 +44,30 @@ public class ColumnsFromTablesServlet extends HttpServlet {
       response.setContentType("application/JSON;"); 
 
       Multimap<String, Object> data = ArrayListMultimap.create();
+      Set<String> primaryKeyColumns = new HashSet<>();
 
       //Parsing the URL for the query parameters
       String[] listOfTables = request.getParameterValues(TABLE_SELECT_PARAM);
+      
       String database = request.getParameter(DATABASE_PARAM);
-
       DatabaseClient dbClient = DatabaseConnector.getInstance().getDbClient(database);
-
-      Statement query = QueryFactory.getInstance().buildColumnsQuery(listOfTables);
+      Statement query = QueryFactory.getInstance().buildFiltersQuery(listOfTables);
 
       try (ResultSet resultSet =
           dbClient
           .singleUse() 
           .executeQuery(query)) {
         while (resultSet.next()) {
-          data.put(resultSet.getString(0), resultSet.getStringList(1));
+          String tableName = resultSet.getString(0);
+          List<String> primaryKeys = resultSet.getStringList(1);
+          List<String> columns = resultSet.getStringList(2);
+          primaryKeyColumns.addAll(primaryKeys);
+          data.put(tableName, columns);
+          data.put(tableName, primaryKeys);
         }
       }
-
+      data.put("PrimaryKeys", primaryKeyColumns);
+      
       //Converting resultList into JSON data
       String json = convertToJsonUsingGson(data);
       response.getWriter().println(json);

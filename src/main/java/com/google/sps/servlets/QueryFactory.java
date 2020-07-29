@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 final class QueryFactory {
   
   private static final QueryFactory instance = new QueryFactory();
-  private static final String GROUP_BY_TABLE_NAMES = ") group by table_name";
 
   private QueryFactory() {
     // Private because static class
@@ -46,12 +45,20 @@ final class QueryFactory {
     int loopCount = 0;
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
-      String filterValue = request.getParameter(table + "-" + colName);
-      loopCount = addWhere(filterValue, loopCount, builder, colName, colSchema);
+      if (colName.equals("UserId")) {
+        String idString = request.getParameter("user_id");
+        loopCount = addWhere(idString, loopCount, builder, colName, colSchema);
+      } else if (colName.equals("DeviceId")) {
+        String idString = request.getParameter("device_id");
+        loopCount = addWhere(idString, loopCount, builder, colName, colSchema);
+      } else {
+        String filterValue = request.getParameter(table + "-" + colName);
+        loopCount = addWhere(filterValue, loopCount, builder, colName, colSchema);
 
-      // Deal with primary keys
-      String primaryKey = request.getParameter(colName);
-      loopCount = addWhere(primaryKey, loopCount, builder, colName, colSchema);
+        // Deal with primary keys
+        String primaryKey = request.getParameter(colName);
+        loopCount = addWhere(primaryKey, loopCount, builder, colName, colSchema);
+      }
     }
   }
 
@@ -126,4 +133,19 @@ final class QueryFactory {
   
     return Statement.newBuilder(String.format(getColumnsSql, tables)).build();
   }
-}
+
+  static Statement buildFiltersQuery(String[] listOfTables) {
+    String query = "SELECT table_name, ARRAY_AGG(column_name), ARRAY(SELECT column_name ";
+    query += "FROM information_schema.columns AS t ";
+    query += "WHERE r.table_name = t.table_name) as columns_list ";
+    query += "FROM information_schema.key_column_usage AS r ";
+    query += "WHERE table_name in (%s) group by table_name, constraint_name=\"PRIMARY_KEY\"";
+
+    List<String> tablesList = 
+        Arrays.stream(listOfTables)
+            .map(table -> String.format("'%s'", table))
+            .collect(Collectors.toList());
+    String tables = String.join(", ", tablesList);
+    return Statement.newBuilder(String.format(query, tables)).build();
+  }
+} 

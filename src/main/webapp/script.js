@@ -1,3 +1,10 @@
+function mainLoad(){
+  login();
+  showReason();
+  showFiltersPanel();
+  createFilters();
+}
+
 function getDatabases(){
   fetch("/databases").then(response => response.json()).then((list) => {
     let dropdown = document.getElementById('list-databases');
@@ -162,7 +169,8 @@ function addReasonInput() {
  
 function createSubmit() {
   const submit = document.createElement("input");
-  submit.setAttribute("type", "submit");
+  submit.type = "submit";
+  submit.value = "Continue";
   document.getElementById("table-form").appendChild(submit);
 }
  
@@ -196,7 +204,11 @@ function copyLink() {
 }
 
 function closeAlert() {
-   document.getElementById("alert").classList.add("invisible");
+  document.getElementById("alert").classList.add("invisible");
+}
+
+function closeIDAlert() {
+  document.getElementById("idAlert").classList.add("invisible");
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
