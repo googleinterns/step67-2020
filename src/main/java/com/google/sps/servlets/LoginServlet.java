@@ -20,26 +20,26 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-    Set<String> usersWithAccess = new HashSet<String>();
-    public void init(){
-        usersWithAccess.add("test@example.com");
-        usersWithAccess.add("jiaxinz@google.com");
-        usersWithAccess.add("gagomez@google.com");
-        usersWithAccess.add("hilakey@google.com");
-        usersWithAccess.add("sasymer@google.com");
-        usersWithAccess.add("williamdc@google.com");
-    }
+  Set<String> usersWithAccess = new HashSet<String>();
+  public void init(){
+      usersWithAccess.add("test@example.com");
+      usersWithAccess.add("jiaxinz@google.com");
+      usersWithAccess.add("gagomez@google.com");
+      usersWithAccess.add("hilakey@google.com");
+      usersWithAccess.add("sasymer@google.com");
+      usersWithAccess.add("williamdc@google.com");
+  }
   public static String currentUser;
   
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
     response.setContentType("text/html");
-    System.out.println("Check login");
+
     UserService userService = UserServiceFactory.getUserService();
     String userEmail = "";
 
     if (!userService.isUserLoggedIn()) {
-      System.out.println("NOT LOGGED IN");
       String loginUrl = userService.createLoginURL("/splash.html");
       userEmail = "Stranger";
       String mail = convertToJsonUsingGson(userEmail);
@@ -48,6 +48,7 @@ public class LoginServlet extends HttpServlet {
     } else {
         String currentUserEmail = userService.getCurrentUser().getEmail();
         userEmail = currentUserEmail;
+        currentUser = currentUserEmail;
         if (!usersWithAccess.contains(currentUserEmail)){
             userEmail="deny";
         }
@@ -61,5 +62,9 @@ public class LoginServlet extends HttpServlet {
     Gson gson = new Gson();
     String json = gson.toJson(email);
     return json;
+  }
+  
+  public static String getCurrentUser(){
+    return currentUser;
   }
 } 

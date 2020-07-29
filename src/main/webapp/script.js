@@ -1,3 +1,10 @@
+function mainLoad(){
+  login();
+  showReason();
+  showFiltersPanel();
+  createFilters();
+}
+
 function getDatabases(){
   fetch("/databases").then(response => response.json()).then((list) => {
     let dropdown = document.getElementById('list-databases');
@@ -205,16 +212,19 @@ function alertPopup(x){
   x.style.display = "block";
   x.style.width = "110px";
   x.style.opacity = 100;
-  x.style.animation = "hide 5s";
+  x.style.animation = "hide 4s";
   x.addEventListener("animationend", endAnimation);
 }
 
 function endAnimation() {
-  console.log("end");
   this.style.opacity = 0; 
   this.style.width = 0;
   this.style.animation = "none";
   this.style.display = "none";
+}
+
+function closeIDAlert() {
+  document.getElementById("idAlert").classList.add("invisible");
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
@@ -239,10 +249,4 @@ function unlucky() {
 
 function changeText() {
   document.getElementById("share-text").value = window.location.href;
-}
-
-function login(){
-  fetch("/login").then(response => response.json()).then((user) => {
-    document.getElementById("user").innerText = user;
-  });
 }
