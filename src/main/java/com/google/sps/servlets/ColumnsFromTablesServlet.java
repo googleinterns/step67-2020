@@ -60,14 +60,12 @@ public class ColumnsFromTablesServlet extends HttpServlet {
           .singleUse() 
           .executeQuery(query)) {
         while (resultSet.next()) {
-          for(int i = 0; i < resultSet.getStringList(1).size(); i++){
-              primaryKeyColumns.add(resultSet.getStringList(1).get(i));
-          }
-          data.put(resultSet.getString(0), resultSet.getStringList(2));
-                    //[table_name]        [columns_list]
-          data.put(resultSet.getString(0), resultSet.getStringList(1));
-                    //[table_name]        [primary_keys]
-        
+          String tableName = resultSet.getString(0);
+          List<String> primaryKeys = resultSet.getStringList(1);
+          List<String> columns = resultSet.getStringList(2);
+          primaryKeyColumns.addAll(primaryKeys);
+          data.put(tableName, columns);
+          data.put(tableName, primaryKeys);
         }
       }
       data.put("PrimaryKeys", primaryKeyColumns);
