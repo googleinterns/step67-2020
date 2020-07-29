@@ -92,21 +92,6 @@ function sort(index, id) {
   table.rerender();
 }
 
-function nextPage(id) {
-  let table = tablesList[id];
-  table.nextPage();
-}
-
-function previousPage(id) {
-  let table = tablesList[id];
-  table.previousPage();
-}
-
-function switchPages(id, pageNum) {
-  let table = tablesList[id];
-  table.goToPage(pageNum);
-}
-
 function showReason() {
   const params = new URLSearchParams(window.location.search);
   var reason = params.get('reason');

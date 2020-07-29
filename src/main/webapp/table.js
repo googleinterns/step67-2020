@@ -206,12 +206,12 @@ class Table {
     nextButton.innerHTML = "Next";
     nextButton.id = "next-button-" + this.name;
     const id = this.id;
-    nextButton.onclick = function() { nextPage(id); }
+    nextButton.onclick = () => this.nextPage(); 
 
     const prevButton = document.createElement("button");
     prevButton.innerHTML = "Previous";
     prevButton.id = "prev-button-" + this.name;
-    prevButton.onclick = function() { previousPage(id); }
+    prevButton.onclick = () => this.previousPage();
 
     const pageInfoStringElement = document.createElement("p");
     pageInfoStringElement.id = "row-string-" + this.name;
@@ -241,9 +241,8 @@ class Table {
       const pageNumButton = document.createElement("button");
       pageNumButton.innerHTML = count;
       pageNumButton.id = count + "-" + this.name;
-      const id = this.id;
-      const goToPage = count;
-      pageNumButton.onclick = function() { switchPages(id, goToPage); }
+      const newPage = count;
+      pageNumButton.onclick = () => this.goToPage(newPage);
       pageNumberSpan.appendChild(pageNumButton);
       count++;
     }
