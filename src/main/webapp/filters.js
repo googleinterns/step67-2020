@@ -46,16 +46,35 @@ function createFilters() {
   const database = searchParams.get('list-databases');
   addDatabaseToForm(database, filterForm);
   addReasonToForm(reasonForUse, filterForm);
+
+  const columnDiv = document.getElementById('column-select');
+  const primaryKeyDiv = document.getElementById('primarykey-select');
+  const perTableDiv = document.getElementById('table-filtering');
+
+  primaryKeyDiv.innerText = "Primary key filters loading...";
+  perTableDiv.innerText = "Per-table filters loading...";
   
   fetch(url + queryString).then(response => response.json()).then((tables) => {
-    const columnDiv = document.getElementById('column-select');
-    const primaryKeyDiv = document.getElementById('primarykey-select');
-    const perTableDiv = document.getElementById('table-filtering');
-
+    primaryKeyDiv.innerText = "";
+    perTableDiv.innerText = "";
     makeQuickStartFilters(tables, primaryKeyDiv, filterForm);
     makeFullFiltersCheckboxes(tables, columnDiv, filterForm);
     makeFullFiltersText(tables, perTableDiv, filterForm);
  });
+}
+
+function showUserID() {
+  var userIdBox = document.getElementById('user_id_box');
+  var userId = document.getElementById('user_id');
+  userIdBox.style.display = 'block';
+  userId.required = true;
+}
+
+function showDeviceID() {
+  var deviceIdBox = document.getElementById('device_id_box');
+  var deviceId = document.getElementById('device_id');
+  deviceIdBox.style.display = 'block';
+  deviceId.required = true;
 }
 
 //Helper method that creates the quickstart filters
@@ -86,18 +105,11 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
         if(columnName === 'UserId' || columnName === 'DeviceId'){
           //If userId or deviceId exists in the primary key list, display the input boxes
           if(columnNames.includes('UserId')){
-            var userIdBox = document.getElementById('user_id_box');
-            var userId = document.getElementById('user_id');
-            userIdBox.style.display = 'block';
-            userId.required = true;
+            showUserID();
           }
           if(columnNames.includes('DeviceId')){
-            var deviceIdBox = document.getElementById('device_id_box');
-            var deviceId = document.getElementById('device_id');
-            deviceIdBox.style.display = 'block';
-            deviceId.required = true;
+            showDeviceID();
           }
-          
           continue;
         } else{
             //Creating text inputs
