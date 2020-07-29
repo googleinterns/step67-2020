@@ -301,13 +301,31 @@ function getFilterValues() {
   var elements = document.getElementById("filter-form").elements;
   var newURL = new URLSearchParams();
   for (var i =0; i < elements.length; i++) {
-      if (elements[i].name){
+      if (elements[i].type == "checkbox") {
+          if(elements[i].checked == true) {
+            newURL.append(elements[i].name,elements[i].value);
+          }
+          continue;
+      } else if (elements[i].name) {
         newURL.append(elements[i].name,elements[i].value);
       }  
   }
-
   var newQueryString = window.location.pathname + '?' + newURL.toString();
   history.pushState(null, '', newQueryString);
   return false;
+}
 
+function clearFilters() { 
+    //TODO: ? Need a method to update filter box if someone pastes link with query
+    //TODO: Update Query String right away after clear by calling get Filter Values
+    var elements = document.getElementById("filter-form").elements;
+    console.log(elements);
+    for (var i =0; i < elements.length; i++) {
+      if (elements[i].type == "text") {
+        elements[i].value = "";
+      } else if (elements[i].type == "checkbox") {
+        elements[i].checked = true;
+      } 
+    }
+    getFilterValues();
 }

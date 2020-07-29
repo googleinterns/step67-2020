@@ -28,6 +28,19 @@ input{
   color: gray;
 }
 
+#filter-alert {
+  float: left;
+  margin-left: 180px;
+  padding: 3px;
+  margin: 3px;
+  background-color: darkseagreen;
+  border-color: cadetblue;
+  color: white;
+  width: 0px;
+  font-size: 12px;
+  opacity: 0;
+}
+
 #alert {
   float: right;
   margin-right: 90px;
@@ -37,10 +50,6 @@ input{
   width: 0px;
   font-size: 12px;
   opacity: 0;
-  animation: hide 3s;
-  animation-delay: 2s;
-  /* animation-play-state: paused; */
-  animation-fill-mode: forwards;
 }
 
 @keyframes hide {
@@ -48,22 +57,6 @@ input{
         width:0;
         opacity: 0;
     }
-}
-@keyframes show {
-    to {
-        width: 110px;
-        opacity: 100;
-    }
-}
-
-.closebtn {
-  margin-left: 5px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 14px;
-  line-height: 12px;
-  cursor: pointer;
 }
 
 .id {
