@@ -82,34 +82,34 @@ function login() {
 //TODO: Pass another paramater to combine data conversion functions 
 function dataConversionMillis(column,tableData){
     tableData.columnSchemas[column].schemaType = "TIMESTAMP";
-    for (var i =0; i<tableData.dataTable.length; i++) {
-      var time = parseInt(tableData.dataTable[i][column]);
+    for (var index=0; index<tableData.dataTable.length; index++) {
+      var time = parseInt(tableData.dataTable[index][column]);
       var date = new Date(time); 
       date.setHours(date.getHours() - 2); //Convert from default Central Time to PST
-      tableData.dataTable[i][column] = date.toISOString();
+      tableData.dataTable[index][column] = date.toISOString();
     } 
     return tableData;
 }
 
 function dataConversionGenreEnum(column,tableData){
     tableData.columnSchemas[column].schemaType = "STRING";
-    for (var i =0; i<tableData.dataTable.length; i++) {
-      var number = parseInt(tableData.dataTable[i][column]);
+    for (var index=0; index<tableData.dataTable.length; index++) {
+      var number = parseInt(tableData.dataTable[index][column]);
       switch(number) {
         case 1:
-            tableData.dataTable[i][column] = "Rock";
+            tableData.dataTable[index][column] = "Rock";
             break;
         case 2:
-            tableData.dataTable[i][column] = "Jazz";
+            tableData.dataTable[index][column] = "Jazz";
             break;
         case 3:
-            tableData.dataTable[i][column] = "Classical";
+            tableData.dataTable[index][column] = "Classical";
             break;
         case 4:
-            tableData.dataTable[i][column] = "Pop";
+            tableData.dataTable[index][column] = "Pop";
             break;
         default:
-           tableData.dataTable[i][column] = "Unspecified";
+           tableData.dataTable[index][column] = "Unspecified";
       }
     }
     return tableData;
@@ -124,7 +124,7 @@ function dataConversionProto(column,tableData) {
 
       for (var j = 0; j<json.length; j++) {
           if (json[j] == ',' ) {
-              newString += (Boolean(tab) ? (json[j] + "\n"+"\t") : (json[j] + "\n"));
+              newString += (Boolean(tab) ? (json[j] + "\n\t") : (json[j] + "\n"));
           } else if (j !=0 && (json[j] == '{' || json[j] =='[')) {
                 newString += json[j] + "\n\t";
                 tab = true;
