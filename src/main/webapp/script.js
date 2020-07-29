@@ -185,19 +185,36 @@ function createListElement(text) {
   return liElement;
 }
 
+var linkShowing = Boolean(false);
 function copyLink() {
   // Create temporary input to copy text and then remove input
   var tempInput = document.createElement("input");
+//   document.getElementById("alert").style.animationFillMode = "none";
   tempInput.value = window.location.href;
   document.body.appendChild(tempInput);
   tempInput.select();
   document.execCommand("copy");
   document.body.removeChild(tempInput);
-  document.getElementById("alert").classList.remove("invisible");
+  document.getElementById("alert").style.width = "110px";
+  document.getElementById("alert").style.opacity = 100;
+  
+  if (!linkShowing){
+      document.getElementById("alert").style.animation = "hide 3s";
+      document.getElementById("alert").style.animationFillMode = "forwards";
+      
+      console.log("hi");
+  } else {
+      document.getElementById("alert").style.animation = "show 2s";
+      document.getElementById("alert").style.animationFillMode = "forwards";
+      console.log("bye");
+  }
+  linkShowing = !linkShowing
 }
 
 function closeAlert() {
-   document.getElementById("alert").classList.add("invisible");
+   document.getElementById("alert").style.width = "0px";
+   document.getElementById("alert").style.opacity = 0;
+   document.getElementById("alert").style.animation = "show";
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg

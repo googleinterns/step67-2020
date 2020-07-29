@@ -34,8 +34,26 @@ input{
   padding: 1px;
   background-color: red;
   color: white;
-  width: 110px;
+  width: 0px;
   font-size: 12px;
+  opacity: 0;
+  animation: hide 3s;
+  animation-delay: 2s;
+  /* animation-play-state: paused; */
+  animation-fill-mode: forwards;
+}
+
+@keyframes hide {
+    to {
+        width:0;
+        opacity: 0;
+    }
+}
+@keyframes show {
+    to {
+        width: 110px;
+        opacity: 100;
+    }
 }
 
 .closebtn {
@@ -46,7 +64,6 @@ input{
   font-size: 14px;
   line-height: 12px;
   cursor: pointer;
-  transition: 0.5s;
 }
 
 .id {

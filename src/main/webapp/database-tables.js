@@ -4,7 +4,6 @@ let tablesList = [];
 var showing = Boolean(false);
 
 function showDatabase() {
-  if (!showing){
     showing = true;
     const search = window.location.search;
     var searchParams = new URLSearchParams(search);
@@ -42,7 +41,6 @@ function showDatabase() {
         id++;
       }
     });
-  }
 }
 
 function updateSqlOnPage(sql) {

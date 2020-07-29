@@ -299,26 +299,15 @@ function toggleFilters() {
 
 function getFilterValues() {
   var elements = document.getElementById("filter-form").elements;
-  console.log(elements);
-  //make button bigger
-  //padding left to instruction
-  ///loop through elements
-  //var element id = elements[index].getelementbyid('idname')
-  //var elementvalue = elemnts[index].getelementbyid('idname').value
-  var params = new URLSearchParams(window.location.search);
-  params.append("some", "data");
+  var newURL = new URLSearchParams();
   for (var i =0; i < elements.length; i++) {
       if (elements[i].name){
-        params.append(elements[i].name,elements[i].value);
-      }   
-    console.log(elements[i]);
-    console.log(elements[i].name ? elements[i].name : 'EMPTY');
-    console.log(elements[i].value);
+        newURL.append(elements[i].name,elements[i].value);
+      }  
   }
 
-  var newRelativePathQuery = window.location.pathname + '?' + params.toString();
-    history.pushState(null, '', newRelativePathQuery);
-
+  var newQueryString = window.location.pathname + '?' + newURL.toString();
+  history.pushState(null, '', newQueryString);
   return false;
 
 }
