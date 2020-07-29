@@ -91,6 +91,14 @@ h2 {
   font-family: 'Open Sans', sans-serif;
 }
 
+body {
+  background-color: white;
+}
+
+p {
+  color: black;
+}
+
 #submit {
   background-color: rgb(26, 162, 96, 0.7);
   margin-left: 10px;
