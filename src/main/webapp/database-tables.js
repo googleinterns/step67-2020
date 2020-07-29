@@ -1,8 +1,6 @@
 let tablesList = [];
 
 //Boolean to ensure data only shows after first click
-var showing = Boolean(false);
-
 function showDatabase() {
     showing = true;
     const search = window.location.search;

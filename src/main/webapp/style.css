@@ -26,6 +26,7 @@ input{
 
 #instruction {
   color: gray;
+  margin-left: 15px;
 }
 
 #filter-alert {
