@@ -153,4 +153,16 @@ h2 {
 
 #filter-form {
   padding: 10px;
+  background-color: gray;
+  color: blue;
+}
+
+#idAlert {
+  float: right;
+  margin-right: 120px;
+  padding: 1px;
+  background-color: rgb(20,170,100);
+  color: white;
+  width: 140px;
+  font-size: 12px;
 }
