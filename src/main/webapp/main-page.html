@@ -69,8 +69,10 @@
         <div id="column-select" style="padding: 10px; display:none;">
           <h2 class="filter-box-header">Column Selection</h2>
         </div>
-        
-        <input type="submit" id="submit" value="Apply Filters">
+
+        <input type="submit" id="submit" value="Apply Filters" onsubmit="return hasUserOrDeviceId()">
+        <div style="padding:5px;"></div>
+
       </form>  
     </div>
 

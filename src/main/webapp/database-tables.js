@@ -25,6 +25,10 @@ function showDatabase() {
     .then((data) => { 
       document.getElementById("tables").innerText = '';
       document.getElementById("sql").innerText = '';
+
+      if (data.length == 0) {
+        document.getElementById("tables").innerText = 'No tables found. UserID/DeviceID may be invalid.';
+      }
       
       let id = 0;
       let tableIndex;
@@ -46,7 +50,6 @@ function showDatabase() {
         }
         updateSqlOnPage(tableData.sql);
         
-        //TODO: sql showing up x2 for some reason, figure this out
         var dataTable = finalDataTable.dataTable;
         let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
 

@@ -1,3 +1,20 @@
+function hasUserOrDeviceID() {
+  const deviceId = document.getElementById('device_id');
+  const userId = document.getElementById('user_id');
+
+  if (deviceId == null || userId == null) {
+    return false;
+  }
+  if (deviceId.value == null && userId.value == null) {
+    //TODO - display a message?
+    deviceId.style.border = "1px solid red";
+    userId.style.border = "1px solid red";
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
   var filterButton = document.getElementById("filter-button");
@@ -63,18 +80,22 @@ function createFilters() {
  });
 }
 
-function showUserID() {
+function showUserID(required) {
   var userIdBox = document.getElementById('user_id_box');
   var userId = document.getElementById('user_id');
   userIdBox.style.display = 'block';
-  userId.required = true;
+  if (required) {
+    userId.required = true;
+  }
 }
 
-function showDeviceID() {
+function showDeviceID(required) {
   var deviceIdBox = document.getElementById('device_id_box');
   var deviceId = document.getElementById('device_id');
   deviceIdBox.style.display = 'block';
-  deviceId.required = true;
+  if (required) {
+    deviceId.required = true; 
+  }
 }
 
 //Helper method that creates the quickstart filters
@@ -96,20 +117,23 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   let primarykey_column_inputs = document.createElement('div');
   primarykey_column_inputs.style.backgroundColor = 'white';
 
+  var userIDRequired = Boolean(false);
+  var deviceIDRequired = Boolean(false);
+
   for(var keys in tables){
     const columnNames = tables[keys][0];
-    if(keys === 'PrimaryKeys'){
+    if (keys != 'PrimaryKeys') {
+      if(columnNames.includes('UserId') && !columnNames.includes('DeviceId')){
+        userIDRequired = true;
+      } else if(columnNames.includes('DeviceId') && !columnNames.includes('UserId')){
+        deviceIDRequired = true;
+      } 
+    }
+    else if(keys === 'PrimaryKeys'){
       for(var col in columnNames){
         //Skip making input boxes for UserId and DeviceId for Quickstart
         const columnName = columnNames[col];
         if(columnName === 'UserId' || columnName === 'DeviceId'){
-          //If userId or deviceId exists in the primary key list, display the input boxes
-          if(columnNames.includes('UserId')){
-            showUserID();
-          }
-          if(columnNames.includes('DeviceId')){
-            showDeviceID();
-          }
           continue;
         } else{
             //Creating text inputs
@@ -131,7 +155,6 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
             var div = document.createElement('div');
             div.style.padding = '10px';
             primarykey_column_inputs.appendChild(div);
-
         }
       }
       //onclick event that will hide/show primary key text boxes
@@ -150,6 +173,8 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
       primaryKeyDiv.appendChild(div);
     }
   }
+  showUserID(userIDRequired);
+  showDeviceID(deviceIDRequired);
 }
 
 function makeFullFiltersText(tables, perTableDiv, filterForm) {
