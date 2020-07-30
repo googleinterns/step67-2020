@@ -270,3 +270,11 @@ function switchColorMode() {
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
   document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
 }
+
+function extendSQL() {
+  const sqlArea = document.getElementById("sql-area");
+  sqlArea.style.height = "70px";
+  const arrow = document.getElementById("arrow");
+  arrow.classList.remove("arrow up");
+  arrow.classList.add("arrow down");
+}
