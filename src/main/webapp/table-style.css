@@ -1,11 +1,12 @@
 table {
   margin-top: 10px;
   margin-bottom: 15px;
+  border-collapse: collapse;
 }
 
 td, th {
   padding: 4px;
-  white-space: pre;
+  border:1px solid white;
 }
  
 body {
