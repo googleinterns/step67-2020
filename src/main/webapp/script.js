@@ -78,7 +78,10 @@ function getTablesList(dbName) {
   const search = "?list-databases=" + dbName;
 
   const tableListSpace = document.getElementById('table-list');
-  tableListSpace.innerText = "Loading...";
+  const loadingElement = document.createElement('div');
+  loadingElement.id = 'loading';
+  loadingElement.innerText = 'Loading...';
+  tableListSpace.appendChild(loadingElement);
   
   const queryString = tablesUrl + search;
   fetch(queryString)
@@ -239,4 +242,31 @@ function login(){
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
   });
+}
+
+var darkMode = Boolean(false);
+
+function switchColorMode() {
+  const oldStyle = document.getElementsByTagName("link").item(1);
+  const newStyle = document.createElement("link");
+  newStyle.rel = "stylesheet";
+  newStyle.type = "text/css";
+
+  const tableStyleOld = document.getElementsByTagName("link").item(2);
+  const tableStyleNew = document.createElement("link");
+  tableStyleNew.rel = "stylesheet";
+  tableStyleNew.type = "text/css";
+
+  if (darkMode) {
+    newStyle.href = "/table-light.css";
+    tableStyleNew.href = "/main-page-light.css";
+    document.getElementById("mode-button").innerText = "Light Mode";
+  } else {
+    newStyle.href = "/table-dark.css";
+    tableStyleNew.href = "/main-page-dark.css";
+    document.getElementById("mode-button").innerText = "Dark Mode";
+  }
+  darkMode = !darkMode;
+  document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
+  document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
 }
