@@ -1,14 +1,12 @@
 function hasUserOrDeviceID() {
   const deviceId = document.getElementById('device_id');
   const userId = document.getElementById('user_id');
-  console.log(deviceId.value)
-  console.log(userId.value)
+
   if (deviceId == null || userId == null) {
     return false;
   }
   if (deviceId.value == null && userId.value == null) {
-    console.log('here')
-    //TODO - display a message
+    //TODO - display a message?
     deviceId.style.border = "1px solid red";
     userId.style.border = "1px solid red";
     return false;
@@ -124,10 +122,8 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
 
   for(var keys in tables){
     const columnNames = tables[keys][0];
-    console.log(columnNames)
     if (keys != 'PrimaryKeys') {
       if(columnNames.includes('UserId') && !columnNames.includes('DeviceId')){
-        console.log('here true')
         userIDRequired = true;
       } else if(columnNames.includes('DeviceId') && !columnNames.includes('UserId')){
         deviceIDRequired = true;
@@ -159,7 +155,6 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
             var div = document.createElement('div');
             div.style.padding = '10px';
             primarykey_column_inputs.appendChild(div);
-
         }
       }
       //onclick event that will hide/show primary key text boxes
@@ -178,8 +173,6 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
       primaryKeyDiv.appendChild(div);
     }
   }
-  console.log('user ' + userIDRequired)
-  console.log('device ' + deviceIDRequired)
   showUserID(userIDRequired);
   showDeviceID(deviceIDRequired);
 }
