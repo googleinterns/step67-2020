@@ -42,10 +42,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    if (request.getParameter("user_id") == null || request.getParameter("user_id") == "") {
-      if (request.getParameter("device_id") == null || request.getParameter("device_id") == "") {
-        return;
-      }
+    String userID = request.getParameter("user_id");
+    String deviceID = request.getParameter("device_id")
+    if (isParameterEmpty(userID) && isParameterEmpty(deviceID)) {
+      return;
     }
     
     response.setContentType(TEXT_TYPE);
@@ -101,6 +101,10 @@ public class DataFromDatabaseServlet extends HttpServlet {
     String json = new Gson().toJson(tables);
     insertUsingDml(account,reason,queryAudit);
     response.getWriter().println(json);
+  }
+
+  private boolean isParameterEmpty(String parameter) {
+    return parameter == null || parameter == "";
   }
 
   private void checkTableHasColumns(List<ColumnSchema> columnSchemas) {
