@@ -22,17 +22,17 @@
       <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
         <input type="search" placeholder="Search...">
-        <a href="splash.html"><button>Previous Page</button></a>
-        <button id="filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
-        <button id="data-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
-        <button id="share-button" onclick="copyLink()"> Share Query </button>
-        <button onclick="clearFilters()"> Clear Filters </button>
+        <a href="splash.html"><button class = "button">Previous Page</button></a>
+        <button id="filter-button" class = "button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id="data-button" class = "button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
+        <button id="share-button" class = "button" onclick="copyLink()"> Share Query </button>
+        <button class = "button" onclick="clearFilters()"> Clear Filters </button>
+      </div>
+      <div id="alert">
+        <strong>Link Copied!</strong>
       </div>
     </div>
 
-    <div id="alert">
-      <strong>Link Copied!</strong>
-    </div>
 
     <div id="idAlert" class="invisible">
       <span class="closebtn" onclick="closeIDAlert()">&times;</span> 

@@ -240,11 +240,13 @@ function luckyFilter() {
 function luckyData() {
   previousId="data-button";
   previousText = document.getElementById("data-button").textContent;
+  document.getElementById("data-button").style.fontSize = "12px";
   document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
 }
 
 function unlucky() {
   document.getElementById(previousId).textContent = previousText;
+  document.getElementById(previousId).style.fontSize = "14px";
 }
 
 function changeText() {
