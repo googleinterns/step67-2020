@@ -240,3 +240,21 @@ function login(){
     document.getElementById("user").innerText = user;
   });
 }
+
+function extendSQL() {
+  const sqlArea = document.getElementById("sql-area");
+  const arrow = document.getElementById("arrow");
+  if (sqlArea.style.height == "200px") {
+    collapseSQL(sqlArea, arrow);
+  } else {
+    sqlArea.style.height = "200px";
+    arrow.classList.remove("up");
+    arrow.classList.add("down");
+  }
+}
+ 
+function collapseSQL(sqlArea, arrow) {
+  sqlArea.style.height = "50px";
+  arrow.classList.remove("down");
+  arrow.classList.add("up");
+}
