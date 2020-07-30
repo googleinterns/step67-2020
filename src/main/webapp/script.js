@@ -45,11 +45,11 @@ function getDatabaseAndTable(){
   
   for (var i = 0; i<search.length; i++){
       if (search.charAt(i) == '='){
-          startIndex = i;
+        startIndex = i;
       } else if (search.charAt(i) == '&'){
-          break;
+        break;
       } else{
-          databaseString += search.charAt(i);
+        databaseString += search.charAt(i);
       }
   }
 
@@ -66,8 +66,8 @@ function getDatabaseAndTable(){
       databaseTable.appendChild(tableText);
 
       for (let index = 0; index < list.length; index++) {
-          databaseTable.appendChild(
-          createListElement(list[index]));
+        databaseTable.appendChild(
+        createListElement(list[index]));
       }
   });
 }
