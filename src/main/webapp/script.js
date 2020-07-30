@@ -260,14 +260,13 @@ function switchColorMode() {
   if (darkMode) {
     newStyle.href = "/table-light.css";
     tableStyleNew.href = "/main-page-light.css";
-    darkMode = false;
     document.getElementById("mode-button").innerText = "Light Mode";
   } else {
     newStyle.href = "/table-dark.css";
     tableStyleNew.href = "/main-page-dark.css";
-    darkMode = true;
     document.getElementById("mode-button").innerText = "Dark Mode";
   }
+  darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
   document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
 }
