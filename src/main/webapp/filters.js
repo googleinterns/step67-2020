@@ -81,7 +81,7 @@ function showDeviceID() {
 function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   //Creating primary key dropdown 
   var primarykey_select = document.createElement('select');
-  primarykey_select.style.width = '210px';
+  primarykey_select.style.width = '200px';
   primarykey_select.options.remove(0);
   primarykey_select.name = 'Primary Keys';
   primarykey_select.id = 'primary_key';
@@ -127,7 +127,7 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
             //Styling DOM elements
             primarykey_column_inputs.style.border = '1px solid';
             primarykey_column_inputs.style.display = 'none';
-            primarykey_column_inputs.style.width = '210px';
+            primarykey_column_inputs.style.width = '200px';
             var div = document.createElement('div');
             div.style.padding = '10px';
             primarykey_column_inputs.appendChild(div);
@@ -167,7 +167,7 @@ function makeFullFiltersText(tables, perTableDiv, filterForm) {
     addSelectedTableToForm(tableName, filterForm);
     
     var select = document.createElement('select');
-    select.style.width = '210px';
+    select.style.width = '200px';
     select.options.remove(0);
     select.id = "table-select";
 
@@ -200,7 +200,7 @@ function makeFullFiltersText(tables, perTableDiv, filterForm) {
 
       textInputs.style.border = "1px solid";
       textInputs.style.display = "none";
-      textInputs.style.width = '210px';
+      textInputs.style.width = '200px';
 
       var boxDiv = document.createElement('div');
       boxDiv.style.padding ='4px';
@@ -235,7 +235,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     }
 
     var column_select = document.createElement('select');
-    column_select.style.width = '210px';
+    column_select.style.width = '200px';
     column_select.options.remove(0);
     column_select.name = keys;
     column_select.id = keys;
@@ -273,7 +273,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
 
       colFilters.style.border = '1px solid';
       colFilters.style.display = 'none';
-      colFilters.style.width = '210px';
+      colFilters.style.width = '200px';
 
       var colBoxDiv = document.createElement('div');
       colBoxDiv.style.padding ='4px';
