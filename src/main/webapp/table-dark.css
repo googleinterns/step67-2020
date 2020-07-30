@@ -6,12 +6,12 @@ th {
 }
 
 tr:nth-child(even) {
-  background-color: darkgray;
+  background-color: rgb(80,80,80);
   color: white;
 }
 
 tr:nth-child(odd) {
-  background-color:  rgb(40,40,40);
+  background-color: rgb(40,40,40);
   color: white;
 }
  

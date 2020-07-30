@@ -3,14 +3,14 @@
   height: 60px;
   top: 0;
   position: fixed;
-  background-color: #f7f1d0;
+  background-color: rgb(20,170,100);
   margin-bottom: 10px;
 }
 
 #filter-box{
   border-style: solid;
   border-width: 1px;
-  background-color:#fafdf9;
+  background-color:rgb(20,170,100);
   display: block;
   width: 300px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -18,6 +18,11 @@
 
 #filter-header:hover {
   background-color: #ddf0d8;
+}
+
+#instruction {
+  text-align: center;
+  color: rgb(40,40,40);
 }
 
 h2 {
@@ -33,18 +38,33 @@ p {
   color: black;
 }
 
+#submit {
+  background-color:white;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-style: bold;
+  color: black;
+  border-radius: 4px;
+  border: 2px solid black;
+}
+
+#submit:hover{
+  background-color: rgb(200,200,200);
+}
+
 #toggle-button {
-  background-color: #f7f1d0;
+  background-color: white;
   color: black;
   font-style: bold;
   font-size: 15px;
-  border: 2px solid orange;
+  border: 2px solid black;
   border-radius: 3px;
   margin-bottom: 5px;
 }
 
 #toggle-button:hover {
-  background-color: orange;
+  background-color: rgb(200,200,200);
 }
 
 .header-button {
