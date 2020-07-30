@@ -26,6 +26,20 @@ input{
 
 #instruction {
   color: gray;
+  margin-left: 15px;
+}
+
+#filter-alert {
+  float: left;
+  margin-left: 180px;
+  padding: 3px;
+  margin: 3px;
+  background-color: darkseagreen;
+  border-color: cadetblue;
+  color: white;
+  width: 0px;
+  font-size: 12px;
+  opacity: 0;
 }
 
 #alert {
@@ -34,19 +48,16 @@ input{
   padding: 1px;
   background-color: red;
   color: white;
-  width: 110px;
+  width: 0px;
   font-size: 12px;
+  opacity: 0;
 }
 
-.closebtn {
-  margin-left: 5px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 14px;
-  line-height: 12px;
-  cursor: pointer;
-  transition: 0.5s;
+@keyframes hide {
+    to {
+        width:0;
+        opacity: 0;
+    }
 }
 
 .id {

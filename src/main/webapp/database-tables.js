@@ -1,10 +1,7 @@
 let tablesList = [];
 
 //Boolean to ensure data only shows after first click
-var showing = Boolean(false);
-
 function showDatabase() {
-  if (!showing){
     showing = true;
     const search = window.location.search;
     var searchParams = new URLSearchParams(search);
@@ -56,7 +53,6 @@ function showDatabase() {
 
       }
     });
-  }
 }
 
 function updateSqlOnPage(sql) {
