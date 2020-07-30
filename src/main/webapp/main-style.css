@@ -160,7 +160,7 @@ input{
 }
 
 #search-bar {
-  background-image: url(search.svg);
+  background-image: url("search.png");
   padding: 10px;
   background-color: #f7f1d0;
   background-repeat: no-repeat;
