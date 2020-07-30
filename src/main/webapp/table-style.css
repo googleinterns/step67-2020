@@ -12,6 +12,7 @@ th {
  
 td, th {
   padding: 4px;
+  white-space: pre;
 }
  
 tr:nth-child(even) {
