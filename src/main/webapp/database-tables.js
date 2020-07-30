@@ -50,7 +50,6 @@ function showDatabase() {
         }
         updateSqlOnPage(tableData.sql);
         
-        //TODO: sql showing up x2 for some reason, figure this out
         var dataTable = finalDataTable.dataTable;
         let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
 
