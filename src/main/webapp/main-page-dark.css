@@ -35,21 +35,6 @@ p {
   color: white;
 }
 
-#submit {
-  background-color: rgb(26, 162, 96, 0.7);
-  margin-left: 10px;
-  margin-bottom: 10px;
-  font-size: 20px;
-  font-style: bold;
-  color: white;
-  border-radius: 4px;
-  border: 2px solid rgb(26, 162, 96);
-}
-
-#submit:hover{
-  background-color: rgb(26, 162, 96);
-}
-
 #toggle-button {
   background-color: rgb(26, 162, 96, 0.7);
   color: white;
@@ -73,16 +58,6 @@ p {
 
 .header-button:hover {
   background-color: black;
-}
-
-#idAlert {
-  float: right;
-  margin-right: 120px;
-  padding: 1px;
-  background-color: rgb(20,170,100);
-  color: white;
-  width: 140px;
-  font-size: 12px;
 }
 
 input[type=text] {
