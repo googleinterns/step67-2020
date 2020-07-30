@@ -12,7 +12,7 @@ function showDatabase() {
     }
 
     const queryString = '/data-from-db' + search;
-    document.getElementById("tables").innerText = 'Loading...';
+    document.getElementById("tables").innerText = 'Data tables loading...';
     document.getElementById("sql").innerText = 'Queries loading...';
 
     tablesList = [];

@@ -94,7 +94,7 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   primarykey_select.selectedIndex = 0;
 
   let primarykey_column_inputs = document.createElement('div');
-  primarykey_column_inputs.style.backgroundColor = 'white';
+  //primarykey_column_inputs.style.backgroundColor = 'white';
 
   for(var keys in tables){
     const columnNames = tables[keys][0];
@@ -249,7 +249,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     column_select.selectedIndex = 0;
             
     let colFilters = document.createElement('div'); //div for columns filter
-    colFilters.style.backgroundColor = 'white';
+    //colFilters.style.backgroundColor = 'white';
     
     const columnNames = tables[keys][0];
     //Create checkboxes for each column of the table
