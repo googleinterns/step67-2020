@@ -47,8 +47,6 @@
 }
 
 #sql {
-  position: absolute;
-  bottom: 0;
   width: 100%;
   font-size: 12px;
   line-height: 50%;
@@ -63,16 +61,6 @@
   position: fixed;
   background-color: rgb(20,170,100);
   height: 50px;
-  width: 100%;
-  bottom: 0;
-  margin: 0;
-  text-align: center;
-}
-
-.sql-bar {
-  position: absolute;
-  background-color: rgb(20,170,100);
-  height: 30px;
   width: 100%;
   bottom: 0;
   margin: 0;
@@ -149,4 +137,31 @@ input{
 .down {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);
+}
+
+#search-bar {
+  background-image: url(search.svg);
+  padding: 10px;
+  background-color: #f7f1d0;
+  background-repeat: no-repeat;
+  background-size: 35px;
+  border-color: #ff7c5a;
+  border-style: solid;
+  border-radius: 10px;
+  padding-left: 40px;
+  box-shadow: 1px 3px 1.5px #ffd952;
+  width: 0;
+  height: 10px;
+  transition: 0.5s;
+  overflow-x: hidden;
+  right: 0;
+}
+ 
+#search-bar:focus {
+  outline:none;
+}
+ 
+#search-bar:hover {
+  background-color: #ffc45a;
+  width: 300px; 
 }
