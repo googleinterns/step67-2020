@@ -1,4 +1,10 @@
 
+.button {
+  width:115px;
+  height:24px;
+  font-size: 14px;
+}
+
 .id {
   left: 0;
 }
@@ -87,6 +93,20 @@ input{
 
 * {
   font-family: 'Open Sans', sans-serif;
+}
+
+#submit {
+  background-color:  darkseagreen;
+  border-color: cadetblue;
+  border-style: solid;
+  margin-left: 10px;
+  font-size: 20px;
+  font-style: bold;
+  color: white;
+}
+
+#submit:hover{
+  background-color: #2da4d2;
 }
 
 #submit:focus {

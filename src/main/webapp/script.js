@@ -203,11 +203,27 @@ function copyLink() {
   tempInput.select();
   document.execCommand("copy");
   document.body.removeChild(tempInput);
-  document.getElementById("alert").classList.remove("invisible");
+  //Animate popup
+  alertPopup(document.getElementById("alert"));
 }
 
-function closeAlert() {
-  document.getElementById("alert").classList.add("invisible");
+function filterAlert(){
+  alertPopup(document.getElementById("filter-alert"));
+}
+
+function alertPopup(x){
+  x.style.display = "block";
+  x.style.width = "110px";
+  x.style.opacity = 100;
+  x.style.animation = "hide 4s";
+  x.addEventListener("animationend", endAnimation);
+}
+
+function endAnimation() {
+  this.style.opacity = 0; 
+  this.style.width = 0;
+  this.style.animation = "none";
+  this.style.display = "none";
 }
 
 function closeIDAlert() {
@@ -227,21 +243,17 @@ function luckyFilter() {
 function luckyData() {
   previousId="data-button";
   previousText = document.getElementById("data-button").textContent;
+  document.getElementById("data-button").style.fontSize = "12px";
   document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
 }
 
 function unlucky() {
   document.getElementById(previousId).textContent = previousText;
+  document.getElementById(previousId).style.fontSize = "14px";
 }
 
 function changeText() {
   document.getElementById("share-text").value = window.location.href;
-}
-
-function login(){
-  fetch("/login").then(response => response.json()).then((user) => {
-    document.getElementById("user").innerText = user;
-  });
 }
 
 var darkMode = Boolean(false);

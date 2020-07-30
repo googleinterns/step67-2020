@@ -24,7 +24,6 @@
       <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
         <input onmouseover = "hoverOpen()" onkeyup="applySearch()" id="search-bar" type="text" placeholder="Search...">
-
         <a href="index.html"><button class="header-button">Previous Page</button></a>
         <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button id="data-button" class="header-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
@@ -32,12 +31,12 @@
         <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
         <button id="mode-button" class="header-button" onclick="switchColorMode()">Dark Mode</button>
       </div>
+      
+      <div id="alert">
+        <strong>Link Copied!</strong>
+      </div>
     </div>
 
-    <div id="alert" class="invisible">
-      <span class="closebtn" onclick="closeAlert()" >&times;</span> 
-      <strong>Link Copied!</strong>
-    </div>
 
     <div id="idAlert" class="invisible">
       <span class="closebtn" onclick="closeIDAlert()">&times;</span> 
@@ -48,7 +47,7 @@
     <div id="toggle">QUICK START</div>
     
     <div id="filter-box" style="display: none;"> 
-      <form id="filter-form" action="/main-page.html" method="GET">
+      <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "return false;">
         <p id="instruction">Enter userID or deviceID, then select filters.<p>
         <div id="user_id_box" class="id-box">
           <h2 class="filter-box-header">User Id</h2>
@@ -71,9 +70,14 @@
           <h2 class="filter-box-header">Column Selection</h2>
         </div>
 
-        <input type="submit" id="submit" value="Apply Filters" onsubmit="return hasUserOrDeviceId()">
+        <!-- <input type="submit" id="submit" value="Apply Filters" onsubmit="return hasUserOrDeviceId()">
+        <div style="padding:5px;"></div> -->
+        <button id="submit" value="Apply Filters" onclick="filterAlert(); return getFilterValues();">Apply Filters</button>
         <div style="padding:5px;"></div>
-
+        
+        <div id="filter-alert">
+            <strong>Filters Applied!</strong>
+        </div>
       </form>  
     </div>
 
