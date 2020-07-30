@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
     String userEmail = "";
 
     if (!userService.isUserLoggedIn()) {
-      String loginUrl = userService.createLoginURL("/splash.html");
+      String loginUrl = userService.createLoginURL("/index.html");
       userEmail = "Stranger";
       String mail = convertToJsonUsingGson(userEmail);
       response.getWriter().println(mail);
