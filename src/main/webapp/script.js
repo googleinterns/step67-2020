@@ -288,3 +288,7 @@ function collapseSQL(sqlArea, arrow) {
   arrow.classList.remove("down");
   arrow.classList.add("up");
 }
+
+function hoverOpen() {
+ document.getElementById("search-bar").style.width = '300px';
+}
