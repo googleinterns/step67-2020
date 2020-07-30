@@ -258,13 +258,13 @@ function switchColorMode() {
   tableStyleNew.type = "text/css";
 
   if (darkMode) {
-    newStyle.href = "/table-style.css";
-    tableStyleNew.href = "/main-style.css";
+    newStyle.href = "/table-light.css";
+    tableStyleNew.href = "/main-page-light.css";
     darkMode = false;
     document.getElementById("mode-button").innerText = "Light Mode";
   } else {
     newStyle.href = "/table-dark.css";
-    tableStyleNew.href = "/main-dark.css";
+    tableStyleNew.href = "/main-page-dark.css";
     darkMode = true;
     document.getElementById("mode-button").innerText = "Dark Mode";
   }
