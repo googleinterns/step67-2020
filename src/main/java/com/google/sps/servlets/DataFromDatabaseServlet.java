@@ -51,7 +51,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
     String account = LoginServlet.getCurrentUser();
     StringBuilder auditBuilder = new StringBuilder();
     initDatabaseClient(databaseName);
-
+    
     List<Table> tables = new ArrayList<>();
     List<String> queries = new ArrayList<>();
     QueryFactory queryFactory = QueryFactory.getInstance();
@@ -86,6 +86,7 @@ public class DataFromDatabaseServlet extends HttpServlet {
         executeTableQuery(tableBuilder, queryStatement, columnSchemas);
         
         Table tableObject = tableBuilder.build();
+
         tables.add(tableObject);
       } catch (RuntimeException e) {
         // Do nothing - ignore (table has no columns or table DNE)

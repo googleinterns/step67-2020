@@ -5,6 +5,7 @@ table {
 
 td, th {
   padding: 4px;
+  white-space: pre;
 }
  
 body {
