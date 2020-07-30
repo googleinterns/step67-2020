@@ -25,6 +25,10 @@ function showDatabase() {
     .then((data) => { 
       document.getElementById("tables").innerText = '';
       document.getElementById("sql").innerText = '';
+
+      if (data.length == 0) {
+        document.getElementById("tables").innerText = 'No tables found. UserID/DeviceID may be invalid.';
+      }
       
       let id = 0;
       let tableIndex;

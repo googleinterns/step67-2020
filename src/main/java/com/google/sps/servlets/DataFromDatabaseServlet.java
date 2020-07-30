@@ -42,7 +42,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    //TODO: check to make sure there is userid or deviceid in request
+    if (request.getParameter("user_id") == null || request.getParameter("user_id") == "") {
+      if (request.getParameter("device_id") == null || request.getParameter("device_id") == "") {
+        return;
+      }
+    }
     
     response.setContentType(TEXT_TYPE);
     selectedTables = request.getParameterValues(TABLE_SELECT_PARAM);
