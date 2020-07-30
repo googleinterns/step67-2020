@@ -6,8 +6,8 @@
     <link rel="stylesheet" href="main-style.css">
     <script src="./script.js"></script>
     <script src="./database-tables.js"></script>
-    <script src="table.js"></script>
-    <script src="filters.js"></script>
+    <script src="./table.js"></script>
+    <script src="./filters.js"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="table-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,300&display=swap" rel="stylesheet">
@@ -39,7 +39,7 @@
       <strong>UserID and/or DeviceID are required.</strong>
     </div>
     
-    <button id="toggle-button" onClick="toggleFilters();">Switch Filtering Mode</button>
+    <button id="toggle-button" onClick="toggleFilters(); populateFilters();">Switch Filtering Mode</button>
     <div id="toggle">QUICK START</div>
     
     <div id="filter-box" style="display: none;"> 
