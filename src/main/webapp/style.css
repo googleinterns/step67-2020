@@ -11,14 +11,14 @@ input{
 }
   
 #user {
-  position: absolute;
+  position: fixed;
   bottom: 8px;
   right: 16px;
   font-size: 18px;
 }
 
 #justification {
-  position: absolute;
+  position: fixed;
   bottom: 24px;
   right: 16px;
   font-size: 18px; 
@@ -30,7 +30,8 @@ input{
 
 #alert {
   float: right;
-  margin-right: 90px;
+  margin-right: 135px;
+  margin-top: 60px;
   padding: 1px;
   background-color: red;
   color: white;
