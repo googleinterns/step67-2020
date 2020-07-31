@@ -207,6 +207,23 @@ function copyLink() {
   alertPopup(document.getElementById("alert"));
 }
 
+function applyFiltersIfPossible() {
+  const deviceId = document.getElementById('device_id');
+  const userId = document.getElementById('user_id');
+
+  if (deviceId == null || userId == null) {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else if (deviceId.value == null && userId.value == null) {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else if (deviceId.value == "" && userId.value == "") {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else {
+    filterAlert();
+    getFilterValues();
+  }
+  return false;
+}
+
 function filterAlert(){
   alertPopup(document.getElementById("filter-alert"));
 }
@@ -276,11 +293,11 @@ function switchColorMode() {
   if (darkMode) {
     newStyle.href = "/table-light.css";
     tableStyleNew.href = "/main-page-light.css";
-    document.getElementById("mode-button").innerText = "Light Mode";
+    document.getElementById("mode-button").innerText = "Dark Mode";
   } else {
     newStyle.href = "/table-dark.css";
     tableStyleNew.href = "/main-page-dark.css";
-    document.getElementById("mode-button").innerText = "Dark Mode";
+    document.getElementById("mode-button").innerText = "Light Mode";
   }
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);

@@ -46,15 +46,15 @@
     <div id="toggle">QUICK START</div>
     
     <div id="filter-box" style="display: none;"> 
-      <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "return false;">
+      <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "applyFiltersIfPossible(); return false;">
         <p id="instruction">Enter userID or deviceID, then select filters.<p>
         <div id="user_id_box" class="id-box">
           <h2 class="filter-box-header">User Id</h2>
-          <input type="text" id="user_id" name="user_id" placeholder="Enter the UserID">
+          <input type="text" id="user_id" name="UserId" placeholder="Enter the UserID">
         </div>
         <div id="device_id_box" class="id-box">
           <h2 class="filter-box-header">Device Id</h2>
-          <input type="text" id="device_id" name="device_id" placeholder="Enter the DeviceID">
+          <input type="text" id="device_id" name="DeviceId" placeholder="Enter the DeviceID">
         </div>
 
         <div id="primarykey-select" style="padding:10px;" >
@@ -69,7 +69,7 @@
           <h2 class="filter-box-header">Column Selection</h2>
         </div>
 
-        <button id="submit" value="Apply Filters" onclick="filterAlert(); return getFilterValues();">Apply Filters</button>
+        <input type="submit" id="submit" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
         <div style="padding:5px;"></div>
         
         <div id="filter-alert">
