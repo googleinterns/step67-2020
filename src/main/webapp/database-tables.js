@@ -53,6 +53,7 @@ function showDatabase() {
 
       }
     });
+    showFiltersPanel();
 }
 
 function updateSqlOnPage(sql) {
