@@ -3,6 +3,7 @@ function mainLoad(){
   showReason();
   showFiltersPanel();
   createFilters();
+  populateFilters();
 }
 
 function getDatabases(){
