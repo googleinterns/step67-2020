@@ -5,14 +5,19 @@ function showDatabase() {
     showing = true;
     const search = window.location.search;
     var searchParams = new URLSearchParams(search);
-    if (!searchParams.has("user_id") && !searchParams.has("device_id")) {
+    if (!searchParams.has("UserId") && !searchParams.has("DeviceId")) {
+      document.getElementById("idAlert").classList.remove("invisible");
+      showing = false;
+      return;
+    }
+    if (searchParams.get("UserId") == "" && searchParams.get("DeviceId") == "") {
       document.getElementById("idAlert").classList.remove("invisible");
       showing = false;
       return;
     }
 
     const queryString = '/data-from-db' + search;
-    document.getElementById("tables").innerText = 'Loading...';
+    document.getElementById("tables").innerText = 'Data tables loading...';
     document.getElementById("sql").innerText = 'Queries loading...';
 
     tablesList = [];
@@ -22,6 +27,10 @@ function showDatabase() {
     .then((data) => { 
       document.getElementById("tables").innerText = '';
       document.getElementById("sql").innerText = '';
+
+      if (data.length == 0) {
+        document.getElementById("tables").innerText = 'No tables found. UserID/DeviceID may be invalid.';
+      }
       
       let id = 0;
       let tableIndex;
@@ -43,7 +52,6 @@ function showDatabase() {
         }
         updateSqlOnPage(tableData.sql);
         
-        //TODO: sql showing up x2 for some reason, figure this out
         var dataTable = finalDataTable.dataTable;
         let tableObj = new Table(dataTable, name, colSchemas, id, isEmpty);
 

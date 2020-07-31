@@ -45,11 +45,11 @@ function getDatabaseAndTable(){
   
   for (var i = 0; i<search.length; i++){
       if (search.charAt(i) == '='){
-          startIndex = i;
+        startIndex = i;
       } else if (search.charAt(i) == '&'){
-          break;
+        break;
       } else{
-          databaseString += search.charAt(i);
+        databaseString += search.charAt(i);
       }
   }
 
@@ -66,8 +66,8 @@ function getDatabaseAndTable(){
       databaseTable.appendChild(tableText);
 
       for (let index = 0; index < list.length; index++) {
-          databaseTable.appendChild(
-          createListElement(list[index]));
+        databaseTable.appendChild(
+        createListElement(list[index]));
       }
   });
 }
@@ -78,7 +78,10 @@ function getTablesList(dbName) {
   const search = "?list-databases=" + dbName;
 
   const tableListSpace = document.getElementById('table-list');
-  tableListSpace.innerText = "Loading...";
+  const loadingElement = document.createElement('div');
+  loadingElement.id = 'loading';
+  loadingElement.innerText = 'Loading...';
+  tableListSpace.appendChild(loadingElement);
   
   const queryString = tablesUrl + search;
   fetch(queryString)
@@ -204,6 +207,23 @@ function copyLink() {
   alertPopup(document.getElementById("alert"));
 }
 
+function applyFiltersIfPossible() {
+  const deviceId = document.getElementById('device_id');
+  const userId = document.getElementById('user_id');
+
+  if (deviceId == null || userId == null) {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else if (deviceId.value == null && userId.value == null) {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else if (deviceId.value == "" && userId.value == "") {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else {
+    filterAlert();
+    getFilterValues();
+  }
+  return false;
+}
+
 function filterAlert(){
   alertPopup(document.getElementById("filter-alert"));
 }
@@ -249,4 +269,37 @@ function unlucky() {
 
 function changeText() {
   document.getElementById("share-text").value = window.location.href;
+}
+
+function login(){
+  fetch("/login").then(response => response.json()).then((user) => {
+    document.getElementById("user").innerText = user;
+  });
+}
+
+var darkMode = Boolean(false);
+
+function switchColorMode() {
+  const oldStyle = document.getElementsByTagName("link").item(1);
+  const newStyle = document.createElement("link");
+  newStyle.rel = "stylesheet";
+  newStyle.type = "text/css";
+
+  const tableStyleOld = document.getElementsByTagName("link").item(2);
+  const tableStyleNew = document.createElement("link");
+  tableStyleNew.rel = "stylesheet";
+  tableStyleNew.type = "text/css";
+
+  if (darkMode) {
+    newStyle.href = "/table-light.css";
+    tableStyleNew.href = "/main-page-light.css";
+    document.getElementById("mode-button").innerText = "Dark Mode";
+  } else {
+    newStyle.href = "/table-dark.css";
+    tableStyleNew.href = "/main-page-dark.css";
+    document.getElementById("mode-button").innerText = "Light Mode";
+  }
+  darkMode = !darkMode;
+  document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
+  document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
 }

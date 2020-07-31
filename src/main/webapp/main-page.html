@@ -3,12 +3,14 @@
   <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
-    <link rel="stylesheet" href="main-style.css">
     <script src="./script.js"></script>
     <script src="./database-tables.js"></script>
     <script src="table.js"></script>
     <script src="filters.js"></script>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="table-light.css">
+    <link rel="stylesheet" href="main-page-light.css">
+    <link rel="stylesheet" href="main-style.css">
     <link rel="stylesheet" href="table-style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@1,300&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
@@ -22,11 +24,12 @@
       <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
         <input type="search" placeholder="Search...">
-        <a href="splash.html"><button>Previous Page</button></a>
-        <button id="filter-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
-        <button id="data-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
-        <button id="share-button" onclick="copyLink()"> Share Query </button>
-        <button onclick="clearFilters()"> Clear Filters </button>
+        <a href="splash.html"><button class="header-button">Previous Page</button></a>
+        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id="data-button" class="header-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
+        <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
+        <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
+        <button id="mode-button" class="header-button" onclick="switchColorMode()">Dark Mode</button>
       </div>
     </div>
 
@@ -43,32 +46,30 @@
     <div id="toggle">QUICK START</div>
     
     <div id="filter-box" style="display: none;"> 
-      <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "return false;">
+      <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "applyFiltersIfPossible(); return false;">
         <p id="instruction">Enter userID or deviceID, then select filters.<p>
-        <div id="user_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
-          <h2>User Id</h2>
-          <input type="text" id="user_id" name="user_id" placeholder="Enter the UserID">
-          <div style="padding:5px;"></div>
+        <div id="user_id_box" class="id-box">
+          <h2 class="filter-box-header">User Id</h2>
+          <input type="text" id="user_id" name="UserId" placeholder="Enter the UserID">
         </div>
-        <div id="device_id_box" style="display: none; padding-left: 10px; padding-top: 10px;">
-          <h2>Device Id</h2>
-          <input type="text" id="device_id" name="device_id" placeholder="Enter the DeviceID">
-          <div style="padding:5px;"></div>
+        <div id="device_id_box" class="id-box">
+          <h2 class="filter-box-header">Device Id</h2>
+          <input type="text" id="device_id" name="DeviceId" placeholder="Enter the DeviceID">
         </div>
 
         <div id="primarykey-select" style="padding:10px;" >
-          <h2 style="padding-bottom:10px;">Primary Keys</h2>
+          <h2 class="filter-box-header">Primary Keys</h2>
         </div>
 
         <div id="table-filtering" style="padding: 10px; display:none;">
-          <h2 style="padding-bottom:10px">Per-Table Filtering</h2>
+          <h2 class="filter-box-header">Per-Table Filtering</h2>
         </div>
         
         <div id="column-select" style="padding: 10px; display:none;">
-          <h2 style="padding-bottom:10px">Column Selection</h2>
+          <h2 class="filter-box-header">Column Selection</h2>
         </div>
         
-        <button id="submit" value="Apply Filters" onclick="filterAlert(); getFilterValues();">Apply Filters</button>
+        <input type="submit" id="submit" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
         <div style="padding:5px;"></div>
       </form>
     </div>
