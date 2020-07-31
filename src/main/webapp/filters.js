@@ -1,29 +1,33 @@
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
   var filterButton = document.getElementById("filter-button");
+  filterButton.disabled = true;
 
   if (filterBox.style.width ===  "0px" || filterBox.style.width === null) { //this line change to checking width
     filterBox.style.display = "block";
     //delay width change to make transition visible
-    var timer = setTimeout("delayWidth()",10);
-	filterBox.onmouseout = function() {  clearTimeout(timer); }
+    var showTimer = setTimeout("delayWidth()",10);
+	filterButton.onmouseout = function() {  clearTimeout(showTimer); }
     filterButton.textContent = "Hide Filters";
   } else {
     filterBox.style.width = 0;
     filterButton.textContent = "Show Filters";
     //timer to change display to none after transition
-    var timer = setTimeout("delayDisplay()",500);
-	filterBox.onmouseout = function() {  clearTimeout(timer); }
+    var hideTimer = setTimeout("delayDisplay()",500);
   }
 }
 function delayWidth(){
      var filterBox = document.getElementById("filter-box");
+     var filterButton = document.getElementById("filter-button");
      filterBox.style.width = "300px";
+     filterButton.disabled = false;
 }
 
 function delayDisplay() {
     var filterBox = document.getElementById("filter-box");
+    var filterButton = document.getElementById("filter-button");
     filterBox.style.display = "none";
+    filterButton.disabled = false;
 }
 
 function addDatabaseToForm(database, filterForm) {
