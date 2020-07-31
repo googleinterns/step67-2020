@@ -16,5 +16,5 @@ tr:nth-child(odd) {
 }
  
 tr:hover {
-  background-color: darkgreen;
+  background-color: rgb(13, 110, 65);
 }
