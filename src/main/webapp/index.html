@@ -3,32 +3,30 @@
   <head>
     <meta charset="UTF-8">
     <title>Play User Data Beetle</title>
-    <script src="script.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="splash.css">
+    <script src="./splash.js"></script>
+    <script src="./script.js"></script>
+    <script src="./database-tables.js"></script>
   </head>
   <body onload="onLoad()">
-    <h1>Play User Data Beetle</h1>
-    <p>Click <a href="/example-db">here</a> to view data queried from an example Cloud Spanner database.</p>
-    <p>Click <a href="/splash.html">here</a> to view our prototype.</p>
-    <p>Click <a href="/tables-from-db">here</a> to see a list of tables in the database.</p>
+    <div class="centered">
+      <div name="logoImage">
+        <img src="beetle_logo3.png" style="width: 100px" alt="logo here">
+        <h2>Beetle</h2>
+      </div>
 
-    <p>
-      Please select the database you would like to use. 
-      <br>
-      Press CTRL key to select multiple tables.
-    </p>
+      <div name="text_enter" class="text-enter">
+        <div id="select-db">
+          <form action="/index.html" onsubmit="login()" method="GET" id="database-select-form" >
+            <select id="list-databases" name="list-databases" class="select" onchange="submitDatabaseForm()">
+              <option id="select-title">Loading...</option>
+            </select>
+          </form>
+        </div>
     
-    <div id="select-db">
-      <form action="/index.html" method="GET" id="database-select-form" >
-        <select id="list-databases" name="list-databases" class="select" onchange="submitDatabaseForm()">
-          <option id="select-title">Loading...</option>
-        </select>
-      </form>
+        <div id="table-list"></div>
+      </div>
     </div>
- 
-    <div id="table-list"></div>
-    <div id="user"></div>
- 
   </body>
-</html>
+  <div id="user"></div>
 </html>
