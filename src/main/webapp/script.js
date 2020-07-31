@@ -303,3 +303,7 @@ function switchColorMode() {
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
   document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
 }
+
+function hoverOpen() {
+  document.getElementById("search-bar").style.width = '300px';
+}

@@ -143,6 +143,39 @@ class Table {
     return pageInfoString;
   }
 
+  //filters data by user input on the search bar
+  getFilteredRows(){
+    var searchBarInput = document.getElementById('search-bar').value;
+    console.log(searchBarInput);
+    
+    let filteredRowsList = [];
+
+    let index;
+    for (index in this.dataTable) {
+      const row = this.dataTable[index];
+
+      let rowIndex;
+      for (rowIndex in row) {
+    
+        let rowData = row[rowIndex];
+        
+        if (rowData === null || rowData === "") {
+          console.log("No data exists for this row");
+        } else {
+          //console.log(rowData + " datatype = " + typeof rowData);
+          rowData = rowData.toString(); //converting data type to string for comparison
+          if (rowData.indexOf(searchBarInput) > -1) {
+            //push the row into array
+            console.log(rowData + " contains: " + searchBarInput);
+            filteredRowsList.push(row); 
+          }
+        }
+      }
+    }
+    console.log("filtered rows list : " + filteredRowsList);
+    return filteredRowsList;
+  }
+
   renderTable() {
     const thisTableDiv = document.createElement("div");
     thisTableDiv.id = "table-div-" + this.name;

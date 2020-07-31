@@ -63,6 +63,21 @@ function showDatabase() {
     });
 }
 
+//method that applies the user's input from the search bar and filters the tables to display only the rows that
+//contain the user input
+function applySearch(){
+  //loop through tableslist
+  alert("i was pressed");// checks if onkeyup triggered method twice
+  let index = 0;
+  for(index in tablesList){
+    let table = tablesList[index];
+    //console.log("index: " +index);
+    //console.log("table name: " + table.name);
+    table.getFilteredRows();
+  }
+}
+
+
 function updateSqlOnPage(sql) {
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
