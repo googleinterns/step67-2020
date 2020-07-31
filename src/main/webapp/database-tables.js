@@ -1,21 +1,23 @@
 let tablesList = [];
 
 //Boolean to ensure data only shows after first click
-var showing = Boolean(false);
-
 function showDatabase() {
-  if (!showing){
     showing = true;
     const search = window.location.search;
     var searchParams = new URLSearchParams(search);
-    if (!searchParams.has("user_id") && !searchParams.has("device_id")) {
+    if (!searchParams.has("UserId") && !searchParams.has("DeviceId")) {
+      document.getElementById("idAlert").classList.remove("invisible");
+      showing = false;
+      return;
+    }
+    if (searchParams.get("UserId") == "" && searchParams.get("DeviceId") == "") {
       document.getElementById("idAlert").classList.remove("invisible");
       showing = false;
       return;
     }
 
     const queryString = '/data-from-db' + search;
-    document.getElementById("tables").innerText = 'Loading...';
+    document.getElementById("tables").innerText = 'Data tables loading...';
     document.getElementById("sql").innerText = 'Queries loading...';
 
     tablesList = [];
@@ -59,7 +61,6 @@ function showDatabase() {
 
       }
     });
-  }
 }
 
 function updateSqlOnPage(sql) {

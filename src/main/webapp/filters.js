@@ -1,20 +1,3 @@
-function hasUserOrDeviceID() {
-  const deviceId = document.getElementById('device_id');
-  const userId = document.getElementById('user_id');
-
-  if (deviceId == null || userId == null) {
-    return false;
-  }
-  if (deviceId.value == null && userId.value == null) {
-    //TODO - display a message?
-    deviceId.style.border = "1px solid red";
-    userId.style.border = "1px solid red";
-    return false;
-  } else {
-    return true;
-  }
-}
-
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
   var filterButton = document.getElementById("filter-button");
@@ -115,7 +98,7 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   primarykey_select.selectedIndex = 0;
 
   let primarykey_column_inputs = document.createElement('div');
-  primarykey_column_inputs.style.backgroundColor = 'white';
+  //primarykey_column_inputs.style.backgroundColor = 'white';
 
   var userIDRequired = Boolean(false);
   var deviceIDRequired = Boolean(false);
@@ -173,6 +156,8 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
       primaryKeyDiv.appendChild(div);
     }
   }
+  console.log(userIDRequired);
+  console.log(deviceIDRequired);
   showUserID(userIDRequired);
   showDeviceID(deviceIDRequired);
 }
@@ -273,7 +258,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     column_select.selectedIndex = 0;
             
     let colFilters = document.createElement('div'); //div for columns filter
-    colFilters.style.backgroundColor = 'white';
+    //colFilters.style.backgroundColor = 'white';
     
     const columnNames = tables[keys][0];
     //Create checkboxes for each column of the table
@@ -336,4 +321,37 @@ function toggleFilters() {
     document.getElementById('column-select').style.display = 'none';
     document.getElementById('table-filtering').style.display = 'none';
   }
+}
+
+function getFilterValues() {
+  var elements = document.getElementById("filter-form").elements;
+  var newURL = new URLSearchParams();
+  for (var i =0; i < elements.length; i++) {
+      if (elements[i].type == "checkbox") {
+          if(elements[i].checked == true) {
+            newURL.append(elements[i].name,elements[i].value);
+          }
+          continue;
+      } else if (elements[i].name) {
+        newURL.append(elements[i].name,elements[i].value);
+      }  
+  }
+  var newQueryString = window.location.pathname + '?' + newURL.toString();
+  history.pushState(null, '', newQueryString);
+  return false;
+}
+
+function clearFilters() { 
+    //TODO: ? Need a method to update filter box if someone pastes link with query
+    // onload populate filter panel based on url 
+    var elements = document.getElementById("filter-form").elements;
+    console.log(elements);
+    for (var i =0; i < elements.length; i++) {
+      if (elements[i].type == "text") {
+        elements[i].value = "";
+      } else if (elements[i].type == "checkbox") {
+        elements[i].checked = true;
+      } 
+    }
+    getFilterValues();
 }

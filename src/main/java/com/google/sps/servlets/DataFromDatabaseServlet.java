@@ -42,8 +42,11 @@ public class DataFromDatabaseServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String userID = request.getParameter("user_id");
-    String deviceID = request.getParameter("device_id");
+    String userID = request.getParameter("UserId");
+    String deviceID = request.getParameter("DeviceId");
+    if (userID == null && deviceID == null) {
+      return;
+    }
     if (isParameterEmpty(userID) && isParameterEmpty(deviceID)) {
       return;
     }
