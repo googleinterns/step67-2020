@@ -11,6 +11,11 @@ function showFiltersPanel() {
   }
 }
 
+function filtersHidden() {
+    var filterBox = document.getElementById("filter-box");
+    return filterBox.style.display == "none";
+}
+
 function addDatabaseToForm(database, filterForm) {
   const chosenDatabase = document.createElement('input');
   chosenDatabase.type = "hidden";
