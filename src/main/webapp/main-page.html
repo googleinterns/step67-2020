@@ -25,7 +25,7 @@
       <div class="button-box">
         <input type="search" placeholder="Search...">
         <a href="index.html"><button class="header-button">Previous Page</button></a>
-        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
+        <button id="filter-button" class="header-button" onClick="showFiltersPanel()"> Hide Filters </button>
         <button id="data-button" class="header-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
         <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
         <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
@@ -46,7 +46,7 @@
     <button id="toggle-button" onClick="toggleFilters(); populateFilters();">Switch Filtering Mode</button>
     <div id="toggle">QUICK START</div>
     
-    <div id="filter-box" style="display: none;"> 
+    <div id="filter-box"> 
       <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "applyFiltersIfPossible(); return false;">
         <p id="instruction">Enter userID or deviceID, then select filters.<p>
         <div id="user_id_box" class="id-box">
