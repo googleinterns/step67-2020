@@ -26,7 +26,7 @@
         <input type="search" placeholder="Search...">
         <a href="index.html"><button class="header-button">Previous Page</button></a>
         <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
-        <button id="data-button" class="header-button" onmouseover="timedDataEgg()" onmouseout="unluckyData()" onclick="login(); showDatabase()"> Load Data </button>
+        <button id="data-button" class="header-button" onmouseover="timedDataEgg(this)" onclick="login(); showDatabase()"> Load Data </button>
         <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
         <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
         <button id="mode-button" class="header-button" onclick="switchColorMode()">Dark Mode</button>
@@ -70,7 +70,7 @@
           <h2 class="filter-box-header">Column Selection</h2>
         </div>
 
-        <input type="submit" id="submit" onmouseover="timedFilterEgg()" onmouseout="unluckyFilter(this)" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
+        <input type="submit" id="submit" onmouseover="timedFilterEgg(this)" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
         <div style="padding:5px;"></div>
         
       </form>  

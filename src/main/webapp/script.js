@@ -249,44 +249,28 @@ function closeIDAlert() {
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
-var previousText = "placeholder";
-var previousId = "id";
-
 function luckyFilter() {
   previousId="filter-button";
   previousText = document.getElementById("filter-button").textContent;
   document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
 }
 
-var timer;
-var filterTimer;
-
-//TODO: Combine at least one of these methods
-function timedFilterEgg() {
+function timedFilterEgg(element) {
     var filterTimer = setTimeout("luckyFilter()",2000);
+    element.onmouseout = function() { clearTimeout(filterTimer); element.value = "Apply Filters"; }
 }
 
 function luckyFilter() {
   document.getElementById("submit").value = "I'm Feeling Lucky!";
 }
 
-function unluckyFilter(elem){
-  elem.value = "Apply Filters";
-  clearTimeout(filterTimer); 
-}
-
-function timedDataEgg() {
+function timedDataEgg(element) {
     var timer = setTimeout("luckyData()",2000);
+    element.onmouseout = function() { clearTimeout(timer); element.textContent = "Load Data"; }
 }
 
 function luckyData() {
-  previousText = document.getElementById("data-button").textContent;
   document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
-}
-
-function unluckyData() {
-  document.getElementById("data-button").textContent = "Load Data";
-  clearTimeout(timer); 
 }
 
 function changeText() {
