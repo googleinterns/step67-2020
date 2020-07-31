@@ -61,6 +61,10 @@ function showDatabase() {
 
       }
     });
+    // Only hide filter panel 
+    if (!filtersHidden()) {
+        showFiltersPanel();
+    }
 }
 
 function updateSqlOnPage(sql) {

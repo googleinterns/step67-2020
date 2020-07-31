@@ -219,14 +219,10 @@ function applyFiltersIfPossible() {
   } else if (deviceId.value == "" && userId.value == "") {
     document.getElementById("idAlert").classList.remove("invisible");
   } else {
-    filterAlert();
     getFilterValues();
+    showDatabase();
   }
   return false;
-}
-
-function filterAlert(){
-  alertPopup(document.getElementById("filter-alert"));
 }
 
 function alertPopup(x){
