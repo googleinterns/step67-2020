@@ -176,8 +176,7 @@ class Table {
         if (rowData === null || rowData === "") {
           //No data for this row
         } else {
-          rowData = rowData.toString(); //converting data type to string for comparison
-          rowData = rowData.toLowerCase();
+          rowData = rowData.toString().toLowerCase();
           if (rowData.indexOf(searchBarInput) > -1) {
             filteredRowsList.push(row); 
             break;
