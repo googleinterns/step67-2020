@@ -248,12 +248,6 @@ function closeIDAlert() {
 var previousText = "placeholder";
 var previousId = "id";
 
-function luckyFilter() {
-  previousId="filter-button";
-  previousText = document.getElementById("filter-button").textContent;
-  document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
-}
-
 var timer;
 var filterTimer;
 
