@@ -61,6 +61,10 @@ function showDatabase() {
 
       }
     });
+    // Only hide filter panel 
+    if (!filtersHidden()) {
+        showFiltersPanel();
+    }
 }
 
 //method that applies the user's input from the search bar and filters the tables to display only the rows that

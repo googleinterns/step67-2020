@@ -25,9 +25,9 @@
       <div class="button-box">
         <input onmouseover = "hoverOpen()" onkeyup="applySearch();" id="search-bar" type="text" placeholder="Search...">
         <a href="index.html"><button class="header-button">Previous Page</button></a>
-        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button id="data-button" class="header-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
         <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
+        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
         <button id="mode-button" class="header-button" onclick="switchColorMode()">Dark Mode</button>
 
@@ -69,15 +69,11 @@
         <div id="column-select" style="padding: 10px; display:none;">
           <h2 class="filter-box-header">Column Selection</h2>
         </div>
-
+        
         <input type="submit" id="submit" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
 
         <div style="padding:5px;"></div>
-        
-        <div id="filter-alert">
-            <strong>Filters Applied!</strong>
-        </div>
-      </form>  
+      </form>
     </div>
 
     <div id="user"></div>
