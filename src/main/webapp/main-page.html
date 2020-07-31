@@ -24,7 +24,6 @@
       <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
         <input type="search" placeholder="Search...">
-
         <a href="index.html"><button class="header-button">Previous Page</button></a>
         <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button id="data-button" class="header-button" onmouseover="timedDataEgg()" onmouseout="unluckyData()" onclick="login(); showDatabase()"> Load Data </button>
@@ -81,10 +80,9 @@
     <div id="justification"></div>
     <div id="tables"></div>
     <div class="sql-bar" id="sql-area" onclick="extendSQL()">
-        <i class="arrow up" id="arrow"></i>
-        <div id="sql"></div>
+      <p>SQL Queries<i class="arrow up" id ="arrow"></i></p>
+      <div id="sql"></div>
     </div>
-    
-    
+
   </body>
 </html>
