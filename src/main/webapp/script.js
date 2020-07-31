@@ -249,11 +249,6 @@ function closeIDAlert() {
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
-function luckyFilter() {
-  previousId="filter-button";
-  previousText = document.getElementById("filter-button").textContent;
-  document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
-}
 
 function timedFilterEgg(element) {
     var filterTimer = setTimeout("luckyFilter()",2000);
