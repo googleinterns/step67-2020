@@ -42,8 +42,11 @@
       <strong>UserID and/or DeviceID are required.</strong>
     </div>
     
-    <button id="toggle-button" onClick="toggleFilters(); populateFilters();">Switch Filtering Mode</button>
-    <div id="toggle">QUICK START</div>
+    <div>
+      <button id="toggle-button" onClick="toggleFilters(); populateFilters();">Switch Filtering Mode</button>
+      <strong id="filter-alert">Filters Applied!</strong>
+      <div id="toggle">QUICK START</div>
+    </div>
     
     <div id="filter-box" style="display: none;"> 
       <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "applyFiltersIfPossible(); return false;">
@@ -72,9 +75,6 @@
         <input type="submit" id="submit" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
         <div style="padding:5px;"></div>
       </form>
-    </div>
-    <div id="filter-alert">
-            <strong>Filters Applied!</strong>
     </div>
 
     <div id="user"></div>

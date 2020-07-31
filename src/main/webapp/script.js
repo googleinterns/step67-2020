@@ -227,6 +227,7 @@ function applyFiltersIfPossible() {
 
 function filterAlert(){
   alertPopup(document.getElementById("filter-alert"));
+  showDatabase();
 }
 
 function alertPopup(x){
