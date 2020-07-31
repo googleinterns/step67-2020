@@ -258,14 +258,35 @@ function luckyFilter() {
   document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
 }
 
+var timer;
+var filterTimer;
+
+//TODO: Combine at least one of these methods
+function timedFilterEgg() {
+    var filterTimer = setTimeout("luckyFilter()",2000);
+}
+
+function luckyFilter() {
+  document.getElementById("submit").value = "I'm Feeling Lucky!";
+}
+
+function unluckyFilter(elem){
+  elem.value = "Apply Filters";
+  clearTimeout(filterTimer); 
+}
+
+function timedDataEgg() {
+    var timer = setTimeout("luckyData()",2000);
+}
+
 function luckyData() {
-  previousId="data-button";
   previousText = document.getElementById("data-button").textContent;
   document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
 }
 
-function unlucky() {
-  document.getElementById(previousId).textContent = previousText;
+function unluckyData() {
+  document.getElementById("data-button").textContent = "Load Data";
+  clearTimeout(timer); 
 }
 
 function changeText() {
