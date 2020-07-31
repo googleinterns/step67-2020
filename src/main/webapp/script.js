@@ -3,6 +3,7 @@ function mainLoad(){
   showReason();
   showFiltersPanel();
   createFilters();
+  populateFilters();
 }
 
 function getDatabases(){
@@ -275,6 +276,17 @@ function login(){
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
   });
+}
+
+function extendSQL() {
+  const sqlArea = document.getElementById("sql-area");
+  sqlArea.style.height = "70px";
+  const arrow = document.getElementById("arrow");
+  arrow.classList.remove("arrow up");
+  arrow.classList.add("arrow down");
+}
+
+function collapseSQL() {
 }
 
 var darkMode = Boolean(false);

@@ -18,7 +18,8 @@ function showDatabase() {
 
     const queryString = '/data-from-db' + search;
     document.getElementById("tables").innerText = 'Data tables loading...';
-    document.getElementById("sql").innerText = 'Queries loading...';
+    //document.getElementById("sql").innerText = 'Queries loading...';
+    //TODO: put this back
 
     tablesList = [];
   
@@ -26,7 +27,8 @@ function showDatabase() {
     .then(response => response.json())
     .then((data) => { 
       document.getElementById("tables").innerText = '';
-      document.getElementById("sql").innerText = '';
+      //document.getElementById("sql").innerText = '';
+      //TODO: put this back
 
       if (data.length == 0) {
         document.getElementById("tables").innerText = 'No tables found. UserID/DeviceID may be invalid.';
@@ -67,22 +69,19 @@ function showDatabase() {
 //contain the user input
 function applySearch(){
   //loop through tableslist
-  alert("i was pressed");// checks if onkeyup triggered method twice
   let index = 0;
   for(index in tablesList){
     let table = tablesList[index];
-    //console.log("index: " +index);
-    //console.log("table name: " + table.name);
     table.getFilteredRows();
   }
 }
 
 
 function updateSqlOnPage(sql) {
-  const sqlDiv = document.getElementById("sql");
-  const newSql = document.createElement("p");
-  newSql.innerText = sql;
-  sqlDiv.appendChild(newSql);
+  // const sqlDiv = document.getElementById("sql");
+  // const newSql = document.createElement("p");
+  // newSql.innerText = sql;
+  // sqlDiv.appendChild(newSql);
 }
 
 function login() {
@@ -94,7 +93,7 @@ function login() {
     }
     else if (currentUser == "Stranger") {
       //This link first takes you to Google sign in and then continues back to splash page when signed in
-      window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/splash.html");
+      window.location.assign("https://accounts.google.com/ServiceLogin?service=ah&passive=true&continue=https://uc.appengine.google.com/_ah/conflogin%3Fcontinue%3Dhttps://play-user-data-beetle.uc.r.appspot.com/index.html");
     }
   });
 }
@@ -162,7 +161,7 @@ function dataConversionProto(column,tableData) {
 
 function sort(index, id) {
   let table = tablesList[id];
-  let dataTable = table.getDataTable();
+  let dataTable = table.getFilteredRows();
   const dataType = table.getDataType(index);
   let sortDirection = table.getSortDirection(index);
 
@@ -181,7 +180,7 @@ function sort(index, id) {
   }
 
   table.flipSortDirection(index);
-  table.setTable(dataTable);
+  table.setFilteredRows(dataTable);
   table.rerender();
 }
 

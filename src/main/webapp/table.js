@@ -9,6 +9,8 @@ class Table {
     this.sortDirections = new Array(colSchemas.length); // Number cols
     this.makeTableWithTypes(dataTable);
     this.setTable = this.setTable.bind(this);
+    this.setFilteredRows = this.setFilteredRows.bind(this);
+    this.filteredRows = null;
 
     this.page = 0;
     this.rowsPerPage = 10;
@@ -26,6 +28,14 @@ class Table {
 
   getDataTable() {
     return this.dataTable;
+  }
+
+  getFilteredRows() {
+    return this.filteredRows;
+  }
+
+  setFilteredRows(filteredRows) {
+    this.filteredRows = filteredRows;
   }
 
   getDataType(colIndex) {
@@ -107,12 +117,17 @@ class Table {
     }
   }
 
+  displayEmpty() {
+    const table = document.getElementById("table_" + this.name);
+    table.innerText = "No rows in table with applied filters.";
+  }
+
   rerender() {
     this.remove();
     const table = document.getElementById("table_" + this.name);
 
-    if (this.isEmpty) {
-      table.innerText = "No rows in table with applied filters.";
+    if (this.isEmpty || this.filteredRows == null || this.filteredRows.length == 0) {
+      this.displayEmpty();
     } else {
       table.appendChild(this.makeTableHeaders());
       document.getElementById("button-div-" + this.name).style.display = "";
@@ -122,12 +137,14 @@ class Table {
   }
 
   createTableRows(table) {
-    //TODO: change dataTable to millennia's filtered rows
+    if (this.filteredRows == null || this.filteredRows.length == 0) {
+      this.filteredRows = this.dataTable;
+    }
     let index;
     const rowToStart = this.page * this.rowsPerPage; 
-    const rowToEnd = Math.min(rowToStart + this.rowsPerPage, this.dataTable.length);
+    const rowToEnd = Math.min(rowToStart + this.rowsPerPage, this.filteredRows.length);
     for (index = rowToStart; index < rowToEnd; index++) {
-      const row = this.dataTable[index];
+      const row = this.filteredRows[index];
       const rowElement = document.createElement("tr");
   
       let rowIndex;
@@ -139,15 +156,14 @@ class Table {
       }
       table.appendChild(rowElement);
     }
-    const pageInfoString = "Displaying rows " + rowToStart + " to " + rowToEnd + " of " + this.dataTable.length;
+    const pageInfoString = "Displaying rows " + rowToStart + " to " + rowToEnd + " of " + this.filteredRows.length;
     return pageInfoString;
   }
 
-  //filters data by user input on the search bar
+  //Filters data by user input on the search bar
   getFilteredRows(){
     var searchBarInput = document.getElementById('search-bar').value;
-    console.log(searchBarInput);
-    
+    searchBarInput = searchBarInput.toString().toLowerCase();
     let filteredRowsList = [];
 
     let index;
@@ -156,23 +172,27 @@ class Table {
 
       let rowIndex;
       for (rowIndex in row) {
-    
         let rowData = row[rowIndex];
-        
         if (rowData === null || rowData === "") {
-          console.log("No data exists for this row");
+          //No data for this row
         } else {
-          //console.log(rowData + " datatype = " + typeof rowData);
           rowData = rowData.toString(); //converting data type to string for comparison
+          rowData = rowData.toLowerCase();
           if (rowData.indexOf(searchBarInput) > -1) {
-            //push the row into array
-            console.log(rowData + " contains: " + searchBarInput);
             filteredRowsList.push(row); 
+            break;
           }
         }
       }
     }
-    console.log("filtered rows list : " + filteredRowsList);
+    
+    this.filteredRows = filteredRowsList;
+    if (filteredRowsList.length == 0) {
+      this.remove();
+      this.displayEmpty();
+    } else {
+      this.rerender();
+    }
     return filteredRowsList;
   }
 
@@ -259,14 +279,19 @@ class Table {
     thisTableDiv.appendChild(buttonDiv);
   }
 
-  //TODO - make sure to re-render buttons once search is applied
   addPageNumberButtons(pageNumberSpan) {
-    const numRows = this.dataTable.length;
+    let numRows = this.dataTable.length;
+    if (this.filteredRows != null) {
+      numRows = this.filteredRows.length;
+    }
     const maxPageNumber = Math.floor(numRows / this.rowsPerPage);
     this.maxPageNumber = maxPageNumber;
+    if (numRows == this.rowsPerPage) {
+      this.maxPageNumber = 0;
+    }
 
     let count = 0;
-    while (count <= maxPageNumber) {
+    while (count <= this.maxPageNumber) {
       const pageNumButton = document.createElement("button");
       pageNumButton.innerHTML = count;
       pageNumButton.id = count + "-" + this.name;
@@ -335,8 +360,10 @@ class Table {
   }
 
   nextPage() {
-    //TODO: change to filtered rows, not dataTable
-    const numRows = this.dataTable.length;
+    let numRows = this.dataTable.length;
+    if (this.filteredRows != null) {
+      numRows = this.filteredRows.length;
+    }
     if (numRows > (this.page + 1) * this.rowsPerPage) {
       this.resetButtonColor();
       this.page = this.page + 1;
