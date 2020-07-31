@@ -18,8 +18,7 @@ function showDatabase() {
 
     const queryString = '/data-from-db' + search;
     document.getElementById("tables").innerText = 'Data tables loading...';
-    //document.getElementById("sql").innerText = 'Queries loading...';
-    //TODO: put this back
+    document.getElementById("sql").innerText = 'Queries loading...';
 
     tablesList = [];
   
@@ -27,8 +26,7 @@ function showDatabase() {
     .then(response => response.json())
     .then((data) => { 
       document.getElementById("tables").innerText = '';
-      //document.getElementById("sql").innerText = '';
-      //TODO: put this back
+      document.getElementById("sql").innerText = '';
 
       if (data.length == 0) {
         document.getElementById("tables").innerText = 'No tables found. UserID/DeviceID may be invalid.';
@@ -78,10 +76,10 @@ function applySearch(){
 
 
 function updateSqlOnPage(sql) {
-  // const sqlDiv = document.getElementById("sql");
-  // const newSql = document.createElement("p");
-  // newSql.innerText = sql;
-  // sqlDiv.appendChild(newSql);
+  const sqlDiv = document.getElementById("sql");
+  const newSql = document.createElement("p");
+  newSql.innerText = sql;
+  sqlDiv.appendChild(newSql);
 }
 
 function login() {

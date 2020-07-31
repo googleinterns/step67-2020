@@ -1,4 +1,3 @@
-
 .id {
   left: 0;
 }
@@ -32,27 +31,14 @@
 }
 
 #sql {
-  position: absolute;
-  bottom: 0;
-  width: 50%;
+  width: 100%;
   font-size: 12px;
   line-height: 50%;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
-  float: left;
   overflow: scroll;
   text-align: left;
-}
-
-.sql-bar {
-  position: absolute;
-  background-color: rgb(20,170,100);
-  height: 30px;
-  width: 100%;
-  bottom: 0;
-  margin: 0;
-  text-align: center;
 }
 
 input{
