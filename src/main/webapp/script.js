@@ -3,6 +3,7 @@ function mainLoad(){
   showReason();
   showFiltersPanel();
   createFilters();
+  populateFilters();
 }
 
 function getDatabases(){
@@ -45,11 +46,11 @@ function getDatabaseAndTable(){
   
   for (var i = 0; i<search.length; i++){
       if (search.charAt(i) == '='){
-          startIndex = i;
+        startIndex = i;
       } else if (search.charAt(i) == '&'){
-          break;
+        break;
       } else{
-          databaseString += search.charAt(i);
+        databaseString += search.charAt(i);
       }
   }
 
@@ -66,8 +67,8 @@ function getDatabaseAndTable(){
       databaseTable.appendChild(tableText);
 
       for (let index = 0; index < list.length; index++) {
-          databaseTable.appendChild(
-          createListElement(list[index]));
+        databaseTable.appendChild(
+        createListElement(list[index]));
       }
   });
 }
@@ -78,7 +79,10 @@ function getTablesList(dbName) {
   const search = "?list-databases=" + dbName;
 
   const tableListSpace = document.getElementById('table-list');
-  tableListSpace.innerText = "Loading...";
+  const loadingElement = document.createElement('div');
+  loadingElement.id = 'loading';
+  loadingElement.innerText = 'Loading...';
+  tableListSpace.appendChild(loadingElement);
   
   const queryString = tablesUrl + search;
   fetch(queryString)
@@ -200,11 +204,44 @@ function copyLink() {
   tempInput.select();
   document.execCommand("copy");
   document.body.removeChild(tempInput);
-  document.getElementById("alert").classList.remove("invisible");
+  //Animate popup
+  alertPopup(document.getElementById("alert"));
 }
 
-function closeAlert() {
-  document.getElementById("alert").classList.add("invisible");
+function applyFiltersIfPossible() {
+  const deviceId = document.getElementById('device_id');
+  const userId = document.getElementById('user_id');
+
+  if (deviceId == null || userId == null) {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else if (deviceId.value == null && userId.value == null) {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else if (deviceId.value == "" && userId.value == "") {
+    document.getElementById("idAlert").classList.remove("invisible");
+  } else {
+    filterAlert();
+    getFilterValues();
+  }
+  return false;
+}
+
+function filterAlert(){
+  alertPopup(document.getElementById("filter-alert"));
+}
+
+function alertPopup(x){
+  x.style.display = "block";
+  x.style.width = "110px";
+  x.style.opacity = 100;
+  x.style.animation = "hide 4s";
+  x.addEventListener("animationend", endAnimation);
+}
+
+function endAnimation() {
+  this.style.opacity = 0; 
+  this.style.width = 0;
+  this.style.animation = "none";
+  this.style.display = "none";
 }
 
 function closeIDAlert() {
@@ -257,4 +294,31 @@ function collapseSQL(sqlArea, arrow) {
   sqlArea.style.height = "50px";
   arrow.classList.remove("down");
   arrow.classList.add("up");
+}
+
+var darkMode = Boolean(false);
+
+function switchColorMode() {
+  const oldStyle = document.getElementsByTagName("link").item(1);
+  const newStyle = document.createElement("link");
+  newStyle.rel = "stylesheet";
+  newStyle.type = "text/css";
+
+  const tableStyleOld = document.getElementsByTagName("link").item(2);
+  const tableStyleNew = document.createElement("link");
+  tableStyleNew.rel = "stylesheet";
+  tableStyleNew.type = "text/css";
+
+  if (darkMode) {
+    newStyle.href = "/table-light.css";
+    tableStyleNew.href = "/main-page-light.css";
+    document.getElementById("mode-button").innerText = "Dark Mode";
+  } else {
+    newStyle.href = "/table-dark.css";
+    tableStyleNew.href = "/main-page-dark.css";
+    document.getElementById("mode-button").innerText = "Light Mode";
+  }
+  darkMode = !darkMode;
+  document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
+  document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
 }
