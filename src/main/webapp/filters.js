@@ -46,16 +46,39 @@ function createFilters() {
   const database = searchParams.get('list-databases');
   addDatabaseToForm(database, filterForm);
   addReasonToForm(reasonForUse, filterForm);
+
+  const columnDiv = document.getElementById('column-select');
+  const primaryKeyDiv = document.getElementById('primarykey-select');
+  const perTableDiv = document.getElementById('table-filtering');
+
+  primaryKeyDiv.innerText = "Primary key filters loading...";
+  perTableDiv.innerText = "Per-table filters loading...";
   
   fetch(url + queryString).then(response => response.json()).then((tables) => {
-    const columnDiv = document.getElementById('column-select');
-    const primaryKeyDiv = document.getElementById('primarykey-select');
-    const perTableDiv = document.getElementById('table-filtering');
-
+    primaryKeyDiv.innerText = "";
+    perTableDiv.innerText = "";
     makeQuickStartFilters(tables, primaryKeyDiv, filterForm);
     makeFullFiltersCheckboxes(tables, columnDiv, filterForm);
     makeFullFiltersText(tables, perTableDiv, filterForm);
  });
+}
+
+function showUserID(required) {
+  var userIdBox = document.getElementById('user_id_box');
+  var userId = document.getElementById('user_id');
+  userIdBox.style.display = 'block';
+  if (required) {
+    userId.required = true;
+  }
+}
+
+function showDeviceID(required) {
+  var deviceIdBox = document.getElementById('device_id_box');
+  var deviceId = document.getElementById('device_id');
+  deviceIdBox.style.display = 'block';
+  if (required) {
+    deviceId.required = true; 
+  }
 }
 
 //Helper method that creates the quickstart filters
@@ -75,36 +98,35 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   primarykey_select.selectedIndex = 0;
 
   let primarykey_column_inputs = document.createElement('div');
-  primarykey_column_inputs.style.backgroundColor = 'white';
- 
+  //primarykey_column_inputs.style.backgroundColor = 'white';
+
+  var userIDRequired = Boolean(false);
+  var deviceIDRequired = Boolean(false);
+
   for(var keys in tables){
-    if(keys === 'PrimaryKeys'){
-      for(var col in tables[keys][0]){
+    const columnNames = tables[keys][0];
+    if (keys != 'PrimaryKeys') {
+      if(columnNames.includes('UserId') && !columnNames.includes('DeviceId')){
+        userIDRequired = true;
+      } else if(columnNames.includes('DeviceId') && !columnNames.includes('UserId')){
+        deviceIDRequired = true;
+      } 
+    }
+    else if(keys === 'PrimaryKeys'){
+      for(var col in columnNames){
         //Skip making input boxes for UserId and DeviceId for Quickstart
-        if(tables[keys][0][col] === 'UserId' || tables[keys][0][col] === 'DeviceId'){
-          //If userId or deviceId exists in the primary key list, display the input boxes
-          if(tables[keys][0].includes('UserId')){
-            var userIdBox = document.getElementById('user_id_box');
-            var userId = document.getElementById('user_id');
-            userIdBox.style.display = 'block';
-            // userId.required = true;
-          }
-          if(tables[keys][0].includes('DeviceId')){
-            var deviceIdBox = document.getElementById('device_id_box');
-            var deviceId = document.getElementById('device_id');
-            deviceIdBox.style.display = 'block';
-            // deviceId.required = true;
-          }
-          
+        const columnName = columnNames[col];
+        if(columnName === 'UserId' || columnName === 'DeviceId'){
           continue;
         } else{
             //Creating text inputs
+            const columnName = tables[keys][0][col];
             var primkey_input = document.createElement('input');
             primkey_input.type= 'text';
-            primkey_input.id = tables[keys][0][col];
-            primkey_input.name = tables[keys][0][col];
+            primkey_input.id = columnName;
+            primkey_input.name = columnName;
             //Creating the label placeholders for the inputs
-            primkey_input.placeholder = tables[keys][0][col];
+            primkey_input.placeholder = columnName;
 
             //Appending input boxes to the primary_column_inputs div
             primarykey_column_inputs.appendChild(primkey_input);
@@ -116,7 +138,6 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
             var div = document.createElement('div');
             div.style.padding = '10px';
             primarykey_column_inputs.appendChild(div);
-
         }
       }
       //onclick event that will hide/show primary key text boxes
@@ -135,15 +156,13 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
       primaryKeyDiv.appendChild(div);
     }
   }
+  showUserID(userIDRequired);
+  showDeviceID(deviceIDRequired);
 }
 
 function makeFullFiltersText(tables, perTableDiv, filterForm) {
   var searchParams = new URLSearchParams(window.location.search);
-  const reasonForUse = searchParams.get('reason');
-  const database = searchParams.get('list-databases');
-  addDatabaseToForm(database, filterForm);
-  addReasonToForm(reasonForUse, filterForm);
-  
+
   //Create a select dropdown based on the table name as tableName
   for(var tableName in tables){
     if(tableName === 'PrimaryKeys'){
@@ -224,8 +243,6 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     column_select.options.remove(0);
     column_select.name = keys;
     column_select.id = keys;
-
-    addSelectedTableToForm(keys, filterForm);
         
     let colDefaultOption = document.createElement('option');
     colDefaultOption.text = keys;
@@ -235,22 +252,25 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     column_select.selectedIndex = 0;
             
     let colFilters = document.createElement('div'); //div for columns filter
-    colFilters.style.backgroundColor = 'white';
+    //colFilters.style.backgroundColor = 'white';
     
+    const columnNames = tables[keys][0];
     //Create checkboxes for each column of the table
-    for(var col in tables[keys][0]){
+    for(var col in columnNames){
+      const columnName = columnNames[col];
+
       var col_checkbox = document.createElement('input');
       col_checkbox.type= 'checkbox';
-      col_checkbox.value = tables[keys][0][col];
-      col_checkbox.id = tables[keys][0][col];
+      col_checkbox.value = columnName;
+      col_checkbox.id = columnName;
       col_checkbox.name = keys;
       col_checkbox.checked = true; //by default checkbox is checked
 
       var label = document.createElement('label');
-      label.innerHTML = tables[keys][0][col];
-      label.htmlFor =  tables[keys][0][col];
+      label.innerHTML = columnName;
+      label.htmlFor =  columnName;
+
       col_checkbox.innerHTML = label.outerHTML;
-                
       col_checkbox.appendChild(label);
       colFilters.appendChild(col_checkbox);
       colFilters.appendChild(label);
@@ -269,7 +289,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     if (colFilters.style.display === 'none') {
       colFilters.style.display = 'block';
     } else {
-        colFilters.style.display = 'none';
+      colFilters.style.display = 'none';
     }};
 
     //appending colum filter dropdown
@@ -297,19 +317,61 @@ function toggleFilters() {
   }
 }
 
+//function that updates query string when filters are applied
 function getFilterValues() {
   var elements = document.getElementById("filter-form").elements;
-  console.log(elements);
-  
-  ///loop through elements
-  //var element id = elements[index].getelementbyid('idname')
-  //var elementvalue = elemnts[index].getelementbyid('idname').value
-  var params = new URLSearchParams(window.location.search);
-  params.append("some", "data");
-
-  var newRelativePathQuery = window.location.pathname + '?' + params.toString();
-    history.pushState(null, '', newRelativePathQuery);
-
+  var newURL = new URLSearchParams();
+  for (var i =0; i < elements.length; i++) {
+      if (elements[i].type == "checkbox") {
+          if(elements[i].checked == true) {
+            newURL.append(elements[i].name,elements[i].value);
+          }
+          continue;
+      } else if (elements[i].name) {
+        newURL.append(elements[i].name,elements[i].value);
+      }  
+  }
+  var newQueryString = window.location.pathname + '?' + newURL.toString();
+  history.pushState(null, '', newQueryString);
   return false;
+}
 
+function clearFilters() { 
+    var elements = document.getElementById("filter-form").elements;
+    for (var i =0; i < elements.length; i++) {
+      if (elements[i].type == "text") {
+        elements[i].value = "";
+      } else if (elements[i].type == "checkbox") {
+        elements[i].checked = true;
+      } 
+    }
+    //update url after filters cleared
+    getFilterValues();
+}
+
+//Check each element of panel and populate values based on queryString
+function populateFilters() {
+  var elements = document.getElementById("filter-form").elements;
+  var params = new URLSearchParams(window.location.search);
+  var checkList;
+  for (var i =0; i < elements.length; i++) {
+    if (elements[i].type == "text") {
+      elements[i].value = params.get(elements[i].name);
+    } else if (elements[i].type == "select-one") {
+      checkList = params.getAll(elements[i].name);
+    }
+    else if (elements[i].type == "checkbox") {
+      var uncheck = Boolean(true);
+      for (var j=0; j<checkList.length; j++) {
+        if (checkList[j] == elements[i].value){
+          elements[i].checked = true;
+          uncheck = false;
+          break;
+        }
+      }
+      if (uncheck) {
+        elements[i].checked = false;
+      }
+    }
+  }
 }

@@ -1,25 +1,12 @@
 table {
   margin-top: 10px;
   margin-bottom: 15px;
+  border-collapse: collapse;
 }
 
-th {
-  padding: 10px;
-  text-align: left;
-  background-color: rgb(20,170,100);
-  color: white;
-}
- 
 td, th {
   padding: 4px;
-}
- 
-tr:nth-child(even) {
-  background-color: rgb(230, 230, 230);
-}
- 
-tr:hover {
-  background-color: lightgoldenrodyellow;
+  border:1px solid black;
 }
  
 body {

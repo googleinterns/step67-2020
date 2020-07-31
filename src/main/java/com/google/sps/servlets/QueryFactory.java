@@ -46,10 +46,10 @@ final class QueryFactory {
     for (ColumnSchema colSchema : columnSchemas) {
       String colName = colSchema.columnName();
       if (colName.equals("UserId")) {
-        String idString = request.getParameter("user_id");
+        String idString = request.getParameter("UserId");
         loopCount = addWhere(idString, loopCount, builder, colName, colSchema);
       } else if (colName.equals("DeviceId")) {
-        String idString = request.getParameter("device_id");
+        String idString = request.getParameter("DeviceId");
         loopCount = addWhere(idString, loopCount, builder, colName, colSchema);
       } else {
         String filterValue = request.getParameter(table + "-" + colName);

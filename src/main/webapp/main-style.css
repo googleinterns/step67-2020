@@ -1,15 +1,8 @@
-#header {
-  width: 100%;
-  height: 60px;
-  top: 0;
-  position: fixed;
-  background-color: rgb(10,10,10);
-  margin-bottom: 10px;
-}
 
 .id {
   left: 0;
 }
+
 #device_id {
   left: 0;
 }
@@ -17,7 +10,7 @@
 .button-box {
   right: 0;
   position:fixed;
-  padding-top: 20px;
+  padding-top: 15px;
   padding-right: 10px;
 }
 
@@ -39,9 +32,9 @@
 }
 
 #sql {
+  position: absolute;
   bottom: 0;
   width: 50%;
-  height: 10%;
   font-size: 12px;
   line-height: 50%;
   padding-top: 10px;
@@ -49,19 +42,17 @@
   padding-left: 10px;
   float: left;
   overflow: scroll;
+  text-align: left;
 }
 
-#filter-box{
-  border-style: solid;
-  border-width: 1px;
-  background-color:#fafdf9;
-  display: block;
-  width: 300px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-#filter-header:hover {
-  background-color: #ddf0d8;
+.sql-bar {
+  position: absolute;
+  background-color: rgb(20,170,100);
+  height: 30px;
+  width: 100%;
+  bottom: 0;
+  margin: 0;
+  text-align: center;
 }
 
 input{
@@ -82,13 +73,6 @@ input{
   font-size: 18px; 
 }
 
-h2 {
-  padding-left: 10px;
-  margin: 0;
-  color:  #130311;
-  font-size: 15px;
-}
-
 * {
   font-family: 'Open Sans', sans-serif;
 }
@@ -103,30 +87,40 @@ h2 {
   color: white;
 }
 
-#submit:hover{
-  background-color: #2da4d2;
-}
-
 #submit:focus {
   outline: none;
 }
 
-#toggle-button {
-  border: none;
-  background-color: #f7f1d0;
-  color: orange;
-  font-style: bold;
-  font-size: 15px;
-  border-color: orange;
-  border-style: solid;
-}
-
-#toggle-button:hover {
-  background-color: #f0d309;
-}
-
 #toggle-button:focus {
   outline: none;
+}
+
+.id-box {
+  display: none; 
+  padding-left: 10px; 
+  padding-top: 10px;
+  padding-bottom:5px;
+}
+
+.filter-box-header {
+  padding-bottom: 5px;
+}
+
+#idAlert {
+  float: right;
+  margin-right: 120px;
+  padding: 1px;
+  background-color: rgb(20,170,100);
+  color: white;
+  width: 140px;
+  font-size: 12px;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
 }
 
 #instructions {
@@ -160,4 +154,14 @@ h2 {
 #search-bar:hover {
   background-color: #ffc45a;
   width: 300px; 
+}
+
+.up {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
+}
+
+.down {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
 }
