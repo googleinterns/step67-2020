@@ -67,6 +67,18 @@ function showDatabase() {
     }
 }
 
+//method that applies the user's input from the search bar and filters the tables to display only the rows that
+//contain the user input
+function applySearch(){
+  //loop through tableslist
+  let index = 0;
+  for(index in tablesList){
+    let table = tablesList[index];
+    table.getFilteredRows();
+  }
+}
+
+
 function updateSqlOnPage(sql) {
   const sqlDiv = document.getElementById("sql");
   const newSql = document.createElement("p");
@@ -151,7 +163,7 @@ function dataConversionProto(column,tableData) {
 
 function sort(index, id) {
   let table = tablesList[id];
-  let dataTable = table.getDataTable();
+  let dataTable = table.getFilteredRows();
   const dataType = table.getDataType(index);
   let sortDirection = table.getSortDirection(index);
 
@@ -170,7 +182,7 @@ function sort(index, id) {
   }
 
   table.flipSortDirection(index);
-  table.setTable(dataTable);
+  table.setFilteredRows(dataTable);
   table.rerender();
 }
 

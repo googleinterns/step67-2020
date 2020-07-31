@@ -166,8 +166,6 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
 }
 
 function makeFullFiltersText(tables, perTableDiv, filterForm) {
-  var searchParams = new URLSearchParams(window.location.search);
-
   //Create a select dropdown based on the table name as tableName
   for(var tableName in tables){
     if(tableName === 'PrimaryKeys'){

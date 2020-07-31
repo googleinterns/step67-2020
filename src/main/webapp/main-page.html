@@ -22,9 +22,9 @@
     <h1 style="padding-bottom:30px;"></h1>
 
     <div id="header">
-      <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
+      <img src="beetle-white.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
-        <input type="search" placeholder="Search...">
+        <input onmouseover = "hoverOpen()" onkeyup="applySearch();" id="search-bar" type="text" placeholder="Search...">
         <a href="index.html"><button class="header-button">Previous Page</button></a>
         <button id="data-button" class="header-button" onmouseover="timedDataEgg()" onclick="login(); showDatabase()" onmouseout="unluckyData()"> Load Data </button>
         <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
@@ -83,6 +83,7 @@
     <div id="user"></div>
     <div id="justification"></div>
     <div id="tables"></div>
+
     <div class="sql-bar" id="sql-area" onclick="extendSQL()">
       <p>SQL Queries<i class="arrow up" id ="arrow"></i></p>
       <div id="sql"></div>
