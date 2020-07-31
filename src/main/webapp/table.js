@@ -254,11 +254,13 @@ class Table {
     const nextButton = document.createElement("button");
     nextButton.innerHTML = "Next";
     nextButton.id = "next-button-" + this.name;
+    nextButton.classList.add("pagination-button");
     nextButton.onclick = () => this.nextPage(); 
 
     const prevButton = document.createElement("button");
     prevButton.innerHTML = "Previous";
     prevButton.id = "prev-button-" + this.name;
+    prevButton.classList.add("pagination-button");
     prevButton.onclick = () => this.previousPage();
 
     const pageInfoStringElement = document.createElement("p");
@@ -294,6 +296,7 @@ class Table {
       const pageNumButton = document.createElement("button");
       pageNumButton.innerHTML = count;
       pageNumButton.id = count + "-" + this.name;
+      pageNumButton.classList.add("pagination-button");
       const newPage = count;
       pageNumButton.onclick = () => this.goToPage(newPage);
       pageNumberSpan.appendChild(pageNumButton);
@@ -306,6 +309,7 @@ class Table {
   makeSelectNumRowsElement() {
     const select = document.createElement("select");
     select.id = "rows-per-page-" + this.id;
+    select.classList.add("pagination-button");
     const id = this.id;
     select.onchange = function() { changeNumRowsPerPage(id); }
     

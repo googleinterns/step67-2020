@@ -99,7 +99,7 @@ input{
 #search-bar {
   background-image: url(search.svg);
   padding: 10px;
-  background-color: #f7f1d0;
+  background-color: rgb(20,170,100, 0.2);
   background-repeat: no-repeat;
   background-size: 35px;
   border-color: #ff7c5a;
