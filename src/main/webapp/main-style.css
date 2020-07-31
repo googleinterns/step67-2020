@@ -32,7 +32,6 @@
 
 #sql {
   width: 100%;
-  bottom: 0;
   font-size: 12px;
   line-height: 50%;
   padding-top: 10px;
@@ -92,12 +91,12 @@ input{
   width: 140px;
   font-size: 12px;
 }
- 
+
 .up {
   transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
 }
- 
+
 .down {
   transform: rotate(45deg);
   -webkit-transform: rotate(45deg);

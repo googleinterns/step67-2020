@@ -156,19 +156,13 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
       primaryKeyDiv.appendChild(div);
     }
   }
-  console.log(userIDRequired);
-  console.log(deviceIDRequired);
   showUserID(userIDRequired);
   showDeviceID(deviceIDRequired);
 }
 
 function makeFullFiltersText(tables, perTableDiv, filterForm) {
   var searchParams = new URLSearchParams(window.location.search);
-  const reasonForUse = searchParams.get('reason');
-  const database = searchParams.get('list-databases');
-  addDatabaseToForm(database, filterForm);
-  addReasonToForm(reasonForUse, filterForm);
-  
+
   //Create a select dropdown based on the table name as tableName
   for(var tableName in tables){
     if(tableName === 'PrimaryKeys'){
