@@ -329,11 +329,11 @@ function switchColorMode() {
   if (darkMode) {
     newStyle.href = "/table-light.css";
     tableStyleNew.href = "/main-page-light.css";
-    document.getElementById("mode-button").innerText = "Dark Mode";
+    //document.getElementById("mode-button").innerText = "Dark Mode";
   } else {
     newStyle.href = "/table-dark.css";
     tableStyleNew.href = "/main-page-dark.css";
-    document.getElementById("mode-button").innerText = "Light Mode";
+   // document.getElementById("mode-button").innerText = "Light Mode";
   }
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
