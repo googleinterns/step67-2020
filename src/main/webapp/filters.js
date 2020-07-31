@@ -323,6 +323,7 @@ function toggleFilters() {
   }
 }
 
+//function that updates query string when filters are applied
 function getFilterValues() {
   var elements = document.getElementById("filter-form").elements;
   var newURL = new URLSearchParams();
@@ -342,10 +343,7 @@ function getFilterValues() {
 }
 
 function clearFilters() { 
-    //TODO: ? Need a method to update filter box if someone pastes link with query
-    // onload populate filter panel based on url 
     var elements = document.getElementById("filter-form").elements;
-    console.log(elements);
     for (var i =0; i < elements.length; i++) {
       if (elements[i].type == "text") {
         elements[i].value = "";
@@ -353,5 +351,33 @@ function clearFilters() {
         elements[i].checked = true;
       } 
     }
+    //update url after filters cleared
     getFilterValues();
+}
+
+//Check each element of panel and populate values based on queryString
+function populateFilters() {
+  var elements = document.getElementById("filter-form").elements;
+  var params = new URLSearchParams(window.location.search);
+  var checkList;
+  for (var i =0; i < elements.length; i++) {
+    if (elements[i].type == "text") {
+      elements[i].value = params.get(elements[i].name);
+    } else if (elements[i].type == "select-one") {
+      checkList = params.getAll(elements[i].name);
+    }
+    else if (elements[i].type == "checkbox") {
+      var uncheck = Boolean(true);
+      for (var j=0; j<checkList.length; j++) {
+        if (checkList[j] == elements[i].value){
+          elements[i].checked = true;
+          uncheck = false;
+          break;
+        }
+      }
+      if (uncheck) {
+        elements[i].checked = false;
+      }
+    }
+  }
 }
