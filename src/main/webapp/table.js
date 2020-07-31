@@ -103,22 +103,19 @@ class Table {
       document.getElementById("table_" + this.name).innerText = "";
     }
     if (document.getElementById("button-div-" + this.name) != null) {
-      document.getElementById("button-div-" + this.name).display = "none";
+      document.getElementById("button-div-" + this.name).style.display = "none";
     }
   }
 
   rerender() {
     this.remove();
     const table = document.getElementById("table_" + this.name);
-    const thisTableDiv = document.getElementById("table-div-" + this.name);
 
     if (this.isEmpty) {
-      const isEmptyMessage = document.createElement("p");
-      isEmptyMessage.innerText = "No rows in table with applied filters.";
-      thisTableDiv.appendChild(isEmptyMessage);
+      table.innerText = "No rows in table with applied filters.";
     } else {
       table.appendChild(this.makeTableHeaders());
-      document.getElementById("button-div-" + this.name).display = "";
+      document.getElementById("button-div-" + this.name).style.display = "";
       const pageInfoString = this.createTableRows(table);
       this.updatePageInformation(pageInfoString);
     }
@@ -205,7 +202,6 @@ class Table {
     const nextButton = document.createElement("button");
     nextButton.innerHTML = "Next";
     nextButton.id = "next-button-" + this.name;
-    const id = this.id;
     nextButton.onclick = () => this.nextPage(); 
 
     const prevButton = document.createElement("button");

@@ -63,18 +63,22 @@ function createFilters() {
  });
 }
 
-function showUserID() {
+function showUserID(required) {
   var userIdBox = document.getElementById('user_id_box');
   var userId = document.getElementById('user_id');
   userIdBox.style.display = 'block';
-  userId.required = true;
+  if (required) {
+    userId.required = true;
+  }
 }
 
-function showDeviceID() {
+function showDeviceID(required) {
   var deviceIdBox = document.getElementById('device_id_box');
   var deviceId = document.getElementById('device_id');
   deviceIdBox.style.display = 'block';
-  deviceId.required = true;
+  if (required) {
+    deviceId.required = true; 
+  }
 }
 
 //Helper method that creates the quickstart filters
@@ -94,22 +98,25 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
   primarykey_select.selectedIndex = 0;
 
   let primarykey_column_inputs = document.createElement('div');
-  primarykey_column_inputs.style.backgroundColor = 'white';
+  //primarykey_column_inputs.style.backgroundColor = 'white';
+
+  var userIDRequired = Boolean(false);
+  var deviceIDRequired = Boolean(false);
 
   for(var keys in tables){
     const columnNames = tables[keys][0];
-    if(keys === 'PrimaryKeys'){
+    if (keys != 'PrimaryKeys') {
+      if(columnNames.includes('UserId') && !columnNames.includes('DeviceId')){
+        userIDRequired = true;
+      } else if(columnNames.includes('DeviceId') && !columnNames.includes('UserId')){
+        deviceIDRequired = true;
+      } 
+    }
+    else if(keys === 'PrimaryKeys'){
       for(var col in columnNames){
         //Skip making input boxes for UserId and DeviceId for Quickstart
         const columnName = columnNames[col];
         if(columnName === 'UserId' || columnName === 'DeviceId'){
-          //If userId or deviceId exists in the primary key list, display the input boxes
-          if(columnNames.includes('UserId')){
-            showUserID();
-          }
-          if(columnNames.includes('DeviceId')){
-            showDeviceID();
-          }
           continue;
         } else{
             //Creating text inputs
@@ -131,7 +138,6 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
             var div = document.createElement('div');
             div.style.padding = '10px';
             primarykey_column_inputs.appendChild(div);
-
         }
       }
       //onclick event that will hide/show primary key text boxes
@@ -150,6 +156,10 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
       primaryKeyDiv.appendChild(div);
     }
   }
+  console.log(userIDRequired);
+  console.log(deviceIDRequired);
+  showUserID(userIDRequired);
+  showDeviceID(deviceIDRequired);
 }
 
 function makeFullFiltersText(tables, perTableDiv, filterForm) {
@@ -248,7 +258,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
     column_select.selectedIndex = 0;
             
     let colFilters = document.createElement('div'); //div for columns filter
-    colFilters.style.backgroundColor = 'white';
+    //colFilters.style.backgroundColor = 'white';
     
     const columnNames = tables[keys][0];
     //Create checkboxes for each column of the table
@@ -310,5 +320,64 @@ function toggleFilters() {
     document.getElementById('primarykey-select').style.display = 'block';
     document.getElementById('column-select').style.display = 'none';
     document.getElementById('table-filtering').style.display = 'none';
+  }
+}
+
+//function that updates query string when filters are applied
+function getFilterValues() {
+  var elements = document.getElementById("filter-form").elements;
+  var newURL = new URLSearchParams();
+  for (var i =0; i < elements.length; i++) {
+      if (elements[i].type == "checkbox") {
+          if(elements[i].checked == true) {
+            newURL.append(elements[i].name,elements[i].value);
+          }
+          continue;
+      } else if (elements[i].name) {
+        newURL.append(elements[i].name,elements[i].value);
+      }  
+  }
+  var newQueryString = window.location.pathname + '?' + newURL.toString();
+  history.pushState(null, '', newQueryString);
+  return false;
+}
+
+function clearFilters() { 
+    var elements = document.getElementById("filter-form").elements;
+    for (var i =0; i < elements.length; i++) {
+      if (elements[i].type == "text") {
+        elements[i].value = "";
+      } else if (elements[i].type == "checkbox") {
+        elements[i].checked = true;
+      } 
+    }
+    //update url after filters cleared
+    getFilterValues();
+}
+
+//Check each element of panel and populate values based on queryString
+function populateFilters() {
+  var elements = document.getElementById("filter-form").elements;
+  var params = new URLSearchParams(window.location.search);
+  var checkList;
+  for (var i =0; i < elements.length; i++) {
+    if (elements[i].type == "text") {
+      elements[i].value = params.get(elements[i].name);
+    } else if (elements[i].type == "select-one") {
+      checkList = params.getAll(elements[i].name);
+    }
+    else if (elements[i].type == "checkbox") {
+      var uncheck = Boolean(true);
+      for (var j=0; j<checkList.length; j++) {
+        if (checkList[j] == elements[i].value){
+          elements[i].checked = true;
+          uncheck = false;
+          break;
+        }
+      }
+      if (uncheck) {
+        elements[i].checked = false;
+      }
+    }
   }
 }
