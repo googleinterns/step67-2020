@@ -17,12 +17,6 @@ input{
   font-size: 18px; 
 }
 
-#instruction {
-  color: rgb(20,20,20);
-  color: gray;
-  margin-left: 5px;
-}
-
 #filter-alert {
   padding: 3px;
   margin: 3px;
