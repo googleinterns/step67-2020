@@ -12,3 +12,10 @@ tr:nth-child(even) {
 tr:hover {
   background-color: lightgoldenrodyellow;
 }
+
+.pagination-button {
+  color: black;
+  background-color: white;
+  padding: 5px;
+  border: 1px solid black;
+}
