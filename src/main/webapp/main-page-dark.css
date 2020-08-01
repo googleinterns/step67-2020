@@ -118,3 +118,8 @@ select {
   display: inline-block;
   padding: 3px;
 }
+
+#search-bar:hover {
+  background-color: rgb(10, 64, 38);
+  width: 300px; 
+}

@@ -105,3 +105,8 @@ p {
 ::placeholder {
   color: rgb(40,40,40);
 }
+
+#search-bar:hover {
+  background-color: rgb(46,217,137);
+  width: 300px; 
+}

@@ -116,11 +116,6 @@ input{
   outline:none;
 }
 
-#search-bar:hover {
-  background-color: rgb(46,217,137);
-  width: 300px; 
-}
-
 .up {
   transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
