@@ -61,18 +61,19 @@ function showDatabase() {
 
       }
     });
+    // Only hide filter panel 
+    if (!filtersHidden()) {
+        showFiltersPanel();
+    }
 }
 
 //method that applies the user's input from the search bar and filters the tables to display only the rows that
 //contain the user input
 function applySearch(){
   //loop through tableslist
-  alert("i was pressed");// checks if onkeyup triggered method twice
   let index = 0;
   for(index in tablesList){
     let table = tablesList[index];
-    //console.log("index: " +index);
-    //console.log("table name: " + table.name);
     table.getFilteredRows();
   }
 }
@@ -162,7 +163,7 @@ function dataConversionProto(column,tableData) {
 
 function sort(index, id) {
   let table = tablesList[id];
-  let dataTable = table.getDataTable();
+  let dataTable = table.getFilteredRows();
   const dataType = table.getDataType(index);
   let sortDirection = table.getSortDirection(index);
 
@@ -181,7 +182,7 @@ function sort(index, id) {
   }
 
   table.flipSortDirection(index);
-  table.setTable(dataTable);
+  table.setFilteredRows(dataTable);
   table.rerender();
 }
 

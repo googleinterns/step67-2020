@@ -225,14 +225,10 @@ function applyFiltersIfPossible() {
   } else if (deviceId.value == "" && userId.value == "") {
     document.getElementById("idAlert").classList.remove("invisible");
   } else {
-    filterAlert();
     getFilterValues();
+    showDatabase();
   }
   return false;
-}
-
-function filterAlert(){
-  alertPopup(document.getElementById("filter-alert"));
 }
 
 function alertPopup(x){
@@ -290,13 +286,20 @@ function hoverOpen() {
 
 function extendSQL() {
   const sqlArea = document.getElementById("sql-area");
-  sqlArea.style.height = "70px";
   const arrow = document.getElementById("arrow");
-  arrow.classList.remove("arrow up");
-  arrow.classList.add("arrow down");
+  if (sqlArea.style.height == "200px") {
+    collapseSQL(sqlArea, arrow);
+  } else {
+    sqlArea.style.height = "200px";
+    arrow.classList.remove("up");
+    arrow.classList.add("down");
+  }
 }
-
-function collapseSQL() {
+ 
+function collapseSQL(sqlArea, arrow) {
+  sqlArea.style.height = "50px";
+  arrow.classList.remove("down");
+  arrow.classList.add("up");
 }
 
 var darkMode = Boolean(false);
