@@ -9,21 +9,8 @@
 .button-box {
   right: 0;
   position:fixed;
-  padding-top: 10px;
+  padding-top: 8px;
   padding-right: 10px;
-}
-
-#share-form {
-  text-align: center;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  background-color: rgb(20,170,100);
-  padding-left: 100px;
-  padding-right: 100px;
-  padding-top: 50px;
-  padding-bottom: 50px;
-  font-size: 24px;
 }
 
 .invisible {
