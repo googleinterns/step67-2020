@@ -279,7 +279,8 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
 
       colFilters.style.border = '1px solid';
       colFilters.style.display = 'none';
-      colFilters.style.width = '200px';
+      colFilters.style.width = '183px';
+      colFilters.style.marginLeft = '5px';
 
       var colBoxDiv = document.createElement('div');
       colBoxDiv.style.padding ='4px';
