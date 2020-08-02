@@ -341,7 +341,8 @@ class Table {
   updateCurrentPageButton() {
     if (document.getElementById(this.page + "-" + this.name) != null) {
       const currentPageButton = document.getElementById(this.page + "-" + this.name);
-      currentPageButton.style.backgroundColor = "lightyellow";
+      currentPageButton.classList.remove("pagination-button");
+      currentPageButton.classList.add("pagination-button-highlight");
     }
   }
 
@@ -349,7 +350,8 @@ class Table {
   resetButtonColor() {
     if (document.getElementById(this.page + "-" + this.name) != null) {
       const currentPageButton = document.getElementById(this.page + "-" + this.name);
-      currentPageButton.style.backgroundColor = "";
+      currentPageButton.classList.remove("pagination-button-highlight");
+      currentPageButton.classList.add("pagination-button");
     }
   }
 

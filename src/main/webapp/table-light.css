@@ -19,3 +19,10 @@ tr:hover {
   padding: 5px;
   border: 1px solid black;
 }
+
+.pagination-button-highlight {
+  color: white;
+  background-color: rgb(20,170,100);
+  padding: 5px;
+  border: 1px solid rgb(150,150,150);
+}
