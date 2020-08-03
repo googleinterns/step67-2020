@@ -26,9 +26,9 @@
       <div class="button-box">
         <input onmouseover = "hoverOpen()" onkeyup="applySearch();" id="search-bar" type="text" placeholder="Search...">
         <a href="index.html"><button class="header-button">Previous Page</button></a>
-        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
-        <button id="data-button" class="header-button" onmouseover="luckyData()" onclick="login(); showDatabase()" onmouseout="unlucky()"> Load Data </button>
+        <button id="data-button" class="header-button" onmouseover="timedDataEgg(this)" onclick="login(); showDatabase()"> Load Data </button>
         <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
+        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()">Hide Filters</button>
         <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
         <label class="toggle">
           <input type="checkbox" onClick="switchColorMode()">
@@ -51,8 +51,8 @@
       <input type="checkbox" onClick="toggleFilters(); populateFilters();">
       <span class="slider round"></span>
     </label>
-    
-    <div id="filter-box" style="display: none;"> 
+
+    <div id="filter-box"> 
       <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "applyFiltersIfPossible(); return false;">
         <p id="instruction">Enter userID or deviceID, then select filters.<p>
         <div id="user_id_box" class="id-box">
@@ -75,14 +75,10 @@
         <div id="column-select" style="padding: 10px; display:none;">
           <h2 class="filter-box-header">Column Selection</h2>
         </div>
-
-        <input type="submit" id="submit" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
-
-        <div style="padding:5px;"></div>
         
-        <div id="filter-alert">
-            <strong>Filters Applied!</strong>
-        </div>
+        <input type="submit" id="submit" onmouseover="timedFilterEgg(this)" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
+        <div style="padding:5px;"></div>
+ 
       </form>  
     </div>
 
