@@ -197,10 +197,6 @@ function sort(index, id) {
   }
 }
 
-function addArrowToSort() {
-  
-}
-
 function showReason() {
   const params = new URLSearchParams(window.location.search);
   var reason = params.get('reason');

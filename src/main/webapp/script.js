@@ -1,7 +1,6 @@
 function mainLoad(){
   login();
   showReason();
-  showFiltersPanel();
   createFilters();
   populateFilters();
 }
@@ -245,23 +244,23 @@ function closeIDAlert() {
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
-var previousText = "placeholder";
-var previousId = "id";
+
+function timedFilterEgg(element) {
+    var filterTimer = setTimeout("luckyFilter()",2000);
+    element.onmouseout = function() { clearTimeout(filterTimer); element.value = "Apply Filters"; }
+}
 
 function luckyFilter() {
-  previousId="filter-button";
-  previousText = document.getElementById("filter-button").textContent;
-  document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
+  document.getElementById("submit").value = "I'm Feeling Lucky!";
+}
+
+function timedDataEgg(element) {
+    var timer = setTimeout("luckyData()",2000);
+    element.onmouseout = function() { clearTimeout(timer); element.textContent = "Load Data"; }
 }
 
 function luckyData() {
-  previousId="data-button";
-  previousText = document.getElementById("data-button").textContent;
   document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
-}
-
-function unlucky() {
-  document.getElementById(previousId).textContent = previousText;
 }
 
 function changeText() {
@@ -308,11 +307,9 @@ function switchColorMode() {
   if (darkMode) {
     newStyle.href = "/table-light.css";
     tableStyleNew.href = "/main-page-light.css";
-    //document.getElementById("mode-button").innerText = "Dark Mode";
   } else {
     newStyle.href = "/table-dark.css";
     tableStyleNew.href = "/main-page-dark.css";
-   // document.getElementById("mode-button").innerText = "Light Mode";
   }
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);

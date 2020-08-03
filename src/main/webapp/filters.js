@@ -1,19 +1,39 @@
 function showFiltersPanel() {
   var filterBox = document.getElementById("filter-box");
   var filterButton = document.getElementById("filter-button");
+  filterButton.disabled = true;
 
-  if (filterBox.style.display === "none") {
+  if (filterBox.style.width ===  "0px" || filterBox.style.width === null) { //this line change to checking width
     filterBox.style.display = "block";
+    //delay width change to make transition visible
+    var showTimer = setTimeout("delayWidth()",10);
+	  filterButton.onmouseout = function() {  clearTimeout(showTimer); }
     filterButton.textContent = "Hide Filters";
   } else {
-    filterBox.style.display = "none";
+    filterBox.style.width = 0;
     filterButton.textContent = "Show Filters";
+    //timer to change display to none after transition
+    var hideTimer = setTimeout("delayDisplay()",500);
   }
 }
 
+function delayWidth(){
+  var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
+  filterBox.style.width = "300px";
+  filterButton.disabled = false;
+}
+
+function delayDisplay() { 
+  var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
+  filterBox.style.display = "none";
+  filterButton.disabled = false;
+}
+
 function filtersHidden() {
-    var filterBox = document.getElementById("filter-box");
-    return filterBox.style.display == "none";
+  var filterBox = document.getElementById("filter-box");
+  return filterBox.style.display == "none";
 }
 
 function addDatabaseToForm(database, filterForm) {
