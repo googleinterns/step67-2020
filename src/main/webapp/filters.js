@@ -7,7 +7,7 @@ function showFiltersPanel() {
     filterBox.style.display = "block";
     //delay width change to make transition visible
     var showTimer = setTimeout("delayWidth()",10);
-	filterButton.onmouseout = function() {  clearTimeout(showTimer); }
+	  filterButton.onmouseout = function() {  clearTimeout(showTimer); }
     filterButton.textContent = "Hide Filters";
   } else {
     filterBox.style.width = 0;
