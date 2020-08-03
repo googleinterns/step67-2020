@@ -1,7 +1,6 @@
 function mainLoad(){
   login();
   showReason();
-  showFiltersPanel();
   createFilters();
   populateFilters();
 }
