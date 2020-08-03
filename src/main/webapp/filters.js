@@ -30,6 +30,11 @@ function delayDisplay() {
     filterButton.disabled = false;
 }
 
+function filtersHidden() {
+    var filterBox = document.getElementById("filter-box");
+    return filterBox.style.display == "none";
+}
+
 function addDatabaseToForm(database, filterForm) {
   const chosenDatabase = document.createElement('input');
   chosenDatabase.type = "hidden";
@@ -180,8 +185,6 @@ function makeQuickStartFilters(tables, primaryKeyDiv, filterForm){
 }
 
 function makeFullFiltersText(tables, perTableDiv, filterForm) {
-  var searchParams = new URLSearchParams(window.location.search);
-
   //Create a select dropdown based on the table name as tableName
   for(var tableName in tables){
     if(tableName === 'PrimaryKeys'){
