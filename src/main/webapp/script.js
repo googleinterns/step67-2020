@@ -307,9 +307,13 @@ function switchColorMode() {
   if (darkMode) {
     newStyle.href = "/table-light.css";
     tableStyleNew.href = "/main-page-light.css";
+    document.getElementById("logo-light").classList.remove("invisible");
+    document.getElementById("logo-dark").classList.add("invisible");
   } else {
     newStyle.href = "/table-dark.css";
     tableStyleNew.href = "/main-page-dark.css";
+    document.getElementById("logo-light").classList.add("invisible");
+    document.getElementById("logo-dark").classList.remove("invisible");
   }
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
