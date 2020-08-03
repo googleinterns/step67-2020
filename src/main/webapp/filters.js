@@ -16,23 +16,24 @@ function showFiltersPanel() {
     var hideTimer = setTimeout("delayDisplay()",500);
   }
 }
+
 function delayWidth(){
-     var filterBox = document.getElementById("filter-box");
-     var filterButton = document.getElementById("filter-button");
-     filterBox.style.width = "300px";
-     filterButton.disabled = false;
+  var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
+  filterBox.style.width = "300px";
+  filterButton.disabled = false;
 }
 
-function delayDisplay() {
-    var filterBox = document.getElementById("filter-box");
-    var filterButton = document.getElementById("filter-button");
-    filterBox.style.display = "none";
-    filterButton.disabled = false;
+function delayDisplay() { 
+  var filterBox = document.getElementById("filter-box");
+  var filterButton = document.getElementById("filter-button");
+  filterBox.style.display = "none";
+  filterButton.disabled = false;
 }
 
 function filtersHidden() {
-    var filterBox = document.getElementById("filter-box");
-    return filterBox.style.display == "none";
+  var filterBox = document.getElementById("filter-box");
+  return filterBox.style.display == "none";
 }
 
 function addDatabaseToForm(database, filterForm) {
