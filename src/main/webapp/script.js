@@ -25,6 +25,7 @@ function getDatabases(){
         dropdown.add(option);
       } 
     }
+
   });
 }
 
@@ -167,14 +168,19 @@ function addReasonInput() {
   reason.setAttribute("name", "reason");
   reason.setAttribute("placeholder", "Enter reason for use.");
   reason.setAttribute("required", "true");  
+  reason.focus();//makes a glowing border on focus/hover
+ 
   document.getElementById("table-form").appendChild(reason);
 }
  
 function createSubmit() {
+  const submit_div = document.createElement('div');
+  submit_div.setAttribute("id", "submit_div");
   const submit = document.createElement("input");
   submit.type = "submit";
   submit.value = "Continue";
-  document.getElementById("table-form").appendChild(submit);
+  submit_div.appendChild(submit);
+  document.getElementById("table-form").appendChild(submit_div);
 }
  
 function addTableOption(text) {
@@ -273,6 +279,10 @@ function login(){
   });
 }
 
+function hoverOpen() {
+  document.getElementById("search-bar").style.width = '300px';
+}
+
 function extendSQL() {
   const sqlArea = document.getElementById("sql-area");
   const arrow = document.getElementById("arrow");
@@ -314,8 +324,4 @@ function switchColorMode() {
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
   document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
-}
-
-function hoverOpen() {
-  document.getElementById("search-bar").style.width = '300px';
 }
