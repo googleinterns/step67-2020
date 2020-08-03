@@ -33,15 +33,15 @@ input{
 }
   
 #user {
-  position: absolute;
-  bottom: 8px;
+  position: fixed;
+  bottom: 48px;
   right: 16px;
   font-size: 18px;
 }
 
 #justification {
-  position: absolute;
-  bottom: 24px;
+  position: fixed;
+  bottom: 64px;
   right: 16px;
   font-size: 18px; 
 }
@@ -77,6 +77,13 @@ input{
   color: white;
   width: 140px;
   font-size: 12px;
+}
+
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
 }
 
 #instructions {

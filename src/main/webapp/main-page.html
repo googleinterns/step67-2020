@@ -25,6 +25,7 @@
       <img id="logo-light" src="beetle-white.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <img id="logo-dark" class="invisible"src="beetle-wars.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
+
         <input onmouseover = "hoverOpen()" onkeyup="applySearch();" id="search-bar" type="text" placeholder="Search...">
         <a href="index.html"><button class="header-button">Previous Page</button></a>
         <button id="data-button" class="header-button" onmouseover="timedDataEgg(this)" onclick="login(); showDatabase()"> Load Data </button>
@@ -35,6 +36,7 @@
           <input type="checkbox" onClick="switchColorMode()">
           <span class="slider round"></span>
         </label>
+        <img src="sun.png" id="sun-moon" alt="sun" style="float:right; width: 25px; transform: rotate(110deg); padding-right: 5px;">
       </div>
     </div>
 
@@ -93,6 +95,5 @@
       <p>SQL Queries<i class="arrow up" id ="arrow"></i></p>
       <div id="sql"></div>
     </div>
-
   </body>
 </html>
