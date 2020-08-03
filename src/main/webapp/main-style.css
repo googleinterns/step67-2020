@@ -63,17 +63,6 @@ input{
   font-family: 'Open Sans', sans-serif;
 }
 
-
-#submit {
-  background-color:  darkseagreen;
-  border-color: cadetblue;
-  border-style: solid;
-  margin-left: 10px;
-  font-size: 20px;
-  font-style: bold;
-  color: white;
-}
-
 #submit:focus {
   outline: none;
 }
