@@ -317,9 +317,11 @@ function switchColorMode() {
   if (darkMode) {
     newStyle.href = "/table-light.css";
     tableStyleNew.href = "/main-page-light.css";
+    document.getElementById("sun-moon").src = "sun.png";
   } else {
     newStyle.href = "/table-dark.css";
     tableStyleNew.href = "/main-page-dark.css";
+    document.getElementById("sun-moon").src = "moonYellow.png";
   }
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);

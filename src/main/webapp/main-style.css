@@ -33,15 +33,15 @@ input{
 }
   
 #user {
-  position: absolute;
-  bottom: 8px;
+  position: fixed;
+  bottom: 48px;
   right: 16px;
   font-size: 18px;
 }
 
 #justification {
-  position: absolute;
-  bottom: 24px;
+  position: fixed;
+  bottom: 64px;
   right: 16px;
   font-size: 18px; 
 }
