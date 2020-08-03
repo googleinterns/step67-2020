@@ -17,23 +17,12 @@ input{
   font-size: 18px; 
 }
 
-#filter-alert {
-  padding: 3px;
-  margin: 3px;
-  margin-left:200px;
-  background-color: darkseagreen;
-  border-color: cadetblue;
-  color: white;
-  width: 0px;
-  font-size: 12px;
-  opacity: 0;
-}
-
 #alert {
+  display: none;
   float: right;
-  margin-right: 90px;
+  margin-right: 250px;
   padding: 1px;
-  background-color: red;
+  background-color: rgb(20, 170, 100);
   color: white;
   width: 0px;
   font-size: 12px;

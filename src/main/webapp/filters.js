@@ -328,7 +328,7 @@ function makeFullFiltersCheckboxes(tables, columnDiv, filterForm){
 
 //Function that toggles between QuickStart mode or Full Mode for filtering
 function toggleFilters() {
-  var toggle = document.getElementById('toggle');
+  var toggle = document.getElementById('toggle-header');
   if (toggle.innerHTML === 'QUICK START') {
     toggle.innerHTML = 'FULL';
     document.getElementById('primarykey-select').style.display = 'none';

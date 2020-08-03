@@ -13,6 +13,7 @@
   width: 300px;
   overflow-x: hidden;
   transition: 0.5s;
+  margin-left: 10px;
 }
 
 #filter-header:hover {
