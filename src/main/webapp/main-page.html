@@ -21,13 +21,13 @@
     <h1 style="padding-bottom:30px;"></h1>
 
     <div id="header">
-      <img src="beetle_logo4.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
+      <img src="beetle-white.png" alt="logo" style="float:left; width: 45px; padding-left: 5px;">
       <div class="button-box">
-        <input type="search" placeholder="Search...">
+        <input onmouseover = "hoverOpen()" onkeyup="applySearch();" id="search-bar" type="text" placeholder="Search...">
         <a href="index.html"><button class="header-button">Previous Page</button></a>
-        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button id="data-button" class="header-button" onmouseover="timedDataEgg(this)" onclick="login(); showDatabase()"> Load Data </button>
         <button id="share-button" class="header-button" onclick="copyLink()"> Share Query </button>
+        <button id="filter-button" class="header-button" onClick="showFiltersPanel(); filterColumns()"> Show Filters </button>
         <button class="header-button" onclick="clearFilters()"> Clear Filters </button>
         <button id="mode-button" class="header-button" onclick="switchColorMode()">Dark Mode</button>
 
@@ -69,16 +69,17 @@
         <div id="column-select" style="padding: 10px; display:none;">
           <h2 class="filter-box-header">Column Selection</h2>
         </div>
-
+        
         <input type="submit" id="submit" onmouseover="timedFilterEgg(this)" value="Apply Filters" onsubmit="applyFiltersIfPossible(); "></input>
         <div style="padding:5px;"></div>
-        
+ 
       </form>  
     </div>
 
     <div id="user"></div>
     <div id="justification"></div>
     <div id="tables"></div>
+
     <div class="sql-bar" id="sql-area" onclick="extendSQL()">
       <p>SQL Queries<i class="arrow up" id ="arrow"></i></p>
       <div id="sql"></div>

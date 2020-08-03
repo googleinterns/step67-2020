@@ -219,14 +219,10 @@ function applyFiltersIfPossible() {
   } else if (deviceId.value == "" && userId.value == "") {
     document.getElementById("idAlert").classList.remove("invisible");
   } else {
-    filterAlert();
     getFilterValues();
+    showDatabase();
   }
   return false;
-}
-
-function filterAlert(){
-  alertPopup(document.getElementById("filter-alert"));
 }
 
 function alertPopup(x){
@@ -321,4 +317,8 @@ function switchColorMode() {
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
   document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
+}
+
+function hoverOpen() {
+  document.getElementById("search-bar").style.width = '300px';
 }
