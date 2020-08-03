@@ -9,11 +9,13 @@ function showFiltersPanel() {
     var showTimer = setTimeout("delayWidth()",10);
 	  filterButton.onmouseout = function() {  clearTimeout(showTimer); }
     filterButton.textContent = "Hide Filters";
+    document.getElementById("filter-toggle").classList.remove("invisible");
   } else {
     filterBox.style.width = 0;
     filterButton.textContent = "Show Filters";
     //timer to change display to none after transition
     var hideTimer = setTimeout("delayDisplay()",500);
+    document.getElementById("filter-toggle").classList.add("invisible");
   }
 }
 
