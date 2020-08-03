@@ -184,6 +184,17 @@ function sort(index, id) {
   table.flipSortDirection(index);
   table.setFilteredRows(dataTable);
   table.rerender();
+
+  //Add arrow indicating direction of sort
+  let columnHeader = document.getElementById("colheader_" + index + table.getName());
+  const arrow = document.createElement("i");
+  arrow.classList.add("arrow");
+  columnHeader.appendChild(arrow);
+  if (sortDirection == 0) {
+    arrow.classList.add("up");
+  } else {
+    arrow.classList.add("down");
+  }
 }
 
 function showReason() {

@@ -46,11 +46,13 @@
       <strong>UserID and/or DeviceID are required.</strong>
     </div>
     
-    <div id="toggle">QUICK START</div>
-    <label class="toggle">
-      <input type="checkbox" onClick="toggleFilters(); populateFilters();">
-      <span class="slider round"></span>
-    </label>
+    <div id="filter-toggle">
+      <div id="toggle">QUICK START</div>
+      <label class="toggle">
+        <input type="checkbox" onClick="toggleFilters(); populateFilters();">
+        <span class="slider round"></span>
+      </label>
+    </div>
 
     <div id="filter-box"> 
       <form id="filter-form" action="/main-page.html" method="GET" onsubmit = "applyFiltersIfPossible(); return false;">
