@@ -12,6 +12,10 @@
   height: 0;
 }
 
+#toggle-header {
+  margin: 10px;
+}
+
 .slider {
   position: absolute;
   cursor: pointer;
