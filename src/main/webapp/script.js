@@ -1,7 +1,6 @@
 function mainLoad(){
   login();
   showReason();
-  showFiltersPanel();
   createFilters();
   populateFilters();
 }
@@ -26,6 +25,7 @@ function getDatabases(){
         dropdown.add(option);
       } 
     }
+
   });
 }
 
@@ -168,14 +168,19 @@ function addReasonInput() {
   reason.setAttribute("name", "reason");
   reason.setAttribute("placeholder", "Enter reason for use.");
   reason.setAttribute("required", "true");  
+  reason.focus();//makes a glowing border on focus/hover
+ 
   document.getElementById("table-form").appendChild(reason);
 }
  
 function createSubmit() {
+  const submit_div = document.createElement('div');
+  submit_div.setAttribute("id", "submit_div");
   const submit = document.createElement("input");
   submit.type = "submit";
   submit.value = "Continue";
-  document.getElementById("table-form").appendChild(submit);
+  submit_div.appendChild(submit);
+  document.getElementById("table-form").appendChild(submit_div);
 }
  
 function addTableOption(text) {
@@ -219,14 +224,10 @@ function applyFiltersIfPossible() {
   } else if (deviceId.value == "" && userId.value == "") {
     document.getElementById("idAlert").classList.remove("invisible");
   } else {
-    filterAlert();
     getFilterValues();
+    showDatabase();
   }
   return false;
-}
-
-function filterAlert(){
-  alertPopup(document.getElementById("filter-alert"));
 }
 
 function alertPopup(x){
@@ -249,23 +250,23 @@ function closeIDAlert() {
 }
 
 // The below methods with "Lucky" in the name are rough draft for the easter egg
-var previousText = "placeholder";
-var previousId = "id";
+
+function timedFilterEgg(element) {
+    var filterTimer = setTimeout("luckyFilter()",2000);
+    element.onmouseout = function() { clearTimeout(filterTimer); element.value = "Apply Filters"; }
+}
 
 function luckyFilter() {
-  previousId="filter-button";
-  previousText = document.getElementById("filter-button").textContent;
-  document.getElementById("filter-button").textContent = "I'm Feeling Lucky!";
+  document.getElementById("submit").value = "I'm Feeling Lucky!";
+}
+
+function timedDataEgg(element) {
+    var timer = setTimeout("luckyData()",2000);
+    element.onmouseout = function() { clearTimeout(timer); element.textContent = "Load Data"; }
 }
 
 function luckyData() {
-  previousId="data-button";
-  previousText = document.getElementById("data-button").textContent;
   document.getElementById("data-button").textContent = "I'm Feeling Lucky!";
-}
-
-function unlucky() {
-  document.getElementById(previousId).textContent = previousText;
 }
 
 function changeText() {
@@ -276,6 +277,10 @@ function login(){
   fetch("/login").then(response => response.json()).then((user) => {
     document.getElementById("user").innerText = user;
   });
+}
+
+function hoverOpen() {
+  document.getElementById("search-bar").style.width = '300px';
 }
 
 function extendSQL() {
@@ -321,8 +326,4 @@ function switchColorMode() {
   darkMode = !darkMode;
   document.getElementsByTagName("head").item(0).replaceChild(newStyle, oldStyle);
   document.getElementsByTagName("head").item(0).replaceChild(tableStyleNew, tableStyleOld);
-}
-
-function hoverOpen() {
-  document.getElementById("search-bar").style.width = '300px';
 }

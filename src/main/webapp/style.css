@@ -17,17 +17,10 @@ input{
   font-size: 18px; 
 }
 
-#instruction {
-  color: rgb(20,20,20);
-  color: gray;
-  margin-left: 15px;
-}
-
 #filter-alert {
-  float: left;
-  margin-left: 180px;
   padding: 3px;
   margin: 3px;
+  margin-left:200px;
   background-color: darkseagreen;
   border-color: cadetblue;
   color: white;

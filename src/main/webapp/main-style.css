@@ -9,21 +9,8 @@
 .button-box {
   right: 0;
   position:fixed;
-  padding-top: 15px;
+  padding-top: 8px;
   padding-right: 10px;
-}
-
-#share-form {
-  text-align: center;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  background-color: rgb(20,170,100);
-  padding-left: 100px;
-  padding-right: 100px;
-  padding-top: 50px;
-  padding-bottom: 50px;
-  font-size: 24px;
 }
 
 .invisible {
@@ -32,7 +19,7 @@
 
 #sql {
   width: 100%;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 50%;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -92,6 +79,13 @@ input{
   font-size: 12px;
 }
 
+.arrow {
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+}
+
 #instructions {
   text-align: center;
 }
@@ -99,14 +93,12 @@ input{
 #search-bar {
   background-image: url(search.svg);
   padding: 10px;
-  background-color: #f7f1d0;
+  background-color: rgb(33, 158, 100);
   background-repeat: no-repeat;
   background-size: 35px;
-  border-color: #ff7c5a;
-  border-style: solid;
+  border: 1px solid black;
   border-radius: 10px;
   padding-left: 40px;
-  box-shadow: 1px 3px 1.5px #ffd952;
   width: 0;
   height: 10px;
   transition: 0.5s;
@@ -116,11 +108,6 @@ input{
 
 #search-bar:focus {
   outline:none;
-}
-
-#search-bar:hover {
-  background-color: #ffc45a;
-  width: 300px; 
 }
 
 .up {
