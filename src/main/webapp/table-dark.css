@@ -5,6 +5,10 @@ th {
   color: white;
 }
 
+th:hover {
+  color: black;
+}
+
 tr:nth-child(even) {
   background-color: rgb(80,80,80);
   color: white;
