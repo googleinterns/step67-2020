@@ -227,7 +227,7 @@ class Table {
 
   addColumnHeader(colName, index) {
     const columnHeader = document.createElement("th");
-    columnHeader.setAttribute("id", "colheader_" + colName + this.name);
+    columnHeader.setAttribute("id", "colheader_" + index + this.name);
     const id = this.id;
     columnHeader.onclick = function() {sort(index, id)};
     columnHeader.innerText = colName;
