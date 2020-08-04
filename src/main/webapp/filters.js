@@ -394,7 +394,7 @@ function populateFilters() {
           break;
         }
       }
-      if (uncheck) {
+      if (uncheck && checkList != null && checkList.length != 0) {
         elements[i].checked = false;
       }
     }
